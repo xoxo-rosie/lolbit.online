@@ -19,12 +19,12 @@
     h1 { color:white; margin:0 0 5px 0; font-size:2em; text-shadow:2px 2px 4px rgba(0,0,0,.3); }
     .subtitle { color:rgba(255,255,255,.7); margin:0 0 8px 0; font-size:.8em; }
     #gameCanvas {
-      background:#1a1a2e; border:3px solid #4caf50; display:block; margin:0;
+      background:#1a1a2e; border:3px solid #4caf50; display:none; margin:0;
       box-shadow:0 0 30px rgba(76,175,80,.4); max-width:90vmin; height:auto;
       aspect-ratio:1/1; touch-action:none; border-radius:6px;
     }
     .info {
-      display:flex; justify-content:space-around; gap:10px; margin:10px 0;
+      display:none; justify-content:space-around; gap:10px; margin:10px 0;
       flex-wrap:wrap; width:100%; max-width:500px;
     }
     .info-box {
@@ -32,10 +32,10 @@
       padding:8px 15px; border-radius:8px; font-size:.9em; font-weight:bold; color:white;
       flex:1; min-width:80px;
     }
-    .controls { color:rgba(255,255,255,.6); font-size:.75em; margin:5px 0; max-width:600px; }
+    .controls { display:none; color:rgba(255,255,255,.6); font-size:.75em; margin:5px 0; max-width:600px; }
     .difficulty-selector {
-      background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
-      padding:8px 16px; border-radius:8px; margin:5px 0; display:inline-flex; gap:12px;
+      display:none; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
+      padding:8px 16px; border-radius:8px; margin:5px 0; display:none; inline-flex; gap:12px;
       align-items:center;
     }
     .difficulty-selector label {
@@ -46,34 +46,35 @@
       margin:8px 0; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; width:100%;
     }
     button {
-      padding:10px 20px; font-size:.85em; background:rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.3); border-radius:8px; cursor:pointer;
+      padding:12px 24px; font-size:1em; background:rgba(76,175,80,.55);
+      border:2px solid #4caf50; border-radius:10px; cursor:pointer;
       font-weight:bold; color:white; transition:all .2s; white-space:nowrap;
+      min-width:160px;
     }
     button:hover {
-      background:rgba(76,175,80,.6); border-color:#4caf50; transform:translateY(-2px);
+      background:rgba(76,175,80,.85); transform:translateY(-2px);
       box-shadow:0 5px 15px rgba(0,0,0,.3);
     }
     button:active { transform:translateY(0); }
+    button.secondary {
+      background:rgba(255,255,255,.1); border-color:rgba(255,255,255,.4);
+    }
+    button.secondary:hover { background:rgba(255,255,255,.2); }
 
     /* Modal overlays */
     .modal-overlay {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;
+      background:rgba(0,0,0,.65); z-index:999; justify-content:center; align-items:center;
     }
     .modal {
       background:#1e1e3a; border:2px solid #4caf50; padding:25px; border-radius:15px;
-      box-shadow:0 20px 60px rgba(0,0,0,.6); text-align:center; min-width:300px; max-width:90vw;
+      box-shadow:0 20px 60px rgba(0,0,0,.6); text-align:center; min-width:320px; max-width:90vw;
       max-height:85vh; overflow-y:auto;
     }
     .modal h2 { color:#4caf50; margin-bottom:12px; font-size:1.6em; }
     .modal h3 { color:white; margin:10px 0 8px 0; font-size:1.1em; }
-    .modal p { color:rgba(255,255,255,.85); margin:6px 0; }
-    .modal input {
-      width:100%; padding:10px; margin:8px 0; border-radius:6px; border:1px solid #4caf50;
-      background:rgba(255,255,255,.1); color:white; font-size:1em; outline:none;
-    }
-    .modal input::placeholder { color:rgba(255,255,255,.5); }
+    .modal p { color:rgba(255,255,255,.85); margin:6px 0; line-height:1.4; }
+    .modal .small { font-size:.85em; color:rgba(255,255,255,.65); margin-top:8px; }
     .leaderboard-list {
       background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
       padding:12px; border-radius:8px; margin:10px 0; text-align:left;
@@ -90,15 +91,13 @@
     .close-btn:hover { background:rgba(255,80,80,.6); }
 
     /* D-Pad */
-    .dpad {
-      display:none; margin-top:10px; user-select:none; -webkit-user-select:none;
-    }
+    .dpad { display:none; margin-top:10px; }
     .dpad.visible { display:grid; }
-    .dpad button {
+    .dpad button.control-btn {
       width:60px; height:60px; font-size:1.5em; padding:0; margin:4px;
-      background:rgba(76,175,80,.25); border:2px solid rgba(76,175,80,.5);
+      background:rgba(76,175,80,.25); border:2px solid rgba(76,175,80,.5); min-width:auto;
     }
-    .dpad button:active { background:rgba(76,175,80,.6); }
+    .dpad button.control-btn:active { background:rgba(76,175,80,.6); }
     .dpad-grid {
       display:grid; grid-template-columns:60px 60px 60px; grid-template-rows:60px 60px 60px;
       justify-items:center; align-items:center;
@@ -106,10 +105,10 @@
     .dpad-center { grid-column:2; grid-row:2; visibility:hidden; }
 
     .power-up-indicator {
-      color:#ffff00; font-weight:bold; margin:4px 0; min-height:18px; font-size:.9em;
+      display:none; color:#ffff00; font-weight:bold; margin:4px 0; min-height:18px; font-size:.9em;
     }
     .fruit-legend {
-      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+      display:none; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
       padding:8px 12px; border-radius:8px; margin:5px 0; font-size:.72em;
       color:rgba(255,255,255,.75); max-width:600px; line-height:1.4;
     }
@@ -118,34 +117,45 @@
     .diff-medium { color:#ff9800; }
     .diff-hard   { color:#f44336; }
 
-    .signed-in { color:#4caf50; font-weight:bold; }
+    .user-info {
+      display:flex; align-items:center; gap:10px; margin:10px 0;
+      padding:10px 16px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
+      border-radius:10px; color:white;
+    }
+    .user-avatar {
+      width:40px; height:40px; border-radius:50%; border:2px solid #4caf50;
+    }
+    .user-name { font-weight:bold; }
+    .user-email { font-size:.8em; color:rgba(255,255,255,.65); }
+
+    /* Start screen */
+    .start-screen { display:flex; flex-direction:column; align-items:center; gap:12px; }
+    .start-screen.hidden { display:none; }
 
     @media (max-width:480px) {
       h1 { font-size:1.5em; }
-      .subtitle { font-size:.7em; }
-      .info-box { font-size:.8em; min-width:70px; padding:6px 10px; }
-      button { padding:8px 15px; font-size:.75em; }
-      .controls { font-size:.65em; }
-      .fruit-legend { font-size:.65em; }
-      .dpad button { width:50px; height:50px; font-size:1.3em; margin:3px; }
+      button { padding:10px 20px; font-size:.9em; min-width:140px; }
+      .dpad button.control-btn { width:50px; height:50px; font-size:1.3em; margin:3px; }
       .dpad-grid { grid-template-columns:50px 50px 50px; grid-template-rows:50px 50px 50px; }
-    }
-    @media (max-height:600px) {
-      .subtitle, .controls, .fruit-legend { display:none; }
     }
   </style>
 </head>
 <body>
+<!-- FIREBASE SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <!-- SIGN IN MODAL -->
 <div class="modal-overlay" id="signInModal">
   <div class="modal">
-    <h2>👤 Sign In</h2>
-    <p>Enter your nickname to save scores globally</p>
-    <input type="text" id="nicknameInput" placeholder="Your nickname" maxlength="16" />
-    <button id="signInBtn">✓ Sign In</button>
-    <p style="margin-top:10px; font-size:.85em; color:rgba(255,255,255,.6);">
-      Your name and scores are saved on this device
-    </p>
+    <h2>🔐 Sign In Required</h2>
+    <p>Sign in with Google to save your scores and compete fairly</p>
+    <button id="googleSignInBtn" style="margin:12px 0;">
+      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" style="vertical-align:middle; margin-right:6px;">
+      Sign in with Google
+    </button>
+    <p class="small">Your Google account keeps scores secure and prevents fake names</p>
   </div>
 </div>
 
@@ -165,11 +175,11 @@
     <h2 style="color:#ff5555">💀 GAME OVER</h2>
     <p>Final Score: <strong style="color:#4caf50"><span id="finalScore">0</span></strong></p>
     <p>Difficulty: <span id="finalDifficulty">Easy</span></p>
-    <p>Player: <span id="finalPlayer" style="color:#4caf50">Guest</span></p>
+    <div id="gameOverPlayer" style="margin:8px 0; color:#4caf50; font-weight:bold;"></div>
     <div class="leaderboard-list" id="lbListGameOver"></div>
     <div class="button-group">
       <button onclick="resetGame()">▶ Play Again</button>
-      <button class="close-btn" onclick="location.reload()">Main Menu</button>
+      <button class="close-btn" onclick="showStartScreen()">Main Menu</button>
     </div>
   </div>
 </div>
@@ -178,9 +188,31 @@
   <h1>🐍 Snake</h1>
   <p class="subtitle">Eat fruit, grab power-ups, don't hit the walls!</p>
 
+  <!-- START SCREEN -->
+  <div class="start-screen" id="startScreen">
+    <div class="user-info" id="userInfo" style="display:none;">
+      <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+      <div style="text-align:left;">
+        <div class="user-name" id="userName"></div>
+        <div class="user-email" id="userEmail"></div>
+      </div>
+      <button class="close-btn" onclick="signOut()" style="margin-left:auto; padding:6px 12px; min-width:auto;">Sign Out</button>
+    </div>
+
+    <button id="playBtn">▶ Play</button>
+    <button class="secondary" id="leaderboardMainBtn" onclick="openLeaderboard()">🏆 Leaderboard</button>
+    <button class="secondary" id="toggleDpadBtn" onclick="toggleDpad()">🎮 D-Pad: OFF</button>
+
+    <div class="difficulty-selector" id="diffSelector" style="display:inline-flex;">
+      <label><input type="radio" name="difficulty" value="easy" checked> <span class="diff-easy">Easy</span></label>
+      <label><input type="radio" name="difficulty" value="medium"> <span class="diff-medium">Medium</span></label>
+      <label><input type="radio" name="difficulty" value="hard"> <span class="diff-hard">Hard</span></label>
+    </div>
+  </div>
+
   <canvas id="gameCanvas" width="400" height="400"></canvas>
 
-  <div class="info">
+  <div class="info" id="infoBar">
     <div class="info-box">Score: <span id="score">0</span></div>
     <div class="info-box">Level: <span id="level">1</span></div>
     <div class="info-box">Best: <span id="highScore">0</span></div>
@@ -188,52 +220,61 @@
 
   <div class="power-up-indicator" id="powerUpIndicator"></div>
 
-  <div class="fruit-legend">
+  <div class="fruit-legend" id="fruitLegend">
     🍎 +10 | 🍊 +15 | 🍓 +25 | 🍌 +35 | 🍉 +50 | ⭐ +100
     &nbsp;&nbsp;||&nbsp;&nbsp;
     <span style="color:#ffdd44">⚡ Speed</span> | <span style="color:#44aaff">🧊 Slow</span> | <span style="color:#ff44ff">🛡️ Shield</span>
   </div>
 
-  <div class="difficulty-selector">
-    <label><input type="radio" name="difficulty" value="easy" checked> <span class="diff-easy">Easy</span></label>
-    <label><input type="radio" name="difficulty" value="medium"> <span class="diff-medium">Medium</span></label>
-    <label><input type="radio" name="difficulty" value="hard"> <span class="diff-hard">Hard</span></label>
-  </div>
-
-  <div class="controls">
+  <div class="controls" id="controlsText">
     📱 Arrow keys / WASD / swipe to move &nbsp;|&nbsp; Click canvas first on desktop
   </div>
 
-  <div class="button-group">
+  <div class="button-group" id="gameButtons" style="display:none;">
     <button id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
     <button onclick="resetGame()">🔄 Reset</button>
     <button id="soundBtn" onclick="toggleSound()">🔊 Sound</button>
     <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
   </div>
 
-  <div class="button-group">
-    <button id="toggleDpadBtn" onclick="toggleDpad()">🎮 D-Pad: OFF</button>
-    <button id="leaderboardBtn" onclick="openLeaderboard()">🏆 Leaderboard</button>
-    <button id="signOutBtn" onclick="signOut()" style="display:none;">🚪 Sign Out</button>
-  </div>
-
-  <!-- D-Pad Controls -->
   <div class="dpad" id="dpad">
     <div class="dpad-grid">
       <div></div>
-      <button ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">⬆️</button>
+      <button class="control-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">⬆️</button>
       <div></div>
-      <button ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">⬅️</button>
+      <button class="control-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">⬅️</button>
       <div class="dpad-center"></div>
-      <button ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">➡️</button>
+      <button class="control-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">➡️</button>
       <div></div>
-      <button ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">⬇️</button>
+      <button class="control-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">⬇️</button>
       <div></div>
     </div>
   </div>
 </div>
 
 <script>
+// ─── FIREBASE CONFIG (REPLACE WITH YOUR OWN) ─────────────────────────
+// 1. Go to https://console.firebase.google.com
+// 2. Create a new project
+// 3. Add a Web app (</>) and copy the config object
+// 4. Enable Authentication → Google provider
+// 5. Enable Firestore Database (start in test mode for now)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 // ─── GLOBAL STATE ────────────────────────────────────────────────────
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -271,87 +312,105 @@ let frameCount, currentFrameDelay;
 let touchStartX, touchStartY;
 let shieldActive;
 let showDpad = false;
+let currentUser = null;
 
-// Player & scores
-let player = loadPlayer();
-let allScores = loadAllScores();
+// ─── AUTH HANDLERS ───────────────────────────────────────────────────
+function updateAuthUI(user) {
+  const userInfo = document.getElementById('userInfo');
+  const signInModal = document.getElementById('signInModal');
+  const playBtn = document.getElementById('playBtn');
 
-// ─── PLAYER / PERSISTENCE ─────────────────────────────────────────────
-function loadPlayer() {
-  const p = localStorage.getItem('snakePlayer');
-  return p ? JSON.parse(p) : null;
-}
-function savePlayer() {
-  localStorage.setItem('snakePlayer', JSON.stringify(player));
-}
-function loadAllScores() {
-  return JSON.parse(localStorage.getItem('snakeAllScores') || '[]');
-}
-function saveAllScores() {
-  localStorage.setItem('snakeAllScores', JSON.stringify(allScores));
-}
-
-function signIn() {
-  const input = document.getElementById('nicknameInput');
-  const name = input.value.trim() || 'Guest';
-  player = { name, joined: Date.now() };
-  savePlayer();
-  updateSignInUI();
-  document.getElementById('signInModal').style.display = 'none';
-}
-
-function signOut() {
-  player = null;
-  localStorage.removeItem('snakePlayer');
-  updateSignInUI();
-  resetGame();
-}
-
-function updateSignInUI() {
-  const modal = document.getElementById('signInModal');
-  const signOutBtn = document.getElementById('signOutBtn');
-  if (player) {
-    modal.style.display = 'none';
-    signOutBtn.style.display = 'inline-block';
+  if (user) {
+    currentUser = user;
+    userInfo.style.display = 'flex';
+    signInModal.style.display = 'none';
+    document.getElementById('userAvatar').src = user.photoURL || '';
+    document.getElementById('userName').textContent = user.displayName || 'Player';
+    document.getElementById('userEmail').textContent = user.email || '';
+    playBtn.disabled = false;
+    playBtn.textContent = '▶ Play';
   } else {
-    modal.style.display = 'flex';
-    signOutBtn.style.display = 'none';
+    currentUser = null;
+    userInfo.style.display = 'none';
+    signInModal.style.display = 'flex';
+    playBtn.disabled = true;
+    playBtn.textContent = 'Sign In to Play';
   }
 }
 
-// ─── LEADERBOARD ─────────────────────────────────────────────────────
+auth.onAuthStateChanged(updateAuthUI);
+
+document.getElementById('googleSignInBtn').addEventListener('click', () => {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(err => {
+    alert('Sign in failed: ' + err.message);
+  });
+});
+
+function signOut() {
+  auth.signOut().then(() => {
+    currentUser = null;
+    showStartScreen();
+  });
+}
+
+// ─── LEADERBOARD (FIRESTORE) ─────────────────────────────────────────
 function addScore(scoreVal) {
+  if (!currentUser) return;
   const entry = {
-    name: player ? player.name : 'Guest',
+    uid: currentUser.uid,
+    name: currentUser.displayName || 'Player',
+    photo: currentUser.photoURL || '',
     score: scoreVal,
     difficulty,
     date: new Date().toLocaleDateString(),
-    ts: Date.now()
+    ts: firebase.firestore.FieldValue.serverTimestamp()
   };
-  allScores.push(entry);
-  allScores.sort((a,b) => b.score - a.score || b.ts - a.ts);
-  allScores = allScores.slice(0, 100);
-  saveAllScores();
+  db.collection('scores').add(entry).catch(err => {
+    console.error('Failed to save score:', err);
+  });
 }
 
-function renderLeaderboard(listId, limit=10) {
-  const list = document.getElementById(listId);
+async function fetchLeaderboard(limit=15) {
+  try {
+    const snapshot = await db.collection('scores')
+      .orderBy('score', 'desc')
+      .limit(limit)
+      .get();
+    const scores = snapshot.docs.map(d => d.data());
+    renderLeaderboardData(scores);
+    return scores;
+  } catch (err) {
+    console.error('Leaderboard fetch error:', err);
+    document.getElementById('lbList').innerHTML = '<div style="color:#ff5555;padding:10px;">Failed to load leaderboard. Check Firebase config.</div>';
+  }
+}
+
+function renderLeaderboardData(scores) {
+  const list = document.getElementById('lbList');
+  const listGameOver = document.getElementById('lbListGameOver');
   list.innerHTML = '';
-  const top = allScores.slice(0, limit);
-  top.forEach((s, i) => {
+  if (listGameOver) listGameOver.innerHTML = '';
+
+  scores.forEach((s, i) => {
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-    const item = document.createElement('div');
-    item.className = 'lb-item';
-    item.innerHTML = `<span>${medal} ${s.name}</span><span>${s.score} (${s.difficulty})</span>`;
-    list.appendChild(item);
+    const html = `<div class="lb-item">
+      <span>${medal} ${s.photo ? `<img src="${s.photo}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:6px;">`:''}${s.name}</span>
+      <span>${s.score} (${s.difficulty})</span>
+    </div>`;
+    list.innerHTML += html;
+    if (listGameOver) listGameOver.innerHTML += html;
   });
-  if (top.length === 0) {
-    list.innerHTML = '<div style="color:rgba(255,255,255,.6);padding:10px;">No scores yet. Be the first!</div>';
+
+  if (scores.length === 0) {
+    const msg = '<div style="color:rgba(255,255,255,.6);padding:10px;">No scores yet. Be the first!</div>';
+    list.innerHTML = msg;
+    if (listGameOver) listGameOver.innerHTML = msg;
   }
 }
 
 function openLeaderboard() {
-  renderLeaderboard('lbList');
+  fetchLeaderboard();
   document.getElementById('leaderboardModal').style.display = 'flex';
 }
 function closeLeaderboard() {
@@ -440,7 +499,6 @@ function update() {
   direction = {...nextDirection};
   const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
-  // Wall collision (kills)
   if (head.x < 0 || head.x >= TILES || head.y < 0 || head.y >= TILES) {
     if (shieldActive) {
       head.x = Math.max(0, Math.min(TILES-1, head.x));
@@ -456,7 +514,6 @@ function update() {
     }
   }
 
-  // Self collision
   for (const seg of snake) {
     if (head.x === seg.x && head.y === seg.y) { endGame(); return; }
   }
@@ -481,7 +538,6 @@ function update() {
   }
   if (!ate) snake.pop();
 
-  // Power-up
   for (let i = 0; i < powerUpsArr.length; i++) {
     if (head.x === powerUpsArr[i].x && head.y === powerUpsArr[i].y) {
       playSound('powerup');
@@ -633,7 +689,8 @@ function gameLoop() { update(); draw(); requestAnimationFrame(gameLoop); }
 function endGame() {
   gameRunning = false;
   playSound('gameover');
-  addScore(score);
+
+  if (currentUser) addScore(score);
 
   if (score > highScore) {
     highScore = score;
@@ -642,10 +699,16 @@ function endGame() {
 
   document.getElementById('finalScore').textContent = score;
   document.getElementById('finalDifficulty').textContent = difficulty.charAt(0).toUpperCase()+difficulty.slice(1);
-  document.getElementById('finalPlayer').textContent = player ? player.name : 'Guest';
+  const playerEl = document.getElementById('gameOverPlayer');
+  if (currentUser) {
+    playerEl.innerHTML = `Player: <span style="color:#4caf50">${currentUser.displayName || 'Player'}</span>`;
+  } else {
+    playerEl.innerHTML = '';
+  }
 
-  renderLeaderboard('lbListGameOver', 5);
-  document.getElementById('gameOverModal').style.display = 'flex';
+  fetchLeaderboard(5).then(() => {
+    document.getElementById('gameOverModal').style.display = 'flex';
+  });
 }
 
 // ─── CONTROLS ────────────────────────────────────────────────────────
@@ -660,7 +723,7 @@ function handleKey(e) {
   if ((k==='arrowup'||k==='w') && direction.y===0) nextDirection = {x:0,y:-1};
   else if ((k==='arrowdown'||k==='s') && direction.y===0) nextDirection = {x:0,y:1};
   else if ((k==='arrowleft'||k==='a') && direction.x===0) nextDirection = {x:-1,y:0};
-  else if ((k==='arrowright'||k==='d') && direction.x===0) nextDirection = {x:1,y:0};
+  else if (k==='arrowright'||k==='d') nextDirection = {x:1,y:0};
   else if (k===' ' || k==='p') togglePause();
 }
 
@@ -692,6 +755,7 @@ function togglePause() {
 }
 
 function resetGame() {
+  document.getElementById('gameOverModal').style.display = 'none';
   initGame();
 }
 
@@ -704,10 +768,10 @@ function toggleFullscreen() {
   const el = document.querySelector('.container');
   if (!document.fullscreenElement) {
     el.requestFullscreen?.catch(()=>{});
-    document.getElementById('gameCanvas').classList.add('fullscreen-canvas');
+    canvas.classList.add('fullscreen-canvas');
   } else {
     document.exitFullscreen?.();
-    document.getElementById('gameCanvas').classList.remove('fullscreen-canvas');
+    canvas.classList.remove('fullscreen-canvas');
   }
 }
 
@@ -726,12 +790,38 @@ function toggleDpad() {
   }
 }
 
-document.querySelectorAll('input[name="difficulty"]').forEach(r => {
-  r.addEventListener('change', e => { difficulty = e.target.value; diffCfg = DIFF[difficulty]; if (!gameRunning) resetGame(); });
-});
+function showStartScreen() {
+  document.getElementById('startScreen').classList.remove('hidden');
+  canvas.style.display = 'none';
+  document.getElementById('infoBar').style.display = 'none';
+  document.getElementById('powerUpIndicator').style.display = 'none';
+  document.getElementById('fruitLegend').style.display = 'none';
+  document.getElementById('controlsText').style.display = 'none';
+  document.getElementById('gameButtons').style.display = 'none';
+  document.getElementById('diffSelector').style.display = 'inline-flex';
+  gameRunning = false;
+}
 
-document.getElementById('signInBtn').addEventListener('click', signIn);
-document.getElementById('nicknameInput').addEventListener('keypress', e => { if (e.key==='Enter') signIn(); });
+function startGame() {
+  if (!currentUser) {
+    alert('Please sign in with Google first!');
+    return;
+  }
+  document.getElementById('startScreen').classList.add('hidden');
+  canvas.style.display = 'block';
+  document.getElementById('infoBar').style.display = 'flex';
+  document.getElementById('powerUpIndicator').style.display = 'block';
+  document.getElementById('fruitLegend').style.display = 'block';
+  document.getElementById('controlsText').style.display = 'block';
+  document.getElementById('gameButtons').style.display = 'flex';
+  document.getElementById('diffSelector').style.display = 'none';
+  initGame();
+}
+
+document.getElementById('playBtn').addEventListener('click', startGame);
+document.querySelectorAll('input[name="difficulty"]').forEach(r => {
+  r.addEventListener('change', e => { difficulty = e.target.value; diffCfg = DIFF[difficulty]; });
+});
 
 // ─── AUDIO ───────────────────────────────────────────────────────────
 function playSound(type) {
@@ -766,8 +856,7 @@ function playSound(type) {
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────
-updateSignInUI();
-initGame();
+showStartScreen();
 gameLoop();
 </script>
 </body>

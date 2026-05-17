@@ -536,7 +536,7 @@
                     food.splice(i, 1);
                     ensureFood();
                     
-                    gameSpeed = Math.min(10, 3 + Math.floor(score / 100));
+                    gameSpeed = Math.min(10, 1 + Math.floor(score / 100));
                     document.getElementById('score').textContent = score;
                     document.getElementById('level').textContent = Math.ceil(gameSpeed / 2);
                     foodEaten = true;

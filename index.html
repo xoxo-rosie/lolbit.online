@@ -143,7 +143,15 @@
     .user-name { font-weight:bold; font-size:1.05em; }
     .user-sub { font-size:.82em; color:rgba(255,255,255,0.65); }
     .err { color:#ff5555; font-weight:bold; margin:8px 0; min-height:18px; }
-    .dev-console-output { text-align:left; background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin:12px 0; max-height:200px; overflow-y:auto; font-family:monospace; font-size:.85em; color:#81c784; }
+    .dev-pass-modal { display:none; }
+    .dev-pass-input { width:100%; padding:12px; margin:12px 0; border-radius:8px; border:2px solid #ff9800; background:rgba(255,255,255,0.1); color:white; font-size:1em; }
+    .dev-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:15px 0; }
+    .dev-btn { padding:8px 14px; font-size:0.85em; border:none; border-radius:6px; cursor:pointer; font-weight:bold; color:white; transition:all 0.2s; }
+    .dev-btn.orange { background:#ff9800; } .dev-btn.orange:hover { background:#ffb74d; }
+    .dev-btn.red { background:#f44336; } .dev-btn.red:hover { background:#ef5350; }
+    .dev-btn.blue { background:#2196f3; } .dev-btn.blue:hover { background:#64b5f6; }
+    .dev-btn.green { background:#4caf50; } .dev-btn.green:hover { background:#81c784; }
+    .dev-btn.purple { background:#9c27b0; } .dev-btn.purple:hover { background:#ba68c8; }
     
     @media (min-width: 768px) {
       h1 { font-size:3em; }
@@ -156,6 +164,7 @@
       .dpad button.control-btn { width:60px; height:60px; font-size:1.5em; margin:3px; }
       .dpad-grid { grid-template-columns:60px 60px 60px; grid-template-rows:60px 60px 60px; }
       .info-box { padding:10px 12px; font-size:.9em; min-width:80px; }
+      .dev-btn-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
@@ -176,14 +185,35 @@
   </div>
 </div>
 
+<!-- DEV PASSWORD MODAL -->
+<div class="modal-overlay" id="devPassModal" class="dev-pass-modal">
+  <div class="modal dev-modal">
+    <h2 class="dev-title">🔐 Dev Access</h2>
+    <p style="color:#ffaa00;">Enter developer password</p>
+    <input type="password" id="devPass" class="dev-pass-input" placeholder="Password" />
+    <div class="err" id="devPassErr"></div>
+    <button class="dev-btn orange" onclick="devCheckPass()">✓ Submit</button>
+    <button class="close-btn" onclick="closeDevPass()">Close</button>
+  </div>
+</div>
+
 <!-- DEV MENU MODAL -->
-<div class="modal-overlay" id="devModal">
+<div class="modal-overlay" id="devMenuModal">
   <div class="modal dev-modal">
     <h2 class="dev-title">🔧 DEV MENU</h2>
-    <input type="text" id="devConsoleInput" placeholder="Enter command..." class="dev-input" />
-    <div class="err" id="devErr"></div>
-    <div class="dev-console-output" id="devConsoleOutput"></div>
-    <button onclick="devConsoleSubmit()">Execute</button>
+    <div class="dev-btn-grid">
+      <button class="dev-btn orange" onclick="devAddScore100()">➕ Score +100</button>
+      <button class="dev-btn orange" onclick="devLevelUp()">📈 Level +1</button>
+      <button class="dev-btn blue" onclick="devClearAllScores()">🗑️ Clear Scores</button>
+      <button class="dev-btn blue" onclick="devClearAllUsers()">🗑️ Delete Users</button>
+      <button class="dev-btn green" onclick="devExportData()">💾 Export Data</button>
+      <button class="dev-btn green" onclick="devViewLogs()">📋 View Logs</button>
+      <button class="dev-btn purple" onclick="devResetAll()">🔄 Reset All</button>
+      <button class="dev-btn red" onclick="devNukeStorage()">☢️ NUKE!</button>
+    </div>
+    <div style="background:rgba(255,152,0,0.15); border:1px solid #ff9800; padding:12px; border-radius:8px; margin:12px 0; text-align:left; max-height:200px; overflow-y:auto;">
+      <div id="devStatus" style="font-size:0.85em; color:#ffaa00; font-family:monospace;"></div>
+    </div>
     <button class="close-btn" onclick="closeDevMenu()">Close</button>
   </div>
 </div>
@@ -349,7 +379,7 @@ const LS = {
   keys: () => Object.keys(localStorage)
 };
 
-/* DEV MENU */
+/* DEV MENU - 15 TAPS */
 let titleClickCount = 0;
 let titleClickTimeout;
 
@@ -358,79 +388,109 @@ function handleTitleClick() {
   clearTimeout(titleClickTimeout);
   titleClickTimeout = setTimeout(() => { titleClickCount = 0; }, 1000);
   
-  if (titleClickCount === 5) {
+  if (titleClickCount === 15) {
     titleClickCount = 0;
-    openDevMenu();
+    document.getElementById('devPassModal').classList.add('visible');
+    document.getElementById('devPass').value = '';
+    document.getElementById('devPassErr').textContent = '';
+    setTimeout(() => document.getElementById('devPass').focus(), 100);
   }
+}
+
+function devCheckPass() {
+  const pass = document.getElementById('devPass').value;
+  const hash = pass.split('').reduce((h,c) => ((h<<5)-h)+c.charCodeAt(0)|0, 0) >>> 0;
+  
+  if (hash === 83638378) {
+    document.getElementById('devPassModal').classList.remove('visible');
+    openDevMenu();
+    appendLog('[DEV] Accessed dev menu');
+  } else {
+    document.getElementById('devPassErr').textContent = 'Incorrect password';
+    appendLoginLog('DEV password fail attempt');
+  }
+}
+
+function closeDevPass() {
+  document.getElementById('devPassModal').classList.remove('visible');
 }
 
 function openDevMenu() {
-  document.getElementById('devModal').classList.add('visible');
-  document.getElementById('devErr').textContent = '';
-  document.getElementById('devConsoleInput').value = '';
-  document.getElementById('devConsoleInput').focus();
+  updateDevStatus();
+  document.getElementById('devMenuModal').classList.add('visible');
 }
 
 function closeDevMenu() {
-  document.getElementById('devModal').classList.remove('visible');
+  document.getElementById('devMenuModal').classList.remove('visible');
 }
 
-function devConsoleSubmit() {
-  const cmd = document.getElementById('devConsoleInput').value.trim().toLowerCase();
-  const errEl = document.getElementById('devErr');
-  const outEl = document.getElementById('devConsoleOutput');
-  
-  errEl.textContent = '';
-  
-  if (!cmd) return;
-  
-  const parts = cmd.split(' ');
-  const action = parts[0];
-  
-  try {
-    if (action === 'score') {
-      const val = parseInt(parts[1]) || 100;
-      score += val;
-      updateScore();
-      appendLog(`[DEV] Added ${val} score`);
-      logDevOutput(`Added ${val} to score. New score: ${score}`);
-    } else if (action === 'level') {
-      const val = parseInt(parts[1]) || 2;
-      level = val;
-      updateScore();
-      appendLog(`[DEV] Set level to ${val}`);
-      logDevOutput(`Level set to ${val}`);
-    } else if (action === 'logs') {
-      const logs = LS.get('snakeLogs') || [];
-      logDevOutput(`Last 5 logs:\n${logs.slice(0,5).join('\n')}`);
-    } else if (action === 'clear') {
-      LS.del('snakeLogs');
-      LS.del('snakeLoginLogs');
-      logDevOutput('All logs cleared');
-    } else if (action === 'data') {
-      const keys = LS.keys();
-      logDevOutput(`Storage keys: ${keys.join(', ')}`);
-    } else if (action === 'reset') {
-      LS.del('snakeSettings');
-      LS.del('snakeHighScore');
-      LS.del('snakeScores');
-      logDevOutput('Settings and scores reset');
-    } else if (action === 'help') {
-      logDevOutput(`Commands:\nscore [n] - Add score\nlevel [n] - Set level\nlogs - View logs\nclear - Clear logs\ndata - Show storage\nreset - Reset all\nhelp - Show this`);
-    } else {
-      errEl.textContent = 'Unknown command';
-    }
-  } catch (e) {
-    errEl.textContent = 'Error: ' + e.message;
-  }
-  
-  document.getElementById('devConsoleInput').value = '';
+function updateDevStatus() {
+  const users = Object.keys(getUsers()).length;
+  const scores = getScores().length;
+  const topScore = getScores().length ? getScores()[0].score : 0;
+  let status = `👥 Users: ${users}\n🏅 Scores: ${scores}\n🔝 Top: ${topScore}\n💾 Size: ${(JSON.stringify(localStorage).length/1024).toFixed(1)}KB`;
+  document.getElementById('devStatus').textContent = status;
 }
 
-function logDevOutput(msg) {
-  const outEl = document.getElementById('devConsoleOutput');
-  const timestamp = new Date().toLocaleTimeString();
-  outEl.innerHTML = `<div>[${timestamp}] ${msg}</div>` + outEl.innerHTML;
+function devAddScore100() {
+  score += 100;
+  updateScore();
+  updateDevStatus();
+  appendLog('[DEV] Added 100 score');
+}
+
+function devLevelUp() {
+  level += 1;
+  updateScore();
+  updateDevStatus();
+  appendLog('[DEV] Level +1');
+}
+
+function devClearAllScores() {
+  if (!confirm('Clear ALL scores?')) return;
+  saveScores([]);
+  updateDevStatus();
+  appendLog('[DEV] Cleared all scores');
+}
+
+function devClearAllUsers() {
+  if (!confirm('Delete ALL user accounts?')) return;
+  saveUsers({});
+  updateDevStatus();
+  appendLog('[DEV] Cleared all users');
+}
+
+function devExportData() {
+  const data = { users: getUsers(), scores: getScores(), settings: LS.get('snakeSettings') };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'snake_' + Date.now() + '.json';
+  a.click();
+  appendLog('[DEV] Data exported');
+}
+
+function devViewLogs() {
+  const logs = LS.get('snakeLogs') || [];
+  alert('Recent logs:\n' + logs.slice(0, 10).join('\n'));
+}
+
+function devResetAll() {
+  if (!confirm('Reset all settings?')) return;
+  LS.del('snakeSettings');
+  LS.del('snakeHighScore');
+  loadSettings();
+  updateDevStatus();
+  appendLog('[DEV] Reset all');
+}
+
+function devNukeStorage() {
+  if (!confirm('⚠️ NUKE ALL DATA?')) return;
+  if (!confirm('ARE YOU ABSOLUTELY SURE?')) return;
+  localStorage.clear();
+  appendLog('[DEV] STORAGE NUKED');
+  alert('Nuked! Reload page.');
+  location.reload();
 }
 
 /* AUTH - LOCAL ONLY */
@@ -555,13 +615,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('playBtn').addEventListener('click', startGame);
-  loadSettings();
-  
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && document.getElementById('devModal').classList.contains('visible')) {
-      devConsoleSubmit();
-    }
+  document.getElementById('devPass').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') devCheckPass();
   });
+  loadSettings();
 });
 
 function loginUser(username) {

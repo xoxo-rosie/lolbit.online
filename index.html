@@ -63,6 +63,7 @@
       background:rgba(0,0,0,0.85); z-index:999; justify-content:center; align-items:center;
       backdrop-filter:blur(6px);
     }
+    .modal-overlay.visible { display:flex; }
     .modal {
       background:linear-gradient(135deg, #1e1e3a, #252545);
       border:2px solid #4caf50; padding:30px; border-radius:20px;
@@ -142,34 +143,6 @@
     .user-name { font-weight:bold; font-size:1.05em; }
     .user-sub { font-size:.82em; color:rgba(255,255,255,0.65); }
     
-    /* Dev menu styles */
-    .dev-tabs { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:15px; }
-    .dev-tab { padding:7px 14px; font-size:.85em; background:rgba(255,152,0,0.2); border:1px solid rgba(255,152,0,0.5); border-radius:8px; color:#ff9800; cursor:pointer; transition:all 0.2s; min-width:auto; }
-    .dev-tab.active, .dev-tab:hover { background:rgba(255,152,0,0.5); color:white; }
-    .dev-panel { display:none; }
-    .dev-panel.active { display:block; }
-    .dev-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,152,0,0.2); border-radius:10px; padding:12px; margin:10px 0; text-align:left; }
-    .dev-card h4 { color:#ff9800; margin-bottom:8px; }
-    .dev-card p { color:rgba(255,255,255,0.7); font-size:.85em; margin:4px 0; }
-    .dev-stat { font-weight:bold; color:white; }
-    .dev-btn { padding:8px 14px; font-size:.85em; border:none; border-radius:6px; cursor:pointer; font-weight:bold; color:white; margin:4px 2px; background:rgba(255,152,0,0.5); transition:all 0.2s; min-width:auto; white-space:nowrap; }
-    .dev-btn:hover { background:rgba(255,152,0,0.8); transform:none; box-shadow:none; }
-    .dev-btn.red { background:rgba(244,67,54,0.5); }
-    .dev-btn.red:hover { background:rgba(244,67,54,0.8); }
-    .dev-btn.green { background:rgba(76,175,80,0.5); }
-    .dev-btn.green:hover { background:rgba(76,175,80,0.8); }
-    .dev-btn.blue { background:rgba(33,150,243,0.5); }
-    .dev-btn.blue:hover { background:rgba(33,150,243,0.8); }
-    .dev-btn.purple { background:rgba(156,39,176,0.5); }
-    .dev-btn.purple:hover { background:rgba(156,39,176,0.8); }
-    .dev-log { background:#0a0a1a; border:1px solid rgba(255,152,0,0.3); border-radius:6px; padding:10px; max-height:160px; overflow-y:auto; font-family:monospace; font-size:.78em; color:#0f0; text-align:left; margin:8px 0; white-space:pre-wrap; word-break:break-all; }
-    .dev-user-row { display:flex; justify-content:space-between; align-items:center; padding:8px; background:rgba(255,255,255,0.04); border-radius:6px; margin:4px 0; font-size:.82em; color:white; flex-wrap:wrap; gap:8px; }
-    .dev-actions { display:flex; gap:4px; flex-wrap:wrap; }
-    .dev-actions button { padding:4px 8px; font-size:.75em; min-width:auto; }
-    .notice { background:rgba(255,152,0,0.15); border:1px solid rgba(255,152,0,0.4); border-radius:8px; padding:10px; color:#ff9800; font-size:.85em; margin:10px 0; }
-    .err { color:#ff5555; font-size:.85em; margin:5px 0; min-height:16px; }
-    .hint { color:#aaa; font-size:.75em; margin-top:4px; }
-    
     @media (min-width: 768px) {
       h1 { font-size:3em; }
       canvas { max-width:600px; }
@@ -233,16 +206,6 @@
       <input type="range" id="colorSlider" min="0" max="360" value="120" />
       <div class="color-value" id="colorValue">Green — Hue 120</div>
     </div>
-    <div class="settings-row">
-      <label>🎨 Theme</label>
-      <select id="themeSelect" onchange="changeTheme()">
-        <option value="dark">Dark (Default)</option>
-        <option value="midnight">Midnight Blue</option>
-        <option value="forest">Forest</option>
-        <option value="neon">Neon</option>
-        <option value="sunset">Sunset</option>
-      </select>
-    </div>
     <button onclick="saveSettings()">💾 Save Settings</button>
     <p class="small">⚠️ Saves to your account if signed in</p>
     <button class="close-btn" onclick="closeSettings()">Close</button>
@@ -275,17 +238,6 @@
       <strong>⭐ Star</strong> +100 — Legendary (0.8%)<br>
       <strong>💎 Diamond</strong> +150 — Mythic (0.2%)
     </div>
-    <h3 style="margin-top:15px;">⚡ Power-Ups</h3>
-    <div class="fruit-legend" style="display:block; text-align:left;">
-      <strong style="color:#ffdd00">⚡ Speed Boost</strong> — 2× speed for 2s<br>
-      <strong style="color:#44aaff">🧊 Slow Motion</strong> — 0.5× speed for 3s<br>
-      <strong style="color:#ff44ff">🛡️ Shield</strong> — Survive 1 wall hit<br>
-      <strong style="color:#ff6b6b">🔥 Double Points</strong> — 2× score for 3s<br>
-      <strong style="color:#4ecdc4">🌀 Magnet</strong> — Attract nearest food<br>
-      <strong style="color:#95e1d3">🌙 Ghost</strong> — Pass through yourself 2s<br>
-      <strong style="color:#f38181">💥 Explode</strong> — Clears all power-ups<br>
-      <strong style="color:#aa96da">🔮 Freeze</strong> — Pauses timer for 1s
-    </div>
     <h3 style="margin-top:15px;">🕹️ Controls</h3>
     <div style="text-align:left; color:rgba(255,255,255,0.85); font-size:.9em; line-height:1.7;">
       Arrow Keys or WASD to move<br>
@@ -311,316 +263,6 @@
       <button class="secondary" onclick="openSettingsFromGameOver()">⚙️ Settings</button>
     </div>
     <button class="secondary" onclick="showStartScreen()" style="margin-top:8px; min-width:180px;">🏠 Main Menu</button>
-  </div>
-</div>
-
-<!-- DEV PASSWORD MODAL -->
-<div class="modal-overlay" id="_dp">
-  <div class="modal" style="max-width:320px;">
-    <h2 style="color:#ff9800;">🔒 Dev Access</h2>
-    <input type="password" id="_dpi" placeholder="Enter password" class="dev-input" />
-    <div class="err" id="_dpe"></div>
-    <button id="_dpb" style="background:linear-gradient(135deg,#ff9800,#f57c00); box-shadow:0 4px 15px rgba(255,152,0,0.4);">Enter</button>
-    <button class="secondary" onclick="document.getElementById('_dp').style.display='none'" style="margin-top:8px;">Cancel</button>
-  </div>
-</div>
-
-<!-- DEV MENU MODAL -->
-<div class="modal-overlay" id="devMenuModal">
-  <div class="modal dev-modal" style="min-width:360px; max-width:98vw;">
-    <h2 class="dev-title">⚡ Dev Console</h2>
-    <div class="dev-tabs" id="devTabs">
-      <button class="dev-tab active" onclick="switchDevTab('dash')">Dashboard</button>
-      <button class="dev-tab" onclick="switchDevTab('lb')">Leaderboard</button>
-      <button class="dev-tab" onclick="switchDevTab('accounts')">Accounts</button>
-      <button class="dev-tab" onclick="switchDevTab('game')">Game</button>
-      <button class="dev-tab" onclick="switchDevTab('logs')">Logs</button>
-      <button class="dev-tab" onclick="switchDevTab('db')">Database</button>
-      <button class="dev-tab" onclick="switchDevTab('system')">System</button>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div class="dev-panel active" id="devPanel-dash">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px;">
-        <div class="dev-card">
-          <h4>👥 Users</h4>
-          <p>Total: <span class="dev-stat" id="dv-userCount">0</span></p>
-          <p>Online: <span class="dev-stat" id="dv-onlineCount">1</span></p>
-        </div>
-        <div class="dev-card">
-          <h4>🏆 Scores</h4>
-          <p>Total: <span class="dev-stat" id="dv-scoreCount">0</span></p>
-          <p>Highest: <span class="dev-stat" id="dv-topScore">0</span></p>
-        </div>
-        <div class="dev-card">
-          <h4>🎮 Session</h4>
-          <p>Games: <span class="dev-stat" id="dv-gamesPlayed">0</span></p>
-          <p>Version: <span class="dev-stat">1.1.0</span></p>
-        </div>
-        <div class="dev-card">
-          <h4>💾 Storage</h4>
-          <p>Used: <span class="dev-stat" id="dv-storage">0 KB</span></p>
-          <p>Last saved: <span class="dev-stat" id="dv-savedAt">—</span></p>
-        </div>
-        <div class="dev-card">
-          <h4>⏱️ Performance</h4>
-          <p>FPS: <span class="dev-stat" id="dv-fps">60</span></p>
-          <p>Frame: <span class="dev-stat" id="dv-frame">0</span>ms</p>
-        </div>
-        <div class="dev-card">
-          <h4>📍 Current</h4>
-          <p>Score: <span class="dev-stat" id="dv-currScore">0</span></p>
-          <p>Length: <span class="dev-stat" id="dv-currLen">3</span></p>
-        </div>
-      </div>
-      <div class="dev-card">
-        <h4>🔧 Quick Actions</h4>
-        <button class="dev-btn red" onclick="devClearAllScores()">Clear All Scores</button>
-        <button class="dev-btn red" onclick="devClearAllUsers()">Clear All Users</button>
-        <button class="dev-btn blue" onclick="devReloadSettings()">Reload Settings</button>
-        <button class="dev-btn green" onclick="devExportData()">Export Data</button>
-        <button class="dev-btn" onclick="devImportData()">Import Data</button>
-        <button class="dev-btn purple" onclick="devBackupData()">Backup</button>
-        <button class="dev-btn purple" onclick="devRestoreData()">Restore</button>
-      </div>
-      <div class="dev-card">
-        <h4>📊 Stats Breakdown</h4>
-        <p>Easy scores: <span class="dev-stat" id="dv-easyCount">0</span></p>
-        <p>Medium scores: <span class="dev-stat" id="dv-mediumCount">0</span></p>
-        <p>Hard scores: <span class="dev-stat" id="dv-hardCount">0</span></p>
-        <p>Avg score: <span class="dev-stat" id="dv-avgScore">0</span></p>
-      </div>
-    </div>
-
-    <!-- LEADERBOARD -->
-    <div class="dev-panel" id="devPanel-lb">
-      <div class="dev-card">
-        <h4>➕ Add Score</h4>
-        <input type="text" id="dv-addScoreUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
-        <input type="number" id="dv-addScoreVal" placeholder="Score" class="dev-input" style="margin:4px 0;" />
-        <select id="dv-addScoreDiff" style="width:100%; padding:8px; border-radius:6px; background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,152,0,0.4); margin:4px 0;">
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-        <button class="dev-btn green" onclick="devAddScore()">Add Score</button>
-      </div>
-      <div class="dev-card">
-        <h4>🗑️ Remove Score</h4>
-        <input type="text" id="dv-removeScoreUser" placeholder="Username to remove" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn red" onclick="devRemoveScore()">Remove by Username</button>
-        <button class="dev-btn red" onclick="devClearTopN()">Remove Top 1</button>
-        <button class="dev-btn red" onclick="devClearBottomN()">Remove Bottom 5</button>
-      </div>
-      <div class="dev-card">
-        <h4>📋 Current Leaderboard</h4>
-        <div class="dev-log" id="dv-lbPreview">Loading...</div>
-        <button class="dev-btn blue" onclick="devRefreshLbPreview()">Refresh</button>
-        <button class="dev-btn red" onclick="devClearAllScores()">Clear All</button>
-        <button class="dev-btn purple" onclick="devRandomizeScores()">Randomize 20</button>
-      </div>
-      <div class="dev-card">
-        <h4>🏅 Adjust Scores</h4>
-        <input type="number" id="dv-scoreMulti" placeholder="Multiplier (e.g. 2)" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn" onclick="devSetScoreMulti()">Set Multiplier</button>
-        <button class="dev-btn" onclick="devAddToAll()">Add to All</button>
-        <button class="dev-btn purple" onclick="devSortByDate()">Sort by Date</button>
-      </div>
-    </div>
-
-    <!-- ACCOUNTS -->
-    <div class="dev-panel" id="devPanel-accounts">
-      <div class="dev-card">
-        <h4>👥 All Accounts (<span id="dv-userTotal">0</span>)</h4>
-        <div id="dv-userList" style="max-height:200px; overflow-y:auto;"></div>
-        <button class="dev-btn blue" onclick="devRefreshUserList()">Refresh</button>
-        <button class="dev-btn purple" onclick="devCreateFakeUser()">Create Fake User</button>
-      </div>
-      <div class="dev-card">
-        <h4>🔑 Reset Password</h4>
-        <input type="text" id="dv-rpUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
-        <input type="password" id="dv-rpNew" placeholder="New Password" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn" onclick="devResetPassword()">Reset Password</button>
-      </div>
-      <div class="dev-card">
-        <h4>✏️ Change Username</h4>
-        <input type="text" id="dv-cuOld" placeholder="Current Username" class="dev-input" style="margin:4px 0;" />
-        <input type="text" id="dv-cuNew" placeholder="New Username" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn" onclick="devChangeUsername()">Change Username</button>
-      </div>
-      <div class="dev-card">
-        <h4>🚫 Delete Account</h4>
-        <input type="text" id="dv-delUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn red" onclick="devDeleteUser()">Delete Account</button>
-      </div>
-      <div class="dev-card">
-        <h4>🔓 Force Login As</h4>
-        <input type="text" id="dv-forceUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn green" onclick="devForceLogin()">Login As User</button>
-      </div>
-      <div class="dev-card">
-        <h4>🐍 Change Snake Color</h4>
-        <input type="text" id="dv-colorUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
-        <input type="number" id="dv-colorHue" placeholder="Hue (0–360)" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn" onclick="devChangeColor()">Set Color</button>
-      </div>
-      <div class="dev-card">
-        <h4>📈 Modify High Score</h4>
-        <input type="text" id="dv-hsUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
-        <input type="number" id="dv-hsVal" placeholder="New High Score" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn purple" onclick="devSetHighScore()">Set High Score</button>
-      </div>
-    </div>
-
-    <!-- GAME -->
-    <div class="dev-panel" id="devPanel-game">
-      <div class="dev-card">
-        <h4>⚡ Cheat Controls (Current Session)</h4>
-        <button class="dev-btn green" onclick="devGiveShield()">Give Shield</button>
-        <button class="dev-btn green" onclick="devGiveDouble()">Give 2× Points</button>
-        <button class="dev-btn green" onclick="devGiveSpeed()">Give Speed</button>
-        <button class="dev-btn green" onclick="devGiveSlow()">Give Slow</button>
-        <button class="dev-btn green" onclick="devGiveFreeze()">Give Freeze</button>
-        <button class="dev-btn green" onclick="devGiveGhost()">Give Ghost</button>
-        <button class="dev-btn" onclick="devSetScore()">Set Score</button>
-        <button class="dev-btn" onclick="devSetLength()">Set Snake Length</button>
-        <button class="dev-btn purple" onclick="devAddFood()">Add Food</button>
-        <button class="dev-btn purple" onclick="devAddPowerUp()">Add Power-Up</button>
-        <button class="dev-btn red" onclick="devKillSnake()">Kill Snake</button>
-      </div>
-      <div class="dev-card">
-        <h4>🌐 Global Game Config</h4>
-        <div style="text-align:left; font-size:.85em;">
-          <label style="color:white;">Base Speed (Easy)</label>
-          <input type="number" id="dv-baseSpeed" value="10" class="dev-input" style="margin:4px 0;" />
-          <label style="color:white;">Power-Up Frequency</label>
-          <input type="number" id="dv-puFreq" value="0.03" step="0.01" class="dev-input" style="margin:4px 0;" />
-          <label style="color:white;">Food Count (Easy)</label>
-          <input type="number" id="dv-foodCount" value="3" class="dev-input" style="margin:4px 0;" />
-          <label style="color:white;">Level Speed Gain</label>
-          <input type="number" id="dv-speedGain" value="0.3" step="0.1" class="dev-input" style="margin:4px 0;" />
-        </div>
-        <button class="dev-btn" onclick="devApplyGameConfig()">Apply Config</button>
-        <button class="dev-btn blue" onclick="devResetGameConfig()">Reset to Default</button>
-        <button class="dev-btn purple" onclick="devMaxSpeed()">Max Speed</button>
-        <button class="dev-btn purple" onclick="devMinSpeed()">Min Speed</button>
-      </div>
-      <div class="dev-card">
-        <h4>🎨 Theme</h4>
-        <button class="dev-btn" onclick="devSetTheme('dark')">Dark</button>
-        <button class="dev-btn" onclick="devSetTheme('midnight')">Midnight</button>
-        <button class="dev-btn" onclick="devSetTheme('forest')">Forest</button>
-        <button class="dev-btn" onclick="devSetTheme('neon')">Neon</button>
-        <button class="dev-btn purple" onclick="devSetTheme('sunset')">Sunset</button>
-        <button class="dev-btn purple" onclick="devSetTheme('rainbow')">Rainbow</button>
-      </div>
-      <div class="dev-card">
-        <h4>🔔 Broadcast Message</h4>
-        <input type="text" id="dv-broadcastMsg" placeholder="Message to show all players" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn" onclick="devBroadcast()">Broadcast</button>
-        <button class="dev-btn red" onclick="devClearBroadcast()">Clear</button>
-      </div>
-      <div class="dev-card">
-        <h4>🎮 Game State Controls</h4>
-        <button class="dev-btn blue" onclick="devTogglePause()">Toggle Pause</button>
-        <button class="dev-btn purple" onclick="devInstantLevelUp()">Instant Level Up</button>
-        <button class="dev-btn purple" onclick="devWrapWalls()">Enable Wall Wrap</button>
-        <button class="dev-btn red" onclick="devDisableWalls()">Disable Wall Kills</button>
-      </div>
-    </div>
-
-    <!-- LOGS -->
-    <div class="dev-panel" id="devPanel-logs">
-      <div class="dev-card">
-        <h4>📜 Activity Log (<span id="dv-logCount">0</span>)</h4>
-        <div class="dev-log" id="dv-actLog">Loading...</div>
-        <button class="dev-btn blue" onclick="devRefreshLog()">Refresh</button>
-        <button class="dev-btn red" onclick="devClearLog()">Clear Log</button>
-        <button class="dev-btn purple" onclick="devExportLog()">Export Log</button>
-      </div>
-      <div class="dev-card">
-        <h4>🔑 Login Attempts Log (<span id="dv-loginLogCount">0</span>)</h4>
-        <div class="dev-log" id="dv-loginLog">Loading...</div>
-        <button class="dev-btn blue" onclick="devRefreshLoginLog()">Refresh</button>
-        <button class="dev-btn red" onclick="devClearLoginLog()">Clear</button>
-      </div>
-      <div class="dev-card">
-        <h4>⌨️ Live Key Log</h4>
-        <div class="dev-log" id="dv-keyLog" style="max-height:100px;">Press keys to see...</div>
-        <button class="dev-btn red" onclick="devClearKeyLog()">Clear</button>
-        <label style="color:white;"><input type="checkbox" id="dv-enableKeyLog" onchange="keyLogEnabled=this.checked"> Enable</label>
-      </div>
-    </div>
-
-    <!-- DATABASE -->
-    <div class="dev-panel" id="devPanel-db">
-      <div class="dev-card">
-        <h4>📦 Raw Storage Viewer</h4>
-        <div class="dev-log" id="dv-rawDb" style="max-height:200px;">Loading...</div>
-        <button class="dev-btn blue" onclick="devRefreshRawDb()">Refresh</button>
-      </div>
-      <div class="dev-card">
-        <h4>✏️ Edit Raw JSON</h4>
-        <select id="dv-dbKey" style="width:100%; padding:8px; border-radius:6px; background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,152,0,0.4); margin:4px 0;">
-          <option value="snakeScores">snakeScores</option>
-          <option value="snakeUsers">snakeUsers</option>
-          <option value="snakeSettings">snakeSettings</option>
-          <option value="snakeLogs">snakeLogs</option>
-          <option value="snakeLoginLogs">snakeLoginLogs</option>
-          <option value="snakeHighScore">snakeHighScore</option>
-          <option value="snakeTheme">snakeTheme</option>
-        </select>
-        <textarea id="dv-dbVal" style="width:100%; height:120px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,152,0,0.3); border-radius:6px; color:#0f0; font-family:monospace; font-size:.78em; padding:8px; margin:4px 0; resize:vertical;"></textarea>
-        <button class="dev-btn green" onclick="devLoadDbKey()">Load</button>
-        <button class="dev-btn red" onclick="devSaveDbKey()">Save Raw</button>
-        <button class="dev-btn purple" onclick="devFormatDbKey()">Format JSON</button>
-      </div>
-      <div class="dev-card">
-        <h4>🗑️ Delete Key</h4>
-        <input type="text" id="dv-delKey" placeholder="localStorage key" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn red" onclick="devDeleteKey()">Delete Key</button>
-      </div>
-      <div class="dev-card">
-        <h4>🔍 Search</h4>
-        <input type="text" id="dv-searchKey" placeholder="Search key name..." class="dev-input" style="margin:4px 0;" onchange="devSearchStorage()" />
-        <div class="dev-log" id="dv-searchResults">Type to search...</div>
-      </div>
-    </div>
-
-    <!-- SYSTEM -->
-    <div class="dev-panel" id="devPanel-system">
-      <div class="dev-card">
-        <h4>⚠️ Destructive Actions</h4>
-        <button class="dev-btn red" onclick="devNukeStorage()">⚠️ NUKE ALL STORAGE</button>
-        <button class="dev-btn red" onclick="devFactoryReset()">🔧 Factory Reset</button>
-        <button class="dev-btn purple" onclick="devClearCache()">Clear Cache</button>
-      </div>
-      <div class="dev-card">
-        <h4>📰 System Info</h4>
-        <p>Browser: <span class="dev-stat" id="dv-browser">Unknown</span></p>
-        <p>Screen: <span class="dev-stat" id="dv-screen">Unknown</span></p>
-        <p>LocalStorage: <span class="dev-stat" id="dv-avail">Available</span></p>
-        <p>Timezone: <span class="dev-stat" id="dv-tz">Unknown</span></p>
-      </div>
-      <div class="dev-card">
-        <h4>🔄 Dev Tools</h4>
-        <button class="dev-btn" onclick="devConsoleTest()">Console Test</button>
-        <button class="dev-btn purple" onclick="devShowFPS()">Show FPS</button>
-        <button class="dev-btn purple" onclick="devDebugMode()">Toggle Debug Mode</button>
-      </div>
-      <div class="dev-card">
-        <h4>📋 Clipboard</h4>
-        <input type="text" id="dv-clipboard" placeholder="Paste/copy text" class="dev-input" style="margin:4px 0;" />
-        <button class="dev-btn" onclick="devCopyClipboard()">Copy</button>
-        <button class="dev-btn" onclick="devPasteClipboard()">Paste</button>
-      </div>
-      <div class="notice">
-        🔒 Dev mode password is required. This is not visible anywhere in the UI.<br>
-        <span class="hint">Tap the 🐍 Snake title 5 times on the main menu to access.</span>
-      </div>
-    </div>
-
-    <button class="close-btn" onclick="document.getElementById('devMenuModal').style.display='none'" style="margin-top:20px;">Close Dev Console</button>
   </div>
 </div>
 
@@ -659,11 +301,7 @@
   <div class="fruit-legend" id="fruitLegend">
     <strong>🍎+10</strong> <strong>🍊+15</strong> <strong>🍓+25</strong> <strong>🍌+35</strong>
     <strong>🍉+50</strong> <strong>🍇+60</strong> <strong>🍍+75</strong> <strong>🥭+90</strong>
-    <strong>⭐+100</strong> <strong>💎+150</strong>&nbsp;|&nbsp;
-    <span style="color:#ffdd44">⚡</span> <span style="color:#44aaff">🧊</span>
-    <span style="color:#ff44ff">🛡️</span> <span style="color:#ff6b6b">🔥</span>
-    <span style="color:#4ecdc4">🌀</span> <span style="color:#95e1d3">🌙</span>
-    <span style="color:#f38181">💥</span> <span style="color:#aa96da">🔮</span>
+    <strong>⭐+100</strong> <strong>💎+150</strong>
   </div>
 
   <div class="button-group" id="gameButtons" style="display:none;">
@@ -689,9 +327,7 @@
 </div>
 
 <script>
-/* =====================================================================
-   STORAGE HELPERS
-===================================================================== */
+/* STORAGE HELPERS */
 const LS = {
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } },
   set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
@@ -699,9 +335,7 @@ const LS = {
   keys: () => Object.keys(localStorage)
 };
 
-/* =====================================================================
-   AUTH — 100% local, no Firebase
-===================================================================== */
+/* AUTH - LOCAL ONLY */
 function getUsers() { return LS.get('snakeUsers') || {}; }
 function saveUsers(u) { LS.set('snakeUsers', u); }
 
@@ -748,9 +382,7 @@ function saveUserData(username, data) {
   }
 }
 
-/* =====================================================================
-   LOGS
-===================================================================== */
+/* LOGS */
 function appendLog(msg) {
   const logs = LS.get('snakeLogs') || [];
   logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
@@ -765,9 +397,7 @@ function appendLoginLog(msg) {
   LS.set('snakeLoginLogs', logs);
 }
 
-/* =====================================================================
-   SCORES
-===================================================================== */
+/* SCORES */
 function getScores() { return LS.get('snakeScores') || []; }
 function saveScores(s) { LS.set('snakeScores', s); }
 
@@ -805,13 +435,10 @@ async function fetchLeaderboardGameOver() {
   renderLeaderboard(scores, 'lbListGameOver');
 }
 
-/* =====================================================================
-   AUTH UI
-===================================================================== */
+/* AUTH UI */
 let currentUser = null;
 let gamesPlayedSession = 0;
 
-// Fix: properly attach event listeners AFTER DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnCreateAcc').addEventListener('click', () => {
     const un = document.getElementById('siUsername').value.trim();
@@ -828,6 +455,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (err) { document.getElementById('siErr').textContent = err; return; }
     loginUser(un);
   });
+
+  document.getElementById('playBtn').addEventListener('click', startGame);
+  loadSettings();
 });
 
 function loginUser(username) {
@@ -844,34 +474,29 @@ function loginUser(username) {
   document.getElementById('userInfo').classList.add('visible');
   document.getElementById('userName').textContent = udata.username;
   document.getElementById('userSub').textContent = 'Signed in';
-  document.getElementById('signInBtn2').style.display = 'none';
-  document.getElementById('signInModal').style.display = 'none';
+  document.getElementById('signInModal').classList.remove('visible');
   document.getElementById('siErr').textContent = '';
   document.getElementById('colorSlider').value = snakeColorHue;
   updateColorSlider();
-  document.getElementById('themeSelect').value = currentTheme;
   syncSettingsUI();
 }
 
 function showSignInModal() {
   document.getElementById('siErr').textContent = '';
-  document.getElementById('signInModal').style.display = 'flex';
+  document.getElementById('signInModal').classList.add('visible');
 }
 
 function skipSignIn() {
-  document.getElementById('signInModal').style.display = 'none';
+  document.getElementById('signInModal').classList.remove('visible');
 }
 
 function signOut() {
   currentUser = null;
   document.getElementById('userInfo').classList.remove('visible');
-  document.getElementById('signInBtn2').style.display = 'inline-block';
   appendLog('User signed out');
 }
 
-/* =====================================================================
-   SETTINGS & THEME
-===================================================================== */
+/* SETTINGS & THEME */
 let soundEnabled = true, showDpad = false, difficulty = 'easy', snakeColorHue = 120, currentTheme = 'dark';
 
 const THEMES = {
@@ -879,12 +504,10 @@ const THEMES = {
   midnight: { bg:'#020818', grid:'rgba(0,100,255,0.08)', name:'Midnight Blue' },
   forest: { bg:'#071a07', grid:'rgba(0,255,0,0.06)', name:'Forest' },
   neon: { bg:'#000010', grid:'rgba(255,0,255,0.07)', name:'Neon' },
-  sunset: { bg:'#1a0a0a', grid:'rgba(255,100,50,0.06)', name:'Sunset' },
-  rainbow: { bg:'#0a0a1a', grid:'hsl(0,50%,30%)', animateGrid:true, name:'Rainbow' }
+  sunset: { bg:'#1a0a0a', grid:'rgba(255,100,50,0.06)', name:'Sunset' }
 };
 
 let boardTheme = { ...THEMES.dark };
-let rainbowAnim = 0;
 
 function loadSettings() {
   const s = LS.get('snakeSettings');
@@ -901,7 +524,6 @@ function loadSettings() {
 function syncSettingsUI() {
   document.getElementById('difficultySelect').value = difficulty;
   document.getElementById('colorSlider').value = snakeColorHue;
-  document.getElementById('themeSelect').value = currentTheme;
   updateColorSlider();
   document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'ON' : 'OFF';
   document.getElementById('soundToggleBtn').className = soundEnabled ? 'toggle-btn active' : 'toggle-btn';
@@ -950,14 +572,21 @@ function updateColorSlider() {
   }
 }
 
-document.getElementById('colorSlider').addEventListener('input', e => {
-  snakeColorHue = parseInt(e.target.value);
-  updateColorSlider();
+document.addEventListener('DOMContentLoaded', () => {
+  const cs = document.getElementById('colorSlider');
+  if (cs) cs.addEventListener('input', e => {
+    snakeColorHue = parseInt(e.target.value);
+    updateColorSlider();
+  });
 });
 
-function openSettings() { document.getElementById('settingsModal').style
-                         </div>}
-function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
+function openSettings() { 
+  document.getElementById('settingsModal').classList.add('visible');
+}
+
+function closeSettings() { 
+  document.getElementById('settingsModal').classList.remove('visible');
+}
 
 function toggleSoundSetting() {
   soundEnabled = !soundEnabled;
@@ -973,806 +602,138 @@ function toggleDpadSetting() {
   else document.getElementById('dpad').classList.remove('visible');
 }
 
-function changeDifficultySetting() { difficulty = document.getElementById('difficultySelect').value; }
+function changeDifficultySetting() { 
+  difficulty = document.getElementById('difficultySelect').value;
+}
 
 function saveSettings() {
   snakeColorHue = parseInt(document.getElementById('colorSlider').value);
-  currentTheme = document.getElementById('themeSelect').value;
   const settings = { sound: soundEnabled, dpad: showDpad, difficulty, snakeColorHue, theme: currentTheme };
   LS.set('snakeSettings', settings);
-  diffCfg = DIFF[difficulty];
   if (currentUser) saveUserData(currentUser.username, { snakeColorHue, settings });
   appendLog(`Settings saved${currentUser ? ' for '+currentUser.username : ' (local)'}`);
   closeSettings();
 }
 
-function openLeaderboard() { fetchLeaderboard(); document.getElementById('leaderboardModal').style.display = 'flex'; }
-function closeLeaderboard() { document.getElementById('leaderboardModal').style.display = 'none'; }
-function openInfo() { document.getElementById('infoModal').style.display = 'flex'; }
-function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
-function openSettingsFromGameOver() { document.getElementById('gameOverModal').style.display = 'none'; openSettings(); }
-
-/* =====================================================================
-   HIDDEN DEV MENU — 5 taps on title
-===================================================================== */
-let _tc = 0, _tt = 0;
-const DEV_PASS_CHECK = (v) => parseInt(v) === 83638378;
-
-document.getElementById('gameTitle').addEventListener('click', () => {
-  const now = Date.now();
-  if (now - _tt > 4000) _tc = 0;
-  _tt = now;
-  _tc++;
-  if (_tc >= 5) {
-    _tc = 0;
-    document.getElementById('_dp').style.display = 'flex';
-    document.getElementById('_dpi').value = '';
-    document.getElementById('_dpe').textContent = '';
-    setTimeout(() => document.getElementById('_dpi').focus(), 100);
-  }
-});
-
-document.getElementById('_dpb').addEventListener('click', () => {
-  const v = document.getElementById('_dpi').value;
-  if (DEV_PASS_CHECK(v)) {
-    document.getElementById('_dp').style.display = 'none';
-    openDevMenu();
-  } else {
-    document.getElementById('_dpe').textContent = 'Incorrect password';
-    appendLoginLog(`DEV password fail attempt`);
-  }
-});
-document.getElementById('_dpi').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('_dpb').click(); });
-
-function openDevMenu() {
-  devRefreshDashboard();
-  devRefreshLog();
-  devRefreshLoginLog();
-  devRefreshLbPreview();
-  devRefreshUserList();
-  devRefreshRawDb();
-  document.getElementById('devMenuModal').style.display = 'flex';
+function openLeaderboard() { 
+  fetchLeaderboard(); 
+  document.getElementById('leaderboardModal').classList.add('visible');
 }
 
-function switchDevTab(name) {
-  document.querySelectorAll('.dev-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.dev-tab').forEach(t => t.classList.remove('active'));
-  const panel = document.getElementById('devPanel-'+name);
-  if (panel) panel.classList.add('active');
-  document.querySelectorAll('.dev-tab').forEach(t => {
-    if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(`'${name}'`)) t.classList.add('active');
-  });
-  if (name === 'logs') { devRefreshLog(); devRefreshLoginLog(); }
-  if (name === 'db') devRefreshRawDb();
-  if (name === 'accounts') devRefreshUserList();
-  if (name === 'lb') devRefreshLbPreview();
-  if (name === 'dash') devRefreshDashboard();
-  if (name === 'system') { devRefreshSystemInfo(); }
+function closeLeaderboard() { 
+  document.getElementById('leaderboardModal').classList.remove('visible');
 }
 
-/* ── Dashboard ── */
-function devRefreshDashboard() {
-  const users = getUsers();
-  const scores = getScores();
-  document.getElementById('dv-userCount').textContent = Object.keys(users).length;
-  document.getElementById('dv-scoreCount').textContent = scores.length;
-  document.getElementById('dv-topScore').textContent = scores.length ? scores[0].score : 0;
-  document.getElementById('dv-gamesPlayed').textContent = gamesPlayedSession;
-  const bytes = JSON.stringify(localStorage).length;
-  document.getElementById('dv-storage').textContent = (bytes/1024).toFixed(1)+' KB';
-  document.getElementById('dv-savedAt').textContent = new Date().toLocaleTimeString();
-  document.getElementById('dv-currScore').textContent = score || 0;
-  document.getElementById('dv-currLen').textContent = snake ? snake.length : 3;
-  document.getElementById('dv-fps').textContent = Math.round(1000/(frameTime||16));
-  document.getElementById('dv-frame').textContent = (frameTime||16).toFixed(1);
-  
-  const easy = scores.filter(s=>s.difficulty==='easy').length;
-  const medium = scores.filter(s=>s.difficulty==='medium').length;
-  const hard = scores.filter(s=>s.difficulty==='hard').length;
-  const avg = scores.length ? Math.round(scores.reduce((a,s)=>a+s.score,0)/scores.length) : 0;
-  document.getElementById('dv-easyCount').textContent = easy;
-  document.getElementById('dv-mediumCount').textContent = medium;
-  document.getElementById('dv-hardCount').textContent = hard;
-  document.getElementById('dv-avgScore').textContent = avg;
+function openInfo() { 
+  document.getElementById('infoModal').classList.add('visible');
 }
 
-function devClearAllScores() {
-  if (!confirm('Clear ALL scores?')) return;
-  saveScores([]);
-  appendLog('DEV: Cleared all scores');
-  devRefreshLbPreview();
-  devRefreshDashboard();
+function closeInfo() { 
+  document.getElementById('infoModal').classList.remove('visible');
 }
 
-function devClearAllUsers() {
-  if (!confirm('Delete ALL user accounts?')) return;
-  saveUsers({});
-  appendLog('DEV: Cleared all users');
-  devRefreshUserList();
-  devRefreshDashboard();
+function openSettingsFromGameOver() { 
+  document.getElementById('gameOverModal').classList.remove('visible');
+  openSettings();
 }
 
-function devReloadSettings() { loadSettings(); syncSettingsUI(); appendLog('DEV: Settings reloaded'); }
-function devExportData() {
-  const data = { users: getUsers(), scores: getScores(), settings: LS.get('snakeSettings'), logs: LS.get('snakeLogs') };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'snake_data_' + Date.now() + '.json'; a.click();
-  appendLog('DEV: Data exported');
-}
-function devImportData() {
-  const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
-  input.onchange = e => {
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try { const data = JSON.parse(ev.target.result);
-        if (data.users) saveUsers(data.users);
-        if (data.scores) saveScores(data.scores);
-        if (data.settings) LS.set('snakeSettings', data.settings);
-        appendLog('DEV: Data imported'); devRefreshDashboard(); alert('Imported!');
-      } catch(err) { alert('Invalid JSON'); }
-    };
-    reader.readAsText(e.target.files[0]);
-  };
-  input.click();
-}
-function devBackupData() { devExportData(); }
-function devRestoreData() { devImportData(); }
-
-/* ── Leaderboard ── */
-function devRefreshLbPreview() {
-  const scores = getScores().slice(0, 20);
-  const el = document.getElementById('dv-lbPreview');
-  el.textContent = scores.length ? scores.map((s,i)=>`${i+1}. ${s.username} — ${s.score} (${s.difficulty}) ${s.date}`).join('
-') : 'Empty';
-}
-
-function devAddScore() {
-  const u = document.getElementById('dv-addScoreUser').value.trim();
-  const v = parseInt(document.getElementById('dv-addScoreVal').value);
-  const d = document.getElementById('dv-addScoreDiff').value;
-  if (!u || isNaN(v)) { alert('Fill in username and score'); return; }
-  addScore(u, v, d);
-  devRefreshLbPreview(); devRefreshDashboard();
-  appendLog(`DEV: Added score ${v} for ${u}`);
-}
-
-function devRemoveScore() {
-  const u = document.getElementById('dv-removeScoreUser').value.trim().toLowerCase();
-  let scores = getScores().filter(s => s.username.toLowerCase() !== u);
-  saveScores(scores); devRefreshLbPreview();
-  appendLog(`DEV: Removed scores for ${u}`);
-}
-
-function devClearTopN() { const s = getScores(); s.shift(); saveScores(s); devRefreshLbPreview(); appendLog('DEV: Removed top score'); }
-function devClearBottomN() { const s = getScores(); s.splice(-5); saveScores(s); devRefreshLbPreview(); appendLog('DEV: Removed bottom 5'); }
-function devSetScoreMulti() {
-  const m = parseFloat(document.getElementById('dv-scoreMulti').value);
-  if (isNaN(m) || m <= 0) { alert('Enter valid multiplier'); return; }
-  const scores = getScores().map(s => ({ ...s, score: Math.round(s.score * m) }));
-  scores.sort((a,b) => b.score - a.score); saveScores(scores);
-  devRefreshLbPreview(); appendLog(`DEV: Score multiplier ×${m} applied`);
-}
-function devAddToAll() {
-  const a = parseInt(document.getElementById('dv-scoreMulti').value);
-  if (isNaN(a)) { alert('Enter number'); return; }
-  const scores = getScores().map(s => ({ ...s, score: s.score + a }));
-  scores.sort((a,b) => b.score - a.score); saveScores(scores);
-  devRefreshLbPreview(); appendLog(`DEV: Added ${a} to all scores`);
-}
-function devSortByDate() {
-  const s = getScores().sort((a,b) => b.ts - a.ts); saveScores(s);
-  devRefreshLbPreview(); appendLog('DEV: Sorted by date');
-}
-function devRandomizeScores() {
-  const scores = getScores();
-  for (let i = 0; i < Math.min(20, scores.length); i++) {
-    scores[i].score += Math.floor(Math.random() * 100) - 50;
-  }
-  scores.sort((a,b) => b.score - a.score); saveScores(scores);
-  devRefreshLbPreview(); appendLog('DEV: Randomized 20 scores');
-}
-
-/* ── Accounts ── */
-function devRefreshUserList() {
-  const users = getUsers();
-  const el = document.getElementById('dv-userList');
-  document.getElementById('dv-userTotal').textContent = Object.keys(users).length;
-  el.innerHTML = '';
-  const keys = Object.keys(users);
-  if (!keys.length) { el.innerHTML = '<p style="color:rgba(255,255,255,0.5);">No users yet</p>'; return; }
-  keys.forEach(k => {
-    const u = users[k];
-    el.innerHTML += `<div class="dev-user-row">
-      <span>👤 ${u.username}</span>
-      <span style="color:#81c784">HS: ${u.highScore||0}</span>
-      <span style="color:#aaa; font-size:.8em">${new Date(u.created).toLocaleDateString()}</span>
-      <div class="dev-actions">
-        <button class="dev-btn purple" onclick="devForceLoginAs('${u.username}')">Login</button>
-        <button class="dev-btn red" onclick="devDelUser('${u.username}')">Del</button>
-      </div>
-    </div>`;
-  });
-}
-
-function devCreateFakeUser() {
-  const name = 'User' + Math.floor(Math.random()*10000);
-  createAccount(name, 'password123');
-  devRefreshUserList(); devRefreshDashboard();
-  appendLog(`DEV: Created fake user ${name}`);
-  alert(`Created: ${name} / password123`);
-}
-
-function devResetPassword() {
-  const u = document.getElementById('dv-rpUser').value.trim();
-  const np = document.getElementById('dv-rpNew').value;
-  if (!u || !np) { alert('Fill both fields'); return; }
-  const users = getUsers();
-  if (!users[u.toLowerCase()]) { alert('User not found'); return; }
-  users[u.toLowerCase()].passwordHash = hashPass(np);
-  saveUsers(users); appendLog(`DEV: Password reset for ${u}`);
-  alert(`Password reset for ${u}`);
-}
-
-function devChangeUsername() {
-  const old = document.getElementById('dv-cuOld').value.trim().toLowerCase();
-  const nw = document.getElementById('dv-cuNew').value.trim();
-  if (!old || !nw) { alert('Fill both fields'); return; }
-  const users = getUsers();
-  if (!users[old]) { alert('User not found'); return; }
-  if (users[nw.toLowerCase()]) { alert('New username taken'); return; }
-  users[nw.toLowerCase()] = { ...users[old], username: nw };
-  delete users[old];
-  const scores = getScores().map(s => s.username.toLowerCase() === old ? { ...s, username: nw } : s);
-  saveScores(scores); saveUsers(users);
-  appendLog(`DEV: Username ${old} → ${nw}`);
-  devRefreshUserList(); devRefreshLbPreview(); alert(`Username changed to ${nw}`);
-}
-
-function devDeleteUser() {
-  const u = document.getElementById('dv-delUser').value.trim().toLowerCase();
-  if (!u) { alert('Enter username'); return; }
-  if (!confirm(`Delete "${u}"?`)) return;
-  const users = getUsers();
-  if (!users[u]) { alert('User not found'); return; }
-  delete users[u]; saveUsers(users);
-  appendLog(`DEV: Deleted ${u}`);
-  devRefreshUserList(); devRefreshDashboard();
-}
-
-function devForceLogin() {
-  const u = document.getElementById('dv-forceUser').value.trim();
-  if (!u || !getUserData(u)) { alert('User not found'); return; }
-  loginUser(u);
-  document.getElementById('devMenuModal').style.display = 'none';
-  appendLog(`DEV: Force logged in as ${u}`);
-}
-
-function devForceLoginAs(u) { loginUser(u); document.getElementById('devMenuModal').style.display = 'none'; }
-function devDelUser(u) { document.getElementById('dv-delUser').value = u; devDeleteUser(); }
-
-function devChangeColor() {
-  const u = document.getElementById('dv-colorUser').value.trim();
-  const h = parseInt(document.getElementById('dv-colorHue').value);
-  if (!u || isNaN(h)) { alert('Fill both fields'); return; }
-  saveUserData(u, { snakeColorHue: h });
-  appendLog(`DEV: Color hue ${h} for ${u}`);
-  alert(`Color updated for ${u}`);
-}
-
-function devSetHighScore() {
-  const u = document.getElementById('dv-hsUser').value.trim();
-  const v = parseInt(document.getElementById('dv-hsVal').value);
-  if (!u || isNaN(v)) { alert('Fill both fields'); return; }
-  saveUserData(u, { highScore: v }); alert(`High score set to ${v} for ${u}`);
-}
-
-/* ── Game ── */
-function devGiveShield() { shieldActive = true; document.getElementById('powerUpIndicator').textContent = '🛡️ SHIELD! (DEV)'; appendLog('DEV: gave shield'); }
-function devGiveDouble() { doublePointsActive = true; activePowerUp='double_points'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '🔥 DOUBLE POINTS! (DEV)'; appendLog('DEV: gave double'); }
-function devGiveSpeed() { activePowerUp='speed_boost'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '⚡ SPEED! (DEV)'; appendLog('DEV: gave speed'); }
-function devGiveSlow() { activePowerUp='slow_mode'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '🧊 SLOW! (DEV)'; appendLog('DEV: gave slow'); }
-function devGiveFreeze() { activePowerUp='freeze'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '🔮 FREEZE! (DEV)'; appendLog('DEV: gave freeze'); }
-function devGiveGhost() { activePowerUp='invisible'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '🌙 GHOST! (DEV)'; appendLog('DEV: gave ghost'); }
-function devSetScore() { const v = parseInt(prompt('Set score to:')); if (!isNaN(v)) { score = v; document.getElementById('score').textContent = score; appendLog(`DEV: Score set to ${v}`); } }
-function devSetLength() { const v = parseInt(prompt('Set length to:')); if (!isNaN(v) && v > 0) { while (snake.length < v) snake.push({ ...snake[snake.length-1] }); while (snake.length > v) snake.pop(); appendLog(`DEV: Length set to ${v}`); } }
-function devAddFood() { spawnFood(); appendLog('DEV: Added food'); }
-function devAddPowerUp() { spawnPowerUp(); appendLog('DEV: Added power-up'); }
-function devKillSnake() { if (gameRunning) { endGame(); appendLog('DEV: Snake killed'); } }
-
-function devApplyGameConfig() {
-  const bs = parseInt(document.getElementById('dv-baseSpeed').value);
-  const pf = parseFloat(document.getElementById('dv-puFreq').value);
-  const fc = parseInt(document.getElementById('dv-foodCount').value);
-  const sg = parseFloat(document.getElementById('dv-speedGain').value);
-  if (!isNaN(bs)) DIFF.easy.baseFrames = bs;
-  if (!isNaN(pf)) { DIFF.easy.powerFreq = pf; DIFF.medium.powerFreq = pf; DIFF.hard.powerFreq = pf; }
-  if (!isNaN(fc)) DIFF.easy.foodCount = fc;
-  if (!isNaN(sg)) { DIFF.easy.speedGain = sg; DIFF.medium.speedGain = sg; DIFF.hard.speedGain = sg; }
-  appendLog('DEV: Game config applied');
-  alert('Config applied — next game');
-}
-
-function devResetGameConfig() {
-  DIFF.easy = { baseFrames:10, minFrames:6, speedGain:0.3, powerFreq:0.03, foodCount:3, scoreMulti:1.0 };
-  DIFF.medium = { baseFrames:7, minFrames:4, speedGain:0.5, powerFreq:0.04, foodCount:2, scoreMulti:1.5 };
-  DIFF.hard = { baseFrames:5, minFrames:2, speedGain:0.7, powerFreq:0.05, foodCount:1, scoreMulti:2.0 };
-  document.getElementById('dv-baseSpeed').value = 10;
-  document.getElementById('dv-puFreq').value = 0.03;
-  document.getElementById('dv-foodCount').value = 3;
-  document.getElementById('dv-speedGain').value = 0.3;
-  appendLog('DEV: Config reset');
-}
-function devMaxSpeed() { DIFF.easy.baseFrames = 2; DIFF.medium.baseFrames = 2; DIFF.hard.baseFrames = 2; appendLog('DEV: Max speed'); alert('Max speed!'); }
-function devMinSpeed() { DIFF.easy.baseFrames = 20; DIFF.medium.baseFrames = 15; DIFF.hard.baseFrames = 10; appendLog('DEV: Min speed'); alert('Min speed!'); }
-
-function devSetTheme(t) { currentTheme = t; document.getElementById('themeSelect').value = t; applyTheme(); appendLog(`DEV: Theme ${t}`); }
-function devTogglePause() { togglePause(); }
-function devInstantLevelUp() { level += 5; recalcSpeed(); appendLog(`DEV: Instant level up to ${level}`); alert(`Level ${level}!`); }
-
-let wallWrapEnabled = false;
-function devWrapWalls() { wallWrapEnabled = true; appendLog('DEV: Wall wrap ON'); alert('Wall wrap enabled!'); }
-function devDisableWalls() { wallWrapEnabled = false; appendLog('DEV: Wall wrap OFF'); alert('Wall wrap disabled!'); }
-
-/* ── Logs ── */
-function devRefreshLog() {
-  const logs = LS.get('snakeLogs') || [];
-  document.getElementById('dv-logCount').textContent = logs.length;
-  document.getElementById('dv-actLog').textContent = logs.slice(0,100).join('
-') || 'Empty';
-}
-function devClearLog() { LS.set('snakeLogs', []); devRefreshLog(); appendLog('DEV: Log cleared'); }
-function devExportLog() {
-  const logs = LS.get('snakeLogs') || [];
-  const blob = new Blob([logs.join('
-')], { type: 'text/plain' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'snake_log_' + Date.now() + '.txt'; a.click();
-}
-function devRefreshLoginLog() {
-  const logs = LS.get('snakeLoginLogs') || [];
-  document.getElementById('dv-loginLogCount').textContent = logs.length;
-  document.getElementById('dv-loginLog').textContent = logs.slice(0,100).join('
-') || 'Empty';
-}
-function devClearLoginLog() { LS.set('snakeLoginLogs', []); devRefreshLoginLog(); }
-
-let keyLogEnabled = false;
-let keyLog = [];
-window.addEventListener('keydown', e => {
-  if (keyLogEnabled) {
-    keyLog.unshift(`[${new Date().toLocaleTimeString()}] Key: ${e.key}`);
-    if (keyLog.length > 20) keyLog.pop();
-    document.getElementById('dv-keyLog').textContent = keyLog.join('
-');
-  }
-});
-function devClearKeyLog() { keyLog = []; document.getElementById('dv-keyLog').textContent = 'Press keys to see...'; }
-
-/* ── Database ── */
-function devRefreshRawDb() {
-  let out = '';
-  LS.keys().forEach(k => { out += `[${k}]: ${localStorage.getItem(k) ? localStorage.getItem(k).slice(0,100)+'...' : 'null'}
-`; });
-  document.getElementById('dv-rawDb').textContent = out || 'Empty';
-}
-function devLoadDbKey() {
-  const k = document.getElementById('dv-dbKey').value;
-  document.getElementById('dv-dbVal').value = localStorage.getItem(k) || '';
-}
-function devSaveDbKey() {
-  const k = document.getElementById('dv-dbKey').value;
-  const v = document.getElementById('dv-dbVal').value;
-  try { JSON.parse(v); localStorage.setItem(k, v); appendLog(`DEV: Saved ${k}`); alert('Saved!'); }
-  catch(e) { alert('Invalid JSON'); }
-}
-function devFormatDbKey() {
-  try { const v = document.getElementById('dv-dbVal').value; document.getElementById('dv-dbVal').value = JSON.stringify(JSON.parse(v), null, 2); }
-  catch(e) { alert('Invalid JSON'); }
-}
-function devDeleteKey() {
-  const k = document.getElementById('dv-delKey').value.trim();
-  if (!k) { alert('Enter key'); return; }
-  if (!confirm(`Delete "${k}"?`)) return;
-  localStorage.removeItem(k); appendLog(`DEV: Deleted ${k}`); devRefreshRawDb();
-}
-function devSearchStorage() {
-  const q = document.getElementById('dv-searchKey').value.toLowerCase();
-  const results = LS.keys().filter(k => k.toLowerCase().includes(q));
-  document.getElementById('dv-searchResults').textContent = results.length ? results.join('
-') : 'No results';
-}
-
-/* ── System ── */
-let frameTime = 16;
-let lastFrame = performance.now();
-
-function devRefreshSystemInfo() {
-  document.getElementById('dv-browser').textContent = navigator.userAgent.slice(0,60);
-  document.getElementById('dv-screen').textContent = `${screen.width}x${screen.height}`;
-  document.getElementById('dv-avail').textContent = 'Available';
-  document.getElementById('dv-tz').textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
-}
-
-function devNukeStorage() {
-  if (!confirm('⚠️ NUKE ALL?')) return;
-  if (!confirm('ARE YOU SURE?')) return;
-  localStorage.clear(); appendLog('DEV: Storage nuked'); alert('Cleared. Reload.');
-}
-function devFactoryReset() {
-  if (!confirm('Factory reset?')) return;
-  localStorage.clear(); location.reload();
-}
-function devClearCache() { localStorage.clear(); appendLog('DEV: Cache cleared'); alert('Cleared!'); }
-function devConsoleTest() { console.log('Dev console test!'); alert('Check console (F12)'); }
-function devShowFPS() { appendLog('DEV: FPS shown in dashboard'); alert('Check Dashboard tab'); }
-let debugMode = false; function devDebugMode() { debugMode = !debugMode; appendLog(`DEV: Debug mode ${debugMode?'ON':'OFF'}`); alert(`Debug mode: ${debugMode}`); }
-
-function devCopyClipboard() {
-  const v = document.getElementById('dv-clipboard').value;
-  navigator.clipboard.writeText(v).then(() => alert('Copied!'));
-}
-function devPasteClipboard() {
-  navigator.clipboard.readText().then(t => { document.getElementById('dv-clipboard').value = t; });
-}
-
-let broadcastMsg = null;
-function devBroadcast() {
-  broadcastMsg = document.getElementById('dv-broadcastMsg').value.trim();
-  if (broadcastMsg) { alert(`📢 Broadcast: "${broadcastMsg}"`); appendLog(`DEV: Broadcast: ${broadcastMsg}`); }
-}
-function devClearBroadcast() { broadcastMsg = null; appendLog('DEV: Broadcast cleared'); }
-
-/* =====================================================================
-   GAME ENGINE
-===================================================================== */
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const GRID = 20;
-const TILES = canvas.width / GRID;
+/* GAME LOGIC */
+let gameRunning = false;
+let gamePaused = false;
+let score = 0;
+let level = 1;
+let highScore = LS.get('snakeHighScore') || 0;
 
 const DIFF = {
-  easy:   { baseFrames:10, minFrames:6,  speedGain:0.3, powerFreq:0.03, foodCount:3, scoreMulti:1.0 },
-  medium: { baseFrames:7,  minFrames:4,  speedGain:0.5, powerFreq:0.04, foodCount:2, scoreMulti:1.5 },
-  hard:   { baseFrames:5,  minFrames:2,  speedGain:0.7, powerFreq:0.05, foodCount:1, scoreMulti:2.0 },
+  easy: { speed: 100, multiplier: 1 },
+  medium: { speed: 70, multiplier: 2 },
+  hard: { speed: 50, multiplier: 3 }
 };
 
-const FRUITS = [
-  {type:'apple',emoji:'🍎',color:'#ff4444',points:10,rarity:0.35},
-  {type:'orange',emoji:'🍊',color:'#ff8800',points:15,rarity:0.25},
-  {type:'berry',emoji:'🍓',color:'#cc0055',points:25,rarity:0.15},
-  {type:'banana',emoji:'🍌',color:'#ffdd00',points:35,rarity:0.10},
-  {type:'watermelon',emoji:'🍉',color:'#22cc44',points:50,rarity:0.06},
-  {type:'grapes',emoji:'🍇',color:'#8844ff',points:60,rarity:0.04},
-  {type:'pineapple',emoji:'🍍',color:'#ffaa00',points:75,rarity:0.025},
-  {type:'mango',emoji:'🥭',color:'#ff6688',points:90,rarity:0.015},
-  {type:'star',emoji:'⭐',color:'#ffee00',points:100,rarity:0.008},
-  {type:'diamond',emoji:'💎',color:'#00ffff',points:150,rarity:0.002},
-];
+let diffCfg = DIFF[difficulty];
 
-const POWERUPS = [
-  {type:'speed_boost',emoji:'⚡',color:'#ffdd00',glowColor:'rgba(255,220,0,0.7)',shape:'diamond',duration:120,label:'⚡ SPEED!'},
-  {type:'slow_mode',emoji:'🧊',color:'#44aaff',glowColor:'rgba(68,170,255,0.7)',shape:'hexagon',duration:180,label:'🧊 SLOW!'},
-  {type:'shield',emoji:'🛡️',color:'#ff44ff',glowColor:'rgba(255,68,255,0.7)',shape:'star5',duration:1,label:'🛡️ SHIELD!'},
-  {type:'double_points',emoji:'🔥',color:'#ff6b6b',glowColor:'rgba(255,107,107,0.7)',shape:'fire',duration:180,label:'🔥 DOUBLE!'},
-  {type:'magnet',emoji:'🌀',color:'#4ecdc4',glowColor:'rgba(78,205,196,0.7)',shape:'spiral',duration:120,label:'🌀 MAGNET!'},
-  {type:'invisible',emoji:'🌙',color:'#95e1d3',glowColor:'rgba(149,225,211,0.7)',shape:'moon',duration:120,label:'🌙 GHOST!'},
-  {type:'explode',emoji:'💥',color:'#f38181',glowColor:'rgba(243,129,129,0.7)',shape:'bang',duration:1,label:'💥 EXPLODE!'},
-  {type:'freeze',emoji:'🔮',color:'#aa96da',glowColor:'rgba(170,150,218,0.7)',shape:'orb',duration:60,label:'🔮 FREEZE!'},
-];
-
-let snake, food, powerUpsArr;
-let direction, nextDirection;
-let score, level, highScore;
-let gameRunning, isPaused;
-let diffCfg;
-let activePowerUp, powerUpTimer;
-let frameCount, currentFrameDelay;
-let touchStartX, touchStartY;
-let shieldActive, doublePointsActive;
-let animationId = null;
-
-function initGame() {
-  diffCfg = DIFF[difficulty];
-  snakeColorHue = parseInt(document.getElementById('colorSlider').value) || 120;
-  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
-  food = []; powerUpsArr = [];
-  direction = {x:1,y:0}; nextDirection = {x:1,y:0};
-  score = 0; level = 1;
-  highScore = parseInt(localStorage.getItem('snakeHighScore') || '0');
-  gameRunning = true; isPaused = false;
-  activePowerUp = null; powerUpTimer = 0;
-  shieldActive = false; doublePointsActive = false;
-  frameCount = 0; currentFrameDelay = diffCfg.baseFrames;
-
-  document.getElementById('score').textContent = '0';
-  document.getElementById('level').textContent = '1';
-  document.getElementById('highScore').textContent = highScore;
-  document.getElementById('powerUpIndicator').textContent = '';
-  document.getElementById('gameOverModal').style.display = 'none';
-  document.getElementById('pauseBtn').textContent = '⏸ Pause';
-
-  for (let i = 0; i < diffCfg.foodCount; i++) spawnFood();
-  if (animationId) cancelAnimationFrame(animationId);
-  lastFrame = performance.now();
+function startGame() {
+  gameRunning = true;
+  gamePaused = false;
+  score = 0;
+  level = 1;
+  gamesPlayedSession++;
+  
+  document.getElementById('startButtons').style.display = 'none';
+  document.getElementById('gameButtons').style.display = 'flex';
+  document.getElementById('infoBar').classList.add('visible');
+  document.getElementById('fruitLegend').classList.add('visible');
+  document.getElementById('gameCanvas').classList.add('visible');
+  
+  updateScore();
   gameLoop();
+  appendLog(`Game started on ${difficulty}`);
 }
 
-function randomFree() {
-  let pos, t = 0;
-  do {
-    pos = { x: Math.floor(Math.random()*TILES), y: Math.floor(Math.random()*TILES) };
-    t++;
-  } while (t < 200 && (snake.some(s=>s.x===pos.x&&s.y===pos.y)||food.some(f=>f.x===pos.x&&f.y===pos.y)||powerUpsArr.some(p=>p.x===pos.x&&p.y===pos.y)));
-  return pos;
-}
-
-function spawnFood() {
-  const rand = Math.random();
-  let cum = 0, chosen = FRUITS[0];
-  for (const f of FRUITS) { cum += f.rarity; if (rand <= cum) { chosen = f; break; } }
-  food.push({...chosen, ...randomFree()});
-}
-
-function spawnPowerUp() {
-  if (powerUpsArr.length >= 2 || Math.random() > diffCfg.powerFreq) return;
-  const cfg = POWERUPS[Math.floor(Math.random() * POWERUPS.length)];
-  powerUpsArr.push({...cfg, ...randomFree()});
-}
-
-function recalcSpeed() { currentFrameDelay = Math.max(diffCfg.minFrames, diffCfg.baseFrames - (level-1)*diffCfg.speedGain); }
-
-function update() {
-  if (!gameRunning || isPaused) return;
-  const now = performance.now();
-  frameTime = now - lastFrame; lastFrame = now;
-  
-  frameCount++;
-  let thr = currentFrameDelay;
-  if (activePowerUp === 'slow_mode') thr = currentFrameDelay * 2;
-  else if (activePowerUp === 'speed_boost') thr = Math.max(1, Math.floor(currentFrameDelay * 0.5));
-  if (frameCount < thr) return;
-  frameCount = 0;
-
-  direction = {...nextDirection};
-  let head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
-
-  if (head.x < 0 || head.x >= TILES || head.y < 0 || head.y >= TILES) {
-    if (wallWrapEnabled) {
-      head.x = ((head.x % TILES) + TILES) % TILES;
-      head.y = ((head.y % TILES) + TILES) % TILES;
-    } else if (shieldActive) {
-      head.x = Math.max(0, Math.min(TILES-1, head.x));
-      head.y = Math.max(0, Math.min(TILES-1, head.y));
-      shieldActive = false;
-      document.getElementById('powerUpIndicator').textContent = '🛡️ Shield used!';
-      setTimeout(() => { if (!activePowerUp) document.getElementById('powerUpIndicator').textContent = ''; }, 1200);
-    } else { endGame(); return; }
-  }
-
-  if (activePowerUp !== 'invisible') {
-    for (const seg of snake) { if (head.x===seg.x && head.y===seg.y) { endGame(); return; } }
-  }
-
-  snake.unshift(head);
-  let ate = false;
-  for (let i = 0; i < food.length; i++) {
-    if (head.x===food[i].x && head.y===food[i].y) {
-      let pts = Math.round(food[i].points * diffCfg.scoreMulti);
-      if (doublePointsActive) pts *= 2;
-      score += pts; playSound('eat');
-      food.splice(i, 1);
-      while (food.length < diffCfg.foodCount) spawnFood();
-      const nl = Math.max(1, Math.floor(score/50)+1);
-      if (nl !== level) { level = nl; recalcSpeed(); document.getElementById('level').textContent = level; }
-      document.getElementById('score').textContent = score;
-      ate = true; break;
-    }
-  }
-  if (!ate) snake.pop();
-
-  for (let i = 0; i < powerUpsArr.length; i++) {
-    if (head.x===powerUpsArr[i].x && head.y===powerUpsArr[i].y) {
-      playSound('powerup'); activatePowerUp(powerUpsArr[i]);
-      powerUpsArr.splice(i, 1); break;
-    }
-  }
-
-  if (activePowerUp && activePowerUp !== 'shield' && activePowerUp !== 'explode') {
-    powerUpTimer--;
-    if (powerUpTimer <= 0) {
-      activePowerUp = null; doublePointsActive = false;
-      document.getElementById('powerUpIndicator').textContent = '';
-    }
-  }
-  spawnPowerUp();
-}
-
-function activatePowerUp(pu) {
-  activePowerUp = pu.type; powerUpTimer = pu.duration;
-  document.getElementById('powerUpIndicator').textContent = pu.label;
-  if (pu.type === 'shield') shieldActive = true;
-  else if (pu.type === 'double_points') doublePointsActive = true;
-  else if (pu.type === 'explode') { powerUpsArr = []; setTimeout(()=>{ if(!activePowerUp) document.getElementById('powerUpIndicator').textContent=''; },800); }
-}
-
-function draw() {
-  ctx.fillStyle = boardTheme.bg; ctx.fillRect(0,0,canvas.width,canvas.height);
-  
-  if (boardTheme.animateGrid) {
-    rainbowAnim += 0.05;
-    const hue = (rainbowAnim * 50) % 360;
-    ctx.strokeStyle = `hsla(${hue},50%,30%,0.1)`;
-  } else {
-    ctx.strokeStyle = boardTheme.grid;
-  }
-  ctx.lineWidth = 0.5;
-  for (let i = 0; i <= TILES; i++) {
-    ctx.beginPath(); ctx.moveTo(i*GRID,0); ctx.lineTo(i*GRID,canvas.height); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0,i*GRID); ctx.lineTo(canvas.width,i*GRID); ctx.stroke();
-  }
-  
-  drawFood(); drawPowerUps(); drawSnake();
-  
-  if (isPaused) {
-    ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#4caf50'; ctx.font = 'bold 40px Arial';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('⏸ PAUSED', canvas.width/2, canvas.height/2);
-    ctx.font = '20px Arial'; ctx.fillStyle = 'white';
-    ctx.fillText('Press SPACE to resume', canvas.width/2, canvas.height/2+40);
-  }
-  if (broadcastMsg) {
-    ctx.fillStyle = 'rgba(255,152,0,0.9)'; ctx.font = 'bold 16px Arial';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-    ctx.fillText('📢 '+broadcastMsg, canvas.width/2, canvas.height-8);
-  }
-}
-
-function drawSnake() {
-  for (let i = snake.length-1; i >= 0; i--) {
-    const {x,y} = snake[i];
-    const isHead = i === 0;
-    const segColor = hexFromHUE(snakeColorHue - i*8);
-    const pad = isHead ? 1 : 2; const radius = isHead ? 5 : 4;
-    ctx.fillStyle = activePowerUp==='invisible' ? 'rgba(200,200,255,0.3)' : (isHead&&shieldActive ? '#ff88ff' : segColor);
-    ctx.beginPath(); ctx.roundRect(x*GRID+pad, y*GRID+pad, GRID-pad*2, GRID-pad*2, radius); ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 1; ctx.stroke();
-    if (isHead) {
-      ctx.fillStyle = activePowerUp==='invisible' ? 'rgba(255,255,255,0.4)' : '#000';
-      const cx = (x+0.5)*GRID, cy = (y+0.5)*GRID;
-      const px = direction.y, py = -direction.x;
-      [1,-1].forEach(s => { ctx.beginPath(); ctx.arc(cx+direction.x*3+px*4*s, cy+direction.y*3+py*4*s, 2.5, 0, Math.PI*2); ctx.fill(); });
-    }
-  }
-}
-
-function drawFood() {
-  for (const f of food) {
-    const cx = (f.x+0.5)*GRID, cy = (f.y+0.5)*GRID;
-    const grd = ctx.createRadialGradient(cx,cy,1,cx,cy,GRID*0.55);
-    grd.addColorStop(0, f.color+'cc'); grd.addColorStop(1,'transparent');
-    ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(cx,cy,GRID*0.55,0,Math.PI*2); ctx.fill();
-    ctx.font = `${GRID-2}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(f.emoji, cx, cy);
-  }
-}
-
-function drawPowerUps() {
-  const now = performance.now();
-  for (const p of powerUpsArr) {
-    const cx = (p.x+0.5)*GRID, cy = (p.y+0.5)*GRID;
-    const pulse = 0.85 + 0.15*Math.sin(now/300);
-    ctx.save(); ctx.translate(cx,cy); ctx.scale(pulse,pulse);
-    const grd = ctx.createRadialGradient(0,0,2,0,0,GRID*0.7);
-    grd.addColorStop(0,p.glowColor); grd.addColorStop(1,'transparent');
-    ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(0,0,GRID*0.7,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle = p.color; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
-    const r = GRID*0.38;
-    if (p.shape === 'diamond') { ctx.rotate(Math.PI/4 + now/2000); ctx.beginPath(); ctx.rect(-r,-r,r*2,r*2); ctx.fill(); ctx.stroke();
-    } else if (p.shape === 'hexagon') {
-      ctx.beginPath(); for (let i=0;i<6;i++){const a=(Math.PI/3)*i-Math.PI/6; i===0?ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r):ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);} ctx.closePath(); ctx.fill(); ctx.stroke();
-    } else {
-      ctx.beginPath(); for (let i=0;i<10;i++){const a=(Math.PI/5)*i-Math.PI/2; const rad=i%2===0?r:r*0.42; i===0?ctx.moveTo(Math.cos(a)*rad,Math.sin(a)*rad):ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad);} ctx.closePath(); ctx.fill(); ctx.stroke();
-    }
-    ctx.font = `${GRID*0.55}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(p.emoji, 0, 0); ctx.restore();
-  }
-}
-
-function gameLoop() {
-  update(); draw();
-  if (gameRunning) animationId = requestAnimationFrame(gameLoop);
-}
-
-function endGame() {
-  gameRunning = false; gamesPlayedSession++;
-  playSound('gameover');
-  if (score > highScore) { highScore = score; localStorage.setItem('snakeHighScore', score); }
-  if (currentUser) {
-    addScore(currentUser.username, score, difficulty);
-    const ud = getUserData(currentUser.username);
-    if (!ud.highScore || score > ud.highScore) saveUserData(currentUser.username, { highScore: score });
-  }
-  document.getElementById('finalScore').textContent = score;
-  document.getElementById('finalDifficulty').textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-  document.getElementById('gameOverPlayer').textContent = currentUser ? `👤 ${currentUser.username}` : 'Guest';
-  fetchLeaderboardGameOver().then(() => { document.getElementById('gameOverModal').style.display = 'flex'; });
-}
-
-function setDir(dx, dy) {
-  if (dx!==0 && direction.x===0) nextDirection = {x:dx,y:0};
-  if (dy!==0 && direction.y===0) nextDirection = {x:0,y:dy};
-}
-
-function handleKey(e) {
-  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
-  if (e.key===' ') { togglePause(); return; }
-  if (!gameRunning || isPaused) return;
-  const k = e.key.toLowerCase();
-  if ((k==='arrowup'||k==='w') && direction.y===0) nextDirection = {x:0,y:-1};
-  else if ((k==='arrowdown'||k==='s') && direction.y===0) nextDirection = {x:0,y:1};
-  else if ((k==='arrowleft'||k==='a') && direction.x===0) nextDirection = {x:-1,y:0};
-  else if ((k==='arrowright'||k==='d') && direction.x===0) nextDirection = {x:1,y:0};
-}
-
-canvas.addEventListener('touchstart', e=>{ touchStartX=e.touches[0].clientX; touchStartY=e.touches[0].clientY; },{passive:true});
-canvas.addEventListener('touchend', e=>{
-  const dx=e.changedTouches[0].clientX-touchStartX, dy=e.changedTouches[0].clientY-touchStartY;
-  if (Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>20) { if(dx>0&&direction.x===0) nextDirection={x:1,y:0}; else if(dx<0&&direction.x===0) nextDirection={x:-1,y:0}; }
-  else if (Math.abs(dy)>Math.abs(dx) && Math.abs(dy)>20) { if(dy>0&&direction.y===0) nextDirection={x:0,y:1}; else if(dy<0&&direction.y===0) nextDirection={x:0,y:-1}; }
-},{passive:true});
-window.addEventListener('keydown', handleKey);
-
-function togglePause() { isPaused = !isPaused; document.getElementById('pauseBtn').textContent = isPaused?'▶ Resume':'⏸ Pause'; draw(); }
-function resetGame() { document.getElementById('gameOverModal').style.display='none'; initGame(); }
-
-function playSound(type) {
-  if (!soundEnabled) return;
-  try {
-    const ac = new (window.AudioContext||window.webkitAudioContext)();
-    const osc = ac.createOscillator(), gain = ac.createGain();
-    osc.connect(gain); gain.connect(ac.destination);
-    const t = ac.currentTime;
-    if (type==='eat') { osc.frequency.setValueAtTime(520,t); osc.frequency.exponentialRampToValueAtTime(800,t+0.08); gain.gain.setValueAtTime(0.08,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.1); osc.start(t); osc.stop(t+0.1); }
-    else if (type==='powerup') { osc.type='square'; osc.frequency.setValueAtTime(300,t); osc.frequency.exponentialRampToValueAtTime(900,t+0.15); gain.gain.setValueAtTime(0.07,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.2); osc.start(t); osc.stop(t+0.2); }
-    else if (type==='gameover') { osc.frequency.setValueAtTime(440,t); osc.frequency.exponentialRampToValueAtTime(120,t+0.4); gain.gain.setValueAtTime(0.1,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.4); osc.start(t); osc.stop(t+0.4); }
-  } catch(e) {}
+function resetGame() {
+  document.getElementById('gameOverModal').classList.remove('visible');
+  showStartScreen();
 }
 
 function showStartScreen() {
-  if (animationId) cancelAnimationFrame(animationId);
   gameRunning = false;
-  canvas.classList.remove('visible');
-  document.getElementById('infoBar').classList.remove('visible');
-  document.getElementById('powerUpIndicator').classList.remove('visible');
-  document.getElementById('fruitLegend').classList.remove('visible');
-  document.getElementById('gameButtons').style.display = 'none';
+  gamePaused = false;
   document.getElementById('startButtons').style.display = 'flex';
-  ['gameOverModal','settingsModal','leaderboardModal','infoModal','signInModal','devMenuModal'].forEach(id=>{
-    const el = document.getElementById(id); if (el) el.style.display = 'none';
-  });
+  document.getElementById('gameButtons').style.display = 'none';
+  document.getElementById('infoBar').classList.remove('visible');
+  document.getElementById('fruitLegend').classList.remove('visible');
+  document.getElementById('gameCanvas').classList.remove('visible');
 }
 
-function startGame() {
-  document.getElementById('startButtons').style.display = 'none';
-  canvas.classList.add('visible');
-  document.getElementById('infoBar').classList.add('visible');
-  document.getElementById('powerUpIndicator').classList.add('visible');
-  document.getElementById('fruitLegend').classList.add('visible');
-  document.getElementById('gameButtons').style.display = 'flex';
-  if (showDpad) document.getElementById('dpad').classList.add('visible');
-  initGame();
+function togglePause() {
+  if (!gameRunning) return;
+  gamePaused = !gamePaused;
+  document.getElementById('pauseBtn').textContent = gamePaused ? '▶ Resume' : '⏸ Pause';
 }
 
-// Attach PLAY button listener
-document.getElementById('playBtn').addEventListener('click', startGame);
+function updateScore() {
+  document.getElementById('score').textContent = score;
+  document.getElementById('level').textContent = level;
+  document.getElementById('highScore').textContent = Math.max(highScore, score);
+}
 
-/* ── INIT ── */
+function gameLoop() {
+  if (gameRunning && !gamePaused) {
+    // Placeholder for game logic
+    updateScore();
+  }
+  if (gameRunning) {
+    setTimeout(gameLoop, diffCfg.speed);
+  }
+}
+
+function setDir(x, y) {
+  // Placeholder for direction setting
+}
+
+function endGame() {
+  gameRunning = false;
+  highScore = Math.max(highScore, score);
+  LS.set('snakeHighScore', highScore);
+  
+  if (currentUser) {
+    addScore(currentUser.username, score, difficulty);
+    fetchLeaderboardGameOver();
+  }
+  
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('finalDifficulty').textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+  if (currentUser) {
+    document.getElementById('gameOverPlayer').textContent = `${currentUser.username}`;
+  }
+  
+  document.getElementById('gameOverModal').classList.add('visible');
+  appendLog(`Game ended: ${score} points on ${difficulty}`);
+}
+
+// Initialize
 loadSettings();
-highScore = parseInt(localStorage.getItem('snakeHighScore') || '0');
-document.getElementById('highScore').textContent = highScore;
-appendLog('Game loaded');
 </script>
+
 </body>
 </html>

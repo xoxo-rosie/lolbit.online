@@ -17,9 +17,9 @@
       width:100%; height:100%; justify-content:center; padding:10px;
       overflow-y:auto; overflow-x:hidden;
     }
-    h1 { 
-      color:white; margin:0 0 10px 0; font-size:2.5em; 
-      text-shadow:0 0 20px rgba(76,175,80,0.5);
+    h1 {
+      color:white; margin:0 0 10px 0; font-size:2.5em;
+      text-shadow:0 0 20px rgba(76,175,80,0.5); cursor:default;
     }
     canvas {
       background:#0f0f1a; border:4px solid #4caf50; display:none; margin:0;
@@ -36,189 +36,224 @@
       background:linear-gradient(135deg, rgba(76,175,80,0.3), rgba(56,142,60,0.3));
       border:2px solid rgba(76,175,80,0.5);
       padding:12px 20px; border-radius:12px; font-size:1em; font-weight:bold; color:white;
-      flex:1; min-width:100px; box-shadow:0 4px 15px rgba(0,0,0,0.3);
+      flex:1; min-width:100px;
     }
     .info-box span { color:#81c784; }
-    
     .button-group {
       margin:10px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; width:100%;
     }
     button {
-      padding:12px 28px; font-size:1em; 
+      padding:12px 28px; font-size:1em;
       background:linear-gradient(135deg, #4caf50, #45a049);
       border:none; border-radius:10px; cursor:pointer;
       font-weight:bold; color:white; transition:all 0.3s; white-space:nowrap;
       min-width:140px; box-shadow:0 4px 15px rgba(76,175,80,0.4);
     }
-    button:hover {
-      transform:translateY(-3px); box-shadow:0 6px 20px rgba(76,175,80,0.6);
-    }
+    button:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(76,175,80,0.6); }
     button:active { transform:translateY(-1px); }
     button.secondary {
       background:linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.1));
-      border:2px solid rgba(255,255,255,0.3);
-      box-shadow:0 4px 15px rgba(0,0,0,0.3);
+      border:2px solid rgba(255,255,255,0.3); box-shadow:0 4px 15px rgba(0,0,0,0.3);
     }
     button.secondary:hover {
       background:linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
-      box-shadow:0 6px 20px rgba(255,255,255,0.3);
     }
-
     .modal-overlay {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center;
-      backdrop-filter:blur(5px);
+      background:rgba(0,0,0,0.85); z-index:999; justify-content:center; align-items:center;
+      backdrop-filter:blur(6px);
     }
     .modal {
       background:linear-gradient(135deg, #1e1e3a, #252545);
       border:2px solid #4caf50; padding:30px; border-radius:20px;
-      box-shadow:0 20px 80px rgba(76,175,80,0.5); text-align:center; 
-      min-width:350px; max-width:90vw; max-height:90vh; overflow-y:auto;
+      box-shadow:0 20px 80px rgba(76,175,80,0.5); text-align:center;
+      min-width:340px; max-width:92vw; max-height:90vh; overflow-y:auto;
     }
-    .modal h2 { 
-      color:#4caf50; margin-bottom:15px; font-size:1.8em; 
-      text-shadow:0 0 10px rgba(76,175,80,0.5);
+    .modal.dev-modal {
+      border-color:#ff9800;
+      box-shadow:0 20px 80px rgba(255,152,0,0.5);
     }
+    .modal h2 { color:#4caf50; margin-bottom:15px; font-size:1.8em; text-shadow:0 0 10px rgba(76,175,80,0.5); }
+    .modal h2.dev-title { color:#ff9800; text-shadow:0 0 10px rgba(255,152,0,0.5); }
     .modal h3 { color:white; margin:15px 0 10px 0; font-size:1.2em; }
     .modal p { color:rgba(255,255,255,0.85); margin:8px 0; line-height:1.5; }
     .modal .small { font-size:.85em; color:rgba(255,255,255,0.6); margin-top:10px; }
-    .modal input {
-      width:100%; padding:12px; margin:10px 0; border-radius:8px; border:2px solid #4caf50;
+    .modal input[type="text"], .modal input[type="password"], .modal input[type="number"] {
+      width:100%; padding:12px; margin:8px 0; border-radius:8px; border:2px solid #4caf50;
       background:rgba(255,255,255,0.1); color:white; font-size:1em; outline:none; text-align:center;
+      -webkit-user-select:text; user-select:text;
     }
-    .modal input::placeholder { color:rgba(255,255,255,0.5); }
-    
+    .modal input::placeholder { color:rgba(255,255,255,0.45); }
+    .modal input.dev-input { border-color:#ff9800; }
     .leaderboard-list {
       background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
       padding:15px; border-radius:12px; margin:12px 0; text-align:left;
-      max-height:300px; overflow-y:auto;
+      max-height:280px; overflow-y:auto;
     }
     .lb-item {
-      display:flex; justify-content:space-between; padding:8px 0;
+      display:flex; justify-content:space-between; align-items:center; padding:8px 0;
       border-bottom:1px solid rgba(255,255,255,0.1); font-size:.9em;
       color:rgba(255,255,255,0.85);
     }
     .lb-item:last-child { border-bottom:none; }
     .close-btn {
-      margin-top:15px; 
-      background:linear-gradient(135deg, #f44336, #d32f2f);
+      margin-top:15px; background:linear-gradient(135deg, #f44336, #d32f2f);
       box-shadow:0 4px 15px rgba(244,67,54,0.4);
     }
     .close-btn:hover { box-shadow:0 6px 20px rgba(244,67,54,0.6); }
-
     .settings-row {
       display:flex; justify-content:space-between; align-items:center;
-      margin:12px 0; padding:10px; background:rgba(255,255,255,0.05);
-      border-radius:8px;
+      margin:12px 0; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px;
     }
     .settings-row label { color:white; font-weight:bold; }
     .settings-row select {
       padding:8px 12px; border-radius:6px; border:none;
-      background:rgba(255,255,255,0.2); color:white; font-size:1em;
-      cursor:pointer;
+      background:rgba(255,255,255,0.2); color:white; font-size:1em; cursor:pointer;
     }
     .settings-row select option { background:#1e1e3a; color:white; }
-    
     .toggle-btn {
       padding:8px 16px; border-radius:6px; border:none;
       background:rgba(255,255,255,0.2); color:white; font-weight:bold;
-      cursor:pointer; transition:all 0.3s; min-width:100px;
+      cursor:pointer; transition:all 0.3s; min-width:70px;
     }
     .toggle-btn.active { background:#4caf50; }
-    
-    .color-slider-container { margin:20px 0; }
-    .color-slider-container label { color:white; font-weight:bold; display:block; margin-bottom:10px; }
+    .color-slider-wrap { margin:20px 0; }
+    .color-slider-wrap label { color:white; font-weight:bold; display:block; margin-bottom:8px; }
     #colorSlider {
-      width:100%; height:40px; border:none; border-radius:10px;
-      cursor:pointer; margin:10px 0;
-      background:linear-gradient(to right, 
-        hsl(0,70%,50%), hsl(60,70%,50%), hsl(120,70%,50%), 
-        hsl(180,70%,50%), hsl(240,70%,50%), hsl(300,70%,50%), hsl(360,70%,50%));
+      -webkit-appearance:none; appearance:none;
+      width:100%; height:36px; border-radius:18px; border:none; outline:none; cursor:pointer;
+      background:linear-gradient(to right,
+        hsl(0,70%,50%),hsl(30,70%,50%),hsl(60,70%,50%),hsl(90,70%,50%),
+        hsl(120,70%,50%),hsl(150,70%,50%),hsl(180,70%,50%),hsl(210,70%,50%),
+        hsl(240,70%,50%),hsl(270,70%,50%),hsl(300,70%,50%),hsl(330,70%,50%),hsl(360,70%,50%));
+      margin:10px 0;
     }
-    .color-value { color:#4caf50; font-weight:bold; margin-top:5px; font-size:1.1em; }
-
+    #colorSlider::-webkit-slider-thumb {
+      -webkit-appearance:none; width:32px; height:32px; border-radius:50%;
+      border:3px solid white; background:var(--thumb-color,#4caf50);
+      box-shadow:0 0 8px rgba(0,0,0,0.6); cursor:pointer;
+    }
+    #colorSlider::-moz-range-thumb {
+      width:32px; height:32px; border-radius:50%;
+      border:3px solid white; background:var(--thumb-color,#4caf50);
+      box-shadow:0 0 8px rgba(0,0,0,0.6); cursor:pointer;
+    }
+    .snake-preview-row {
+      display:flex; align-items:center; justify-content:center; gap:3px;
+      margin:8px 0; height:36px;
+    }
+    .snake-preview-seg { width:28px; height:28px; border-radius:6px; }
+    .color-value { color:#aaa; font-size:.9em; margin-top:4px; }
     .dpad { display:none; margin-top:15px; }
     .dpad.visible { display:grid; }
     .dpad button.control-btn {
-      width:70px; height:70px; font-size:1.8em; padding:0; margin:5px;
+      width:70px; height:70px; font-size:1.8em; padding:0; margin:4px;
       background:linear-gradient(135deg, rgba(76,175,80,0.4), rgba(56,142,60,0.4));
       border:2px solid rgba(76,175,80,0.6); border-radius:12px; min-width:auto;
-      box-shadow:0 4px 15px rgba(76,175,80,0.3);
     }
-    .dpad button.control-btn:active { 
-      background:linear-gradient(135deg, rgba(76,175,80,0.7), rgba(56,142,60,0.7));
-      transform:scale(0.95);
+    .dpad button.control-btn:active {
+      background:rgba(76,175,80,0.7); transform:scale(0.95);
     }
     .dpad-grid {
       display:grid; grid-template-columns:70px 70px 70px; grid-template-rows:70px 70px 70px;
       justify-items:center; align-items:center;
     }
-    .dpad-center { grid-column:2; grid-row:2; visibility:hidden; }
-
-    .power-up-indicator { 
-      color:#ffff00; font-weight:bold; margin:8px 0; min-height:22px; font-size:1em; 
+    .power-up-indicator {
+      color:#ffff00; font-weight:bold; margin:6px 0; min-height:22px; font-size:1em;
       display:none; text-shadow:0 0 10px rgba(255,255,0,0.5);
     }
     .power-up-indicator.visible { display:block; }
-    
     .fruit-legend {
-      display:none; background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2);
-      padding:12px 16px; border-radius:12px; margin:8px 0; font-size:.8em;
-      color:rgba(255,255,255,0.85); max-width:700px; line-height:1.6;
-      box-shadow:0 4px 15px rgba(0,0,0,0.3);
+      display:none; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+      padding:10px 14px; border-radius:10px; margin:6px 0; font-size:.78em;
+      color:rgba(255,255,255,0.85); max-width:700px; line-height:1.7;
     }
     .fruit-legend.visible { display:block; }
-    .fruit-legend strong { color:#4caf50; }
-
+    .fruit-legend strong { color:#81c784; }
     .user-info {
-      display:none; align-items:center; gap:12px; margin:12px 0;
-      padding:12px 20px; background:rgba(76,175,80,0.2); 
+      display:none; align-items:center; gap:12px; margin:10px 0;
+      padding:10px 18px; background:rgba(76,175,80,0.2);
       border:2px solid rgba(76,175,80,0.5); border-radius:12px; color:white;
-      box-shadow:0 4px 15px rgba(76,175,80,0.3);
     }
     .user-info.visible { display:flex; }
-    .user-avatar {
-      width:45px; height:45px; border-radius:50%; border:2px solid #4caf50;
+    .user-name { font-weight:bold; font-size:1.05em; }
+    .user-sub { font-size:.82em; color:rgba(255,255,255,0.65); }
+    /* Dev menu tabs */
+    .dev-tabs { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:15px; }
+    .dev-tab {
+      padding:7px 14px; font-size:.85em; background:rgba(255,152,0,0.2);
+      border:1px solid rgba(255,152,0,0.5); border-radius:8px; color:#ff9800;
+      cursor:pointer; transition:all 0.2s; min-width:auto;
     }
-    .user-name { font-weight:bold; font-size:1.1em; }
-    .user-email { font-size:.85em; color:rgba(255,255,255,0.7); }
-
+    .dev-tab.active, .dev-tab:hover { background:rgba(255,152,0,0.5); color:white; }
+    .dev-panel { display:none; }
+    .dev-panel.active { display:block; }
+    .dev-card {
+      background:rgba(255,255,255,0.05); border:1px solid rgba(255,152,0,0.2);
+      border-radius:10px; padding:12px; margin:10px 0; text-align:left;
+    }
+    .dev-card h4 { color:#ff9800; margin-bottom:8px; }
+    .dev-card p { color:rgba(255,255,255,0.7); font-size:.85em; margin:4px 0; }
+    .dev-stat { font-weight:bold; color:white; }
+    .dev-btn {
+      padding:8px 14px; font-size:.85em; border:none; border-radius:6px;
+      cursor:pointer; font-weight:bold; color:white; margin:4px 2px;
+      background:rgba(255,152,0,0.5); transition:all 0.2s; min-width:auto;
+    }
+    .dev-btn:hover { background:rgba(255,152,0,0.8); transform:none; box-shadow:none; }
+    .dev-btn.red { background:rgba(244,67,54,0.5); }
+    .dev-btn.red:hover { background:rgba(244,67,54,0.8); }
+    .dev-btn.green { background:rgba(76,175,80,0.5); }
+    .dev-btn.green:hover { background:rgba(76,175,80,0.8); }
+    .dev-btn.blue { background:rgba(33,150,243,0.5); }
+    .dev-btn.blue:hover { background:rgba(33,150,243,0.8); }
+    .dev-log {
+      background:#0a0a1a; border:1px solid rgba(255,152,0,0.3);
+      border-radius:6px; padding:10px; max-height:160px; overflow-y:auto;
+      font-family:monospace; font-size:.78em; color:#0f0; text-align:left; margin:8px 0;
+    }
+    .dev-user-row {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:8px; background:rgba(255,255,255,0.04); border-radius:6px; margin:4px 0;
+      font-size:.82em; color:white;
+    }
+    .notice { 
+      background:rgba(255,152,0,0.15); border:1px solid rgba(255,152,0,0.4);
+      border-radius:8px; padding:10px; color:#ff9800; font-size:.85em; margin:10px 0;
+    }
+    .err { color:#ff5555; font-size:.85em; margin:5px 0; min-height:16px; }
     @media (min-width: 768px) {
-      .container { padding:20px; }
       h1 { font-size:3em; }
       canvas { max-width:600px; }
       button { padding:14px 32px; font-size:1.05em; min-width:160px; }
-      .dpad button.control-btn { width:80px; height:80px; font-size:2em; margin:6px; }
-      .dpad-grid { grid-template-columns:80px 80px 80px; grid-template-rows:80px 80px 80px; }
     }
-
     @media (max-width: 480px) {
       h1 { font-size:1.8em; }
-      button { padding:10px 20px; font-size:.9em; min-width:120px; }
-      .dpad button.control-btn { width:60px; height:60px; font-size:1.5em; margin:4px; }
+      button { padding:10px 20px; font-size:.9em; min-width:110px; }
+      .dpad button.control-btn { width:60px; height:60px; font-size:1.5em; margin:3px; }
       .dpad-grid { grid-template-columns:60px 60px 60px; grid-template-rows:60px 60px 60px; }
-      .info-box { padding:10px 15px; font-size:.9em; min-width:80px; }
+      .info-box { padding:10px 12px; font-size:.9em; min-width:80px; }
     }
   </style>
 </head>
 <body>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
+<!-- ███ SIGN IN MODAL ███ -->
 <div class="modal-overlay" id="signInModal">
   <div class="modal">
     <h2>🔐 Sign In</h2>
-    <p>Enter your email and password to save scores</p>
-    <input type="email" id="emailInput" placeholder="Enter email" />
-    <input type="password" id="passwordInput" placeholder="Enter password" />
-    <input type="text" id="usernameInput" placeholder="Choose a username (first time only)" maxlength="20" />
-    <button id="signInBtn">✓ Sign In</button>
-    <button class="secondary" onclick="skipSignIn()">⏭ Play as Guest</button>
-    <p class="small">Signing in saves your color, settings, and scores globally!</p>
+    <p>Create or log into your account</p>
+    <input type="text" id="siUsername" placeholder="Username" maxlength="20" />
+    <input type="password" id="siPassword" placeholder="Password" />
+    <div class="err" id="siErr"></div>
+    <button id="btnCreateAcc">Create Account</button>
+    <button id="btnLoginAcc" class="secondary" style="margin-top:8px;">Log In</button>
+    <button class="secondary" onclick="skipSignIn()" style="margin-top:8px;">⏭ Play as Guest</button>
+    <p class="small">Username + password saves your scores, color & settings!</p>
   </div>
 </div>
 
+<!-- ███ SETTINGS MODAL ███ -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
     <h2>⚙️ Settings</h2>
@@ -238,17 +273,25 @@
         <option value="hard">Hard</option>
       </select>
     </div>
-    <div class="color-slider-container">
+    <div class="color-slider-wrap">
       <label>🐍 Snake Color</label>
+      <div class="snake-preview-row" id="snakePreviewRow">
+        <div class="snake-preview-seg" id="sp0"></div>
+        <div class="snake-preview-seg" id="sp1"></div>
+        <div class="snake-preview-seg" id="sp2"></div>
+        <div class="snake-preview-seg" id="sp3"></div>
+        <div class="snake-preview-seg" id="sp4"></div>
+      </div>
       <input type="range" id="colorSlider" min="0" max="360" value="120" />
-      <div class="color-value" id="colorValue">Hue 120 (Green)</div>
+      <div class="color-value" id="colorValue">Green — Hue 120</div>
     </div>
     <button onclick="saveSettings()">💾 Save Settings</button>
-    <p class="small">⚠️ Saves globally if signed in</p>
+    <p class="small">⚠️ Saves to your account if signed in</p>
     <button class="close-btn" onclick="closeSettings()">Close</button>
   </div>
 </div>
 
+<!-- ███ LEADERBOARD MODAL ███ -->
 <div class="modal-overlay" id="leaderboardModal">
   <div class="modal">
     <h2>🏆 Global Leaderboard</h2>
@@ -257,65 +300,289 @@
   </div>
 </div>
 
+<!-- ███ INFO MODAL ███ -->
 <div class="modal-overlay" id="infoModal">
   <div class="modal">
     <h2>📖 Game Info</h2>
     <h3>🍎 Fruits</h3>
-    <div class="fruit-legend" style="display:block;">
-      <strong>🍎 Apple</strong> +10 (Common)<br>
-      <strong>🍊 Orange</strong> +15 (Common)<br>
-      <strong>🍓 Berry</strong> +25 (Uncommon)<br>
-      <strong>🍌 Banana</strong> +35 (Rare)<br>
-      <strong>🍉 Watermelon</strong> +50 (Rare)<br>
-      <strong>🍇 Grapes</strong> +60 (Very Rare)<br>
-      <strong>🍍 Pineapple</strong> +75 (Very Rare)<br>
-      <strong>🥭 Mango</strong> +90 (Ultra Rare)<br>
-      <strong>⭐ Star</strong> +100 (Legendary)<br>
-      <strong>💎 Diamond</strong> +150 (Mythic)
+    <div class="fruit-legend" style="display:block; text-align:left;">
+      <strong>🍎 Apple</strong> +10 — Common (35%)<br>
+      <strong>🍊 Orange</strong> +15 — Common (25%)<br>
+      <strong>🍓 Berry</strong> +25 — Uncommon (15%)<br>
+      <strong>🍌 Banana</strong> +35 — Rare (10%)<br>
+      <strong>🍉 Watermelon</strong> +50 — Rare (6%)<br>
+      <strong>🍇 Grapes</strong> +60 — Very Rare (4%)<br>
+      <strong>🍍 Pineapple</strong> +75 — Very Rare (2.5%)<br>
+      <strong>🥭 Mango</strong> +90 — Ultra Rare (1.5%)<br>
+      <strong>⭐ Star</strong> +100 — Legendary (0.8%)<br>
+      <strong>💎 Diamond</strong> +150 — Mythic (0.2%)
     </div>
     <h3 style="margin-top:15px;">⚡ Power-Ups</h3>
-    <div class="fruit-legend" style="display:block;">
-      <strong style="color:#ffdd00">⚡ Speed</strong> 2× speed (2s)<br>
-      <strong style="color:#44aaff">🧊 Slow</strong> 0.5× speed (3s)<br>
-      <strong style="color:#ff44ff">🛡️ Shield</strong> 1 wall save<br>
-      <strong style="color:#ff6b6b">🔥 Double</strong> 2× points (3s)<br>
-      <strong style="color:#4ecdc4">🌀 Magnet</strong> Attract food<br>
-      <strong style="color:#95e1d3">🌙 Invisible</strong> Ghost mode<br>
-      <strong style="color:#f38181">💥 Explode</strong> Clear all<br>
-      <strong style="color:#aa96da">🔮 Freeze</strong> Stop 1s
+    <div class="fruit-legend" style="display:block; text-align:left;">
+      <strong style="color:#ffdd00">⚡ Speed Boost</strong> — 2× speed for 2s<br>
+      <strong style="color:#44aaff">🧊 Slow Motion</strong> — 0.5× speed for 3s<br>
+      <strong style="color:#ff44ff">🛡️ Shield</strong> — Survive 1 wall hit<br>
+      <strong style="color:#ff6b6b">🔥 Double Points</strong> — 2× score for 3s<br>
+      <strong style="color:#4ecdc4">🌀 Magnet</strong> — Attract nearest food<br>
+      <strong style="color:#95e1d3">🌙 Ghost</strong> — Pass through yourself 2s<br>
+      <strong style="color:#f38181">💥 Explode</strong> — Clears all power-ups on board<br>
+      <strong style="color:#aa96da">🔮 Freeze</strong> — Pauses timer for 1s
+    </div>
+    <h3 style="margin-top:15px;">🕹️ Controls</h3>
+    <div style="text-align:left; color:rgba(255,255,255,0.85); font-size:.9em; line-height:1.7;">
+      Arrow Keys or WASD to move<br>
+      Swipe on mobile to move<br>
+      Enable D-Pad in Settings<br>
+      SPACE to pause<br>
+      Higher difficulty = more points multiplier
     </div>
     <button class="close-btn" onclick="closeInfo()">Close</button>
   </div>
 </div>
 
+<!-- ███ GAME OVER MODAL ███ -->
 <div class="modal-overlay" id="gameOverModal">
   <div class="modal">
-    <h2 style="color:#ff5555">💀 GAME OVER</h2>
-    <p>Score: <strong style="color:#4caf50; font-size:1.3em;"><span id="finalScore">0</span></strong></p>
+    <h2 style="color:#ff5555">💀 Game Over</h2>
+    <p>Score: <strong style="color:#4caf50; font-size:1.4em;"><span id="finalScore">0</span></strong></p>
     <p>Difficulty: <span id="finalDifficulty">Easy</span></p>
-    <div id="gameOverPlayer" style="margin:10px 0; color:#4caf50; font-weight:bold;"></div>
+    <div id="gameOverPlayer" style="margin:8px 0; color:#81c784; font-weight:bold;"></div>
     <div class="leaderboard-list" id="lbListGameOver"></div>
-    <div class="button-group">
+    <div class="button-group" style="margin-top:12px;">
       <button onclick="resetGame()">▶ Play Again</button>
       <button class="secondary" onclick="openSettingsFromGameOver()">⚙️ Settings</button>
     </div>
-    <button class="secondary" onclick="showStartScreen()" style="margin-top:10px;">🏠 Main Menu</button>
+    <button class="secondary" onclick="showStartScreen()" style="margin-top:8px; min-width:180px;">🏠 Main Menu</button>
   </div>
 </div>
 
+<!-- ███ DEV PASSWORD MODAL ███ (hidden, not linked from anywhere visible) -->
+<div class="modal-overlay" id="_dp">
+  <div class="modal" style="max-width:320px;">
+    <h2 style="color:#ff9800;">🔒</h2>
+    <input type="password" id="_dpi" placeholder="••••••••" class="dev-input" />
+    <div class="err" id="_dpe"></div>
+    <button id="_dpb" style="background:linear-gradient(135deg,#ff9800,#f57c00); box-shadow:0 4px 15px rgba(255,152,0,0.4);">Enter</button>
+    <button class="secondary" onclick="document.getElementById('_dp').style.display='none'" style="margin-top:8px;">Cancel</button>
+  </div>
+</div>
+
+<!-- ███ DEV MENU MODAL ███ -->
+<div class="modal-overlay" id="devMenuModal">
+  <div class="modal dev-modal" style="min-width:360px; max-width:96vw;">
+    <h2 class="dev-title">⚡ Dev Console</h2>
+    <div class="dev-tabs" id="devTabs">
+      <button class="dev-tab active" onclick="switchDevTab('dash')">Dashboard</button>
+      <button class="dev-tab" onclick="switchDevTab('lb')">Leaderboard</button>
+      <button class="dev-tab" onclick="switchDevTab('accounts')">Accounts</button>
+      <button class="dev-tab" onclick="switchDevTab('game')">Game</button>
+      <button class="dev-tab" onclick="switchDevTab('logs')">Logs</button>
+      <button class="dev-tab" onclick="switchDevTab('db')">Database</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dev-panel active" id="devPanel-dash">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <div class="dev-card">
+          <h4>👥 Users</h4>
+          <p>Total: <span class="dev-stat" id="dv-userCount">0</span></p>
+          <p>Online: <span class="dev-stat" id="dv-onlineCount">1</span></p>
+        </div>
+        <div class="dev-card">
+          <h4>🏆 Scores</h4>
+          <p>Total: <span class="dev-stat" id="dv-scoreCount">0</span></p>
+          <p>Highest: <span class="dev-stat" id="dv-topScore">0</span></p>
+        </div>
+        <div class="dev-card">
+          <h4>🎮 Session</h4>
+          <p>Games: <span class="dev-stat" id="dv-gamesPlayed">0</span></p>
+          <p>Version: <span class="dev-stat">1.0.0</span></p>
+        </div>
+        <div class="dev-card">
+          <h4>💾 Storage</h4>
+          <p>Used: <span class="dev-stat" id="dv-storage">0 KB</span></p>
+          <p>Saved: <span class="dev-stat" id="dv-savedAt">—</span></p>
+        </div>
+      </div>
+      <div class="dev-card" style="margin-top:10px;">
+        <h4>🔧 Quick Actions</h4>
+        <button class="dev-btn red" onclick="devClearAllScores()">Clear All Scores</button>
+        <button class="dev-btn red" onclick="devClearAllUsers()">Clear All Users</button>
+        <button class="dev-btn blue" onclick="devReloadSettings()">Reload Settings</button>
+        <button class="dev-btn green" onclick="devExportData()">Export Data</button>
+        <button class="dev-btn" onclick="devImportData()">Import Data</button>
+        <button class="dev-btn red" onclick="devNukeStorage()">⚠️ Nuke Storage</button>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="dev-panel" id="devPanel-lb">
+      <div class="dev-card">
+        <h4>➕ Add Score</h4>
+        <input type="text" id="dv-addScoreUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
+        <input type="number" id="dv-addScoreVal" placeholder="Score" class="dev-input" style="margin:4px 0;" />
+        <select id="dv-addScoreDiff" style="width:100%; padding:8px; border-radius:6px; background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,152,0,0.4); margin:4px 0;">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+        <button class="dev-btn green" onclick="devAddScore()">Add Score</button>
+      </div>
+      <div class="dev-card">
+        <h4>🗑️ Remove Score</h4>
+        <input type="text" id="dv-removeScoreUser" placeholder="Username to remove" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn red" onclick="devRemoveScore()">Remove by Username</button>
+        <button class="dev-btn red" onclick="devClearTopN()">Remove Top 1</button>
+      </div>
+      <div class="dev-card">
+        <h4>📋 Current Leaderboard</h4>
+        <div class="dev-log" id="dv-lbPreview">Loading...</div>
+        <button class="dev-btn blue" onclick="devRefreshLbPreview()">Refresh</button>
+        <button class="dev-btn red" onclick="devClearAllScores()">Clear All</button>
+      </div>
+      <div class="dev-card">
+        <h4>🏅 Set Score Multiplier</h4>
+        <input type="number" id="dv-scoreMulti" placeholder="Multiplier (e.g. 2)" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn" onclick="devSetScoreMulti()">Apply Multiplier to All</button>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="dev-panel" id="devPanel-accounts">
+      <div class="dev-card">
+        <h4>👥 All Accounts</h4>
+        <div id="dv-userList" style="max-height:180px; overflow-y:auto;"></div>
+        <button class="dev-btn blue" onclick="devRefreshUserList()">Refresh</button>
+      </div>
+      <div class="dev-card">
+        <h4>🔑 Reset Password</h4>
+        <input type="text" id="dv-rpUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
+        <input type="password" id="dv-rpNew" placeholder="New Password" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn" onclick="devResetPassword()">Reset Password</button>
+      </div>
+      <div class="dev-card">
+        <h4>✏️ Change Username</h4>
+        <input type="text" id="dv-cuOld" placeholder="Current Username" class="dev-input" style="margin:4px 0;" />
+        <input type="text" id="dv-cuNew" placeholder="New Username" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn" onclick="devChangeUsername()">Change Username</button>
+      </div>
+      <div class="dev-card">
+        <h4>🚫 Delete Account</h4>
+        <input type="text" id="dv-delUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn red" onclick="devDeleteUser()">Delete Account</button>
+      </div>
+      <div class="dev-card">
+        <h4>🔓 Force Login As</h4>
+        <input type="text" id="dv-forceUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn green" onclick="devForceLogin()">Login As User</button>
+      </div>
+      <div class="dev-card">
+        <h4>🐍 Change Snake Color</h4>
+        <input type="text" id="dv-colorUser" placeholder="Username" class="dev-input" style="margin:4px 0;" />
+        <input type="number" id="dv-colorHue" placeholder="Hue (0–360)" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn" onclick="devChangeColor()">Set Color</button>
+      </div>
+    </div>
+
+    <!-- GAME SETTINGS -->
+    <div class="dev-panel" id="devPanel-game">
+      <div class="dev-card">
+        <h4>⚡ Cheat Controls (Current Session)</h4>
+        <button class="dev-btn green" onclick="devGiveShield()">Give Shield</button>
+        <button class="dev-btn green" onclick="devGiveDouble()">Give 2× Points</button>
+        <button class="dev-btn green" onclick="devGiveSpeed()">Give Speed</button>
+        <button class="dev-btn green" onclick="devGiveFreeze()">Give Freeze</button>
+        <button class="dev-btn" onclick="devSetScore()">Set Score</button>
+        <button class="dev-btn" onclick="devSetLength()">Set Snake Length</button>
+        <button class="dev-btn red" onclick="devKillSnake()">Kill Snake</button>
+      </div>
+      <div class="dev-card">
+        <h4>🌐 Global Game Config</h4>
+        <div style="text-align:left;">
+          <label style="color:white; font-size:.85em;">Base Speed (Easy)</label>
+          <input type="number" id="dv-baseSpeed" value="10" class="dev-input" style="margin:4px 0;" />
+          <label style="color:white; font-size:.85em;">Power-Up Frequency</label>
+          <input type="number" id="dv-puFreq" value="0.03" step="0.01" class="dev-input" style="margin:4px 0;" />
+          <label style="color:white; font-size:.85em;">Food Count (Easy)</label>
+          <input type="number" id="dv-foodCount" value="3" class="dev-input" style="margin:4px 0;" />
+        </div>
+        <button class="dev-btn" onclick="devApplyGameConfig()">Apply Config</button>
+        <button class="dev-btn blue" onclick="devResetGameConfig()">Reset to Default</button>
+      </div>
+      <div class="dev-card">
+        <h4>🎨 Board Theme</h4>
+        <button class="dev-btn" onclick="devSetTheme('dark')">Dark (Default)</button>
+        <button class="dev-btn" onclick="devSetTheme('midnight')">Midnight Blue</button>
+        <button class="dev-btn" onclick="devSetTheme('forest')">Forest</button>
+        <button class="dev-btn" onclick="devSetTheme('neon')">Neon</button>
+      </div>
+      <div class="dev-card">
+        <h4>🔔 Broadcast Message</h4>
+        <input type="text" id="dv-broadcastMsg" placeholder="Message to show all players" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn" onclick="devBroadcast()">Broadcast</button>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="dev-panel" id="devPanel-logs">
+      <div class="dev-card">
+        <h4>📜 Activity Log</h4>
+        <div class="dev-log" id="dv-actLog">Loading...</div>
+        <button class="dev-btn blue" onclick="devRefreshLog()">Refresh</button>
+        <button class="dev-btn red" onclick="devClearLog()">Clear Log</button>
+      </div>
+      <div class="dev-card">
+        <h4>🔑 Login Attempts Log</h4>
+        <div class="dev-log" id="dv-loginLog">Loading...</div>
+        <button class="dev-btn blue" onclick="devRefreshLoginLog()">Refresh</button>
+        <button class="dev-btn red" onclick="devClearLoginLog()">Clear</button>
+      </div>
+    </div>
+
+    <!-- DATABASE -->
+    <div class="dev-panel" id="devPanel-db">
+      <div class="dev-card">
+        <h4>📦 Raw Storage Viewer</h4>
+        <div class="dev-log" id="dv-rawDb" style="max-height:200px;">Loading...</div>
+        <button class="dev-btn blue" onclick="devRefreshRawDb()">Refresh</button>
+      </div>
+      <div class="dev-card">
+        <h4>✏️ Edit Raw JSON</h4>
+        <select id="dv-dbKey" style="width:100%; padding:8px; border-radius:6px; background:rgba(255,255,255,0.15); color:white; border:1px solid rgba(255,152,0,0.4); margin:4px 0;">
+          <option value="snakeScores">Scores</option>
+          <option value="snakeUsers">Users</option>
+          <option value="snakeSettings">Settings</option>
+          <option value="snakeLogs">Logs</option>
+          <option value="snakeLoginLogs">Login Logs</option>
+        </select>
+        <textarea id="dv-dbVal" style="width:100%; height:100px; background:rgba(0,0,0,0.4); border:1px solid rgba(255,152,0,0.3); border-radius:6px; color:#0f0; font-family:monospace; font-size:.78em; padding:8px; margin:4px 0; -webkit-user-select:text; user-select:text;"></textarea>
+        <button class="dev-btn green" onclick="devLoadDbKey()">Load</button>
+        <button class="dev-btn red" onclick="devSaveDbKey()">Save Raw</button>
+      </div>
+      <div class="dev-card">
+        <h4>🗑️ Delete Key</h4>
+        <input type="text" id="dv-delKey" placeholder="localStorage key" class="dev-input" style="margin:4px 0;" />
+        <button class="dev-btn red" onclick="devDeleteKey()">Delete Key</button>
+      </div>
+    </div>
+
+    <button class="close-btn" onclick="document.getElementById('devMenuModal').style.display='none'" style="margin-top:20px;">Close Dev Console</button>
+  </div>
+</div>
+
+<!-- ████ MAIN PAGE ████ -->
 <div class="container">
-  <h1>🐍 Snake</h1>
+  <h1 id="gameTitle">🐍 Snake</h1>
 
   <div class="user-info" id="userInfo">
-    <img id="userAvatar" class="user-avatar" src="" alt="">
-    <div style="text-align:left; flex:1;">
+    <div style="flex:1; text-align:left;">
       <div class="user-name" id="userName"></div>
-      <div class="user-email" id="userEmail"></div>
+      <div class="user-sub" id="userSub">Signed in</div>
     </div>
-    <button class="close-btn" onclick="signOut()" style="margin:0; padding:8px 16px; min-width:auto; font-size:.9em;">Sign Out</button>
+    <button class="close-btn" onclick="signOut()" style="margin:0; padding:8px 16px; min-width:auto; font-size:.85em;">Sign Out</button>
   </div>
 
-  <!-- MAIN MENU - ONLY ONE SET OF BUTTONS -->
+  <!-- START SCREEN -->
   <div class="button-group" id="startButtons">
     <button id="playBtn">▶ PLAY</button>
     <button class="secondary" id="signInBtn2" onclick="showSignInModal()">🔐 Sign In</button>
@@ -324,7 +591,7 @@
     <button class="secondary" onclick="openInfo()">📖 Info</button>
   </div>
 
-  <!-- GAME CANVAS -->
+  <!-- GAME ELEMENTS (hidden until play) -->
   <canvas id="gameCanvas" width="400" height="400"></canvas>
 
   <div class="info" id="infoBar">
@@ -336,28 +603,29 @@
   <div class="power-up-indicator" id="powerUpIndicator"></div>
 
   <div class="fruit-legend" id="fruitLegend">
-    <strong>🍎+10</strong> <strong>🍊+15</strong> <strong>🍓+25</strong> <strong>🍌+35</strong> 
-    <strong>🍉+50</strong> <strong>🍇+60</strong> <strong>🍍+75</strong> <strong>🥭+90</strong> 
-    <strong>⭐+100</strong> <strong>💎+150</strong> || 
-    <span style="color:#ffdd44">⚡Speed</span> <span style="color:#44aaff">🧊Slow</span> 
-    <span style="color:#ff44ff">🛡️Shield</span> <span style="color:#ff6b6b">🔥2×</span>
+    <strong>🍎+10</strong> <strong>🍊+15</strong> <strong>🍓+25</strong> <strong>🍌+35</strong>
+    <strong>🍉+50</strong> <strong>🍇+60</strong> <strong>🍍+75</strong> <strong>🥭+90</strong>
+    <strong>⭐+100</strong> <strong>💎+150</strong>&nbsp;|&nbsp;
+    <span style="color:#ffdd44">⚡</span> <span style="color:#44aaff">🧊</span>
+    <span style="color:#ff44ff">🛡️</span> <span style="color:#ff6b6b">🔥</span>
+    <span style="color:#4ecdc4">🌀</span> <span style="color:#95e1d3">🌙</span>
+    <span style="color:#f38181">💥</span> <span style="color:#aa96da">🔮</span>
   </div>
 
-  <div class="button-group" id="gameButtons">
+  <div class="button-group" id="gameButtons" style="display:none;">
     <button id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
     <button onclick="resetGame()">🔄 Restart</button>
     <button class="secondary" onclick="openSettings()">⚙️ Settings</button>
     <button class="secondary" onclick="openInfo()">📖 Info</button>
   </div>
 
-  <!-- D-PAD -->
   <div class="dpad" id="dpad">
     <div class="dpad-grid">
       <div></div>
       <button class="control-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">⬆️</button>
       <div></div>
       <button class="control-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">⬅️</button>
-      <div class="dpad-center"></div>
+      <div></div>
       <button class="control-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">➡️</button>
       <div></div>
       <button class="control-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">⬇️</button>
@@ -367,80 +635,203 @@
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+/* =====================================================================
+   STORAGE HELPERS
+===================================================================== */
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } },
+  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
+  del: k => localStorage.removeItem(k),
+  keys: () => Object.keys(localStorage)
 };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+/* =====================================================================
+   AUTH  — no Firebase, 100% local
+===================================================================== */
+function getUsers() { return LS.get('snakeUsers') || {}; }
+function saveUsers(u) { LS.set('snakeUsers', u); }
 
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const GRID = 20;
-const TILES = canvas.width / GRID;
+function hashPass(p) {
+  // simple deterministic hash (not cryptographic, but hides plaintext)
+  let h = 0;
+  for (let i = 0; i < p.length; i++) { h = Math.imul(31, h) + p.charCodeAt(i) | 0; }
+  return (h >>> 0).toString(36);
+}
 
-const DIFF = {
-  easy:   { baseFrames:10, minFrames:6,  speedGain:0.3, powerFreq:0.03, foodCount:3, scoreMulti:1.0 },
-  medium: { baseFrames:7,  minFrames:4,  speedGain:0.5, powerFreq:0.04, foodCount:2, scoreMulti:1.5 },
-  hard:   { baseFrames:5,  minFrames:2,  speedGain:0.7, powerFreq:0.05, foodCount:1, scoreMulti:2.0 },
-};
+function createAccount(username, password) {
+  if (!username || username.length < 2) return 'Username must be at least 2 characters';
+  if (!password || password.length < 4) return 'Password must be at least 4 characters';
+  const users = getUsers();
+  if (users[username.toLowerCase()]) return 'Username already taken';
+  users[username.toLowerCase()] = {
+    username, passwordHash: hashPass(password),
+    snakeColorHue: 120, settings: {}, highScore: 0,
+    created: Date.now()
+  };
+  saveUsers(users);
+  appendLog(`Account created: ${username}`);
+  return null;
+}
 
-const FRUITS = [
-  {type:'apple', emoji:'🍎', color:'#ff4444', points:10,  rarity:0.35},
-  {type:'orange', emoji:'🍊', color:'#ff8800', points:15,  rarity:0.25},
-  {type:'berry', emoji:'🍓', color:'#cc0055', points:25,  rarity:0.15},
-  {type:'banana', emoji:'🍌', color:'#ffdd00', points:35,  rarity:0.10},
-  {type:'watermelon', emoji:'🍉', color:'#22cc44', points:50,  rarity:0.06},
-  {type:'grapes', emoji:'🍇', color:'#8844ff', points:60,  rarity:0.04},
-  {type:'pineapple', emoji:'🍍', color:'#ffaa00', points:75,  rarity:0.025},
-  {type:'mango', emoji:'🥭', color:'#ff6688', points:90,  rarity:0.015},
-  {type:'star', emoji:'⭐', color:'#ffee00', points:100, rarity:0.008},
-  {type:'diamond', emoji:'💎', color:'#00ffff', points:150, rarity:0.002},
-];
-
-const POWERUPS = [
-  {type:'speed_boost', emoji:'⚡', color:'#ffdd00', glowColor:'rgba(255,220,0,0.7)', shape:'diamond', duration:120, label:'⚡ SPEED! (2×)'},
-  {type:'slow_mode', emoji:'🧊', color:'#44aaff', glowColor:'rgba(68,170,255,0.7)', shape:'hexagon', duration:180, label:'🧊 SLOW! (0.5×)'},
-  {type:'shield', emoji:'🛡️', color:'#ff44ff', glowColor:'rgba(255,68,255,0.7)', shape:'star5', duration:1, label:'🛡️ SHIELD!'},
-  {type:'double_points', emoji:'🔥', color:'#ff6b6b', glowColor:'rgba(255,107,107,0.7)', shape:'fire', duration:180, label:'🔥 DOUBLE! (2×)'},
-  {type:'magnet', emoji:'🌀', color:'#4ecdc4', glowColor:'rgba(78,205,196,0.7)', shape:'spiral', duration:120, label:'🌀 MAGNET!'},
-  {type:'invisible', emoji:'🌙', color:'#95e1d3', glowColor:'rgba(149,225,211,0.7)', shape:'moon', duration:120, label:'🌙 GHOST!'},
-  {type:'explode', emoji:'💥', color:'#f38181', glowColor:'rgba(243,129,129,0.7)', shape:'bang', duration:1, label:'💥 EXPLODE!'},
-  {type:'freeze', emoji:'🔮', color:'#aa96da', glowColor:'rgba(170,150,218,0.7)', shape:'orb', duration:60, label:'🔮 FREEZE!'},
-];
-
-let snake, food, powerUpsArr;
-let direction, nextDirection;
-let score, level, highScore;
-let gameRunning, isPaused, soundEnabled;
-let difficulty, diffCfg;
-let activePowerUp, powerUpTimer;
-let frameCount, currentFrameDelay;
-let touchStartX, touchStartY;
-let shieldActive, doublePointsActive;
-let showDpad = false;
-let currentUser = null;
-let snakeColorHue = 120;
-let animationId = null;
-
-// ═══════════════════════════════════════════════════════════════
-// LOAD SETTINGS ON START
-// ═══════════════════════════════════════════════════════════════
-function loadSettings() {
-  const saved = localStorage.getItem('snakeSettings');
-  if (saved) {
-    const s = JSON.parse(saved);
-    soundEnabled = s.sound !== undefined ? s.sound : true;
-    showDpad = s.dpad !== undefined ? s.dpad : false;
-    difficulty = s.difficulty || 'easy';
-    snakeColorHue = s.snakeColorHue || 120;
+function loginAccount(username, password) {
+  const users = getUsers();
+  const u = users[username.toLowerCase()];
+  if (!u) return 'Account not found';
+  if (u.passwordHash !== hashPass(password)) {
+    appendLoginLog(`FAIL login: ${username}`);
+    return 'Wrong password';
   }
+  appendLoginLog(`OK login: ${username}`);
+  appendLog(`Login: ${username}`);
+  return null;
+}
+
+function getUserData(username) {
+  const users = getUsers();
+  return users[username.toLowerCase()] || null;
+}
+
+function saveUserData(username, data) {
+  const users = getUsers();
+  if (users[username.toLowerCase()]) {
+    Object.assign(users[username.toLowerCase()], data);
+    saveUsers(users);
+  }
+}
+
+/* =====================================================================
+   LOGS
+===================================================================== */
+function appendLog(msg) {
+  const logs = LS.get('snakeLogs') || [];
+  logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
+  if (logs.length > 200) logs.pop();
+  LS.set('snakeLogs', logs);
+}
+
+function appendLoginLog(msg) {
+  const logs = LS.get('snakeLoginLogs') || [];
+  logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
+  if (logs.length > 100) logs.pop();
+  LS.set('snakeLoginLogs', logs);
+}
+
+/* =====================================================================
+   SCORES
+===================================================================== */
+function getScores() { return LS.get('snakeScores') || []; }
+function saveScores(s) { LS.set('snakeScores', s); }
+
+function addScore(username, scoreVal, diff) {
+  const scores = getScores();
+  scores.push({ username, score: scoreVal, difficulty: diff, date: new Date().toLocaleDateString(), ts: Date.now() });
+  scores.sort((a,b) => b.score - a.score);
+  if (scores.length > 200) scores.pop();
+  saveScores(scores);
+  appendLog(`Score: ${username} got ${scoreVal} on ${diff}`);
+}
+
+function renderLeaderboard(scores, listId) {
+  const el = document.getElementById(listId);
+  if (!el) return;
+  el.innerHTML = '';
+  if (!scores || scores.length === 0) {
+    el.innerHTML = '<div style="color:rgba(255,255,255,0.5);padding:12px;">No scores yet — be the first!</div>';
+    return;
+  }
+  scores.forEach((s, i) => {
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+    el.innerHTML += `<div class="lb-item"><span>${medal} ${s.username}</span><span style="color:#81c784">${s.score}</span><span style="color:#aaa;font-size:.8em">${s.difficulty}</span></div>`;
+  });
+}
+
+async function fetchLeaderboard(limit=15) {
+  const scores = getScores().slice(0, limit);
+  renderLeaderboard(scores, 'lbList');
+  return scores;
+}
+
+async function fetchLeaderboardGameOver() {
+  const scores = getScores().slice(0, 5);
+  renderLeaderboard(scores, 'lbListGameOver');
+}
+
+/* =====================================================================
+   AUTH UI
+===================================================================== */
+let currentUser = null;
+let gamesPlayedSession = 0;
+
+document.getElementById('btnCreateAcc').addEventListener('click', () => {
+  const un = document.getElementById('siUsername').value.trim();
+  const pw = document.getElementById('siPassword').value;
+  const err = createAccount(un, pw);
+  if (err) { document.getElementById('siErr').textContent = err; return; }
+  loginUser(un);
+});
+
+document.getElementById('btnLoginAcc').addEventListener('click', () => {
+  const un = document.getElementById('siUsername').value.trim();
+  const pw = document.getElementById('siPassword').value;
+  const err = loginAccount(un, pw);
+  if (err) { document.getElementById('siErr').textContent = err; return; }
+  loginUser(un);
+});
+
+function loginUser(username) {
+  const udata = getUserData(username);
+  if (!udata) return;
+  currentUser = { username: udata.username };
+  snakeColorHue = udata.snakeColorHue || 120;
+  if (udata.settings) {
+    if (udata.settings.sound !== undefined) soundEnabled = udata.settings.sound;
+    if (udata.settings.dpad !== undefined) showDpad = udata.settings.dpad;
+    if (udata.settings.difficulty) difficulty = udata.settings.difficulty;
+  }
+  document.getElementById('userInfo').classList.add('visible');
+  document.getElementById('userName').textContent = udata.username;
+  document.getElementById('userSub').textContent = 'Signed in';
+  document.getElementById('signInBtn2').style.display = 'none';
+  document.getElementById('signInModal').style.display = 'none';
+  document.getElementById('siErr').textContent = '';
+  document.getElementById('colorSlider').value = snakeColorHue;
+  updateColorSlider();
+  syncSettingsUI();
+}
+
+function showSignInModal() {
+  document.getElementById('siErr').textContent = '';
+  document.getElementById('signInModal').style.display = 'flex';
+}
+
+function skipSignIn() {
+  document.getElementById('signInModal').style.display = 'none';
+}
+
+function signOut() {
+  currentUser = null;
+  document.getElementById('userInfo').classList.remove('visible');
+  document.getElementById('signInBtn2').style.display = 'inline-block';
+  appendLog('User signed out');
+}
+
+/* =====================================================================
+   SETTINGS
+===================================================================== */
+let soundEnabled = true, showDpad = false, difficulty = 'easy', snakeColorHue = 120;
+
+function loadSettings() {
+  const s = LS.get('snakeSettings');
+  if (s) {
+    if (s.sound !== undefined) soundEnabled = s.sound;
+    if (s.dpad !== undefined) showDpad = s.dpad;
+    if (s.difficulty) difficulty = s.difficulty;
+    if (s.snakeColorHue !== undefined) snakeColorHue = s.snakeColorHue;
+  }
+  syncSettingsUI();
+}
+
+function syncSettingsUI() {
   document.getElementById('difficultySelect').value = difficulty;
   document.getElementById('colorSlider').value = snakeColorHue;
   updateColorSlider();
@@ -449,64 +840,45 @@ function loadSettings() {
   document.getElementById('dpadToggleBtn').textContent = showDpad ? 'ON' : 'OFF';
   document.getElementById('dpadToggleBtn').className = showDpad ? 'toggle-btn active' : 'toggle-btn';
   if (showDpad) document.getElementById('dpad').classList.add('visible');
+  else document.getElementById('dpad').classList.remove('visible');
 }
 
-// ═══════════════════════════════════════════════════════════════
-// COLOR SLIDER FUNCTIONALITY
-// ═══════════════════════════════════════════════════════════════
 function hexFromHUE(hue) {
-  const s = 70, l = 50;
-  const c = (1 - Math.abs(2 * l / 100 - 1)) * s / 100;
-  const x = c * (1 - Math.abs((hue / 60) % 2 - 1));
-  const m = l / 100 - c / 2;
-  let r, g, b;
-  if (hue < 60) { r=c; g=x; b=0; }
-  else if (hue < 120) { r=x; g=c; b=0; }
-  else if (hue < 180) { r=0; g=c; b=x; }
-  else if (hue < 240) { r=0; g=x; b=c; }
-  else if (hue < 300) { r=x; g=0; b=c; }
-  else { r=c; g=0; b=x; }
-  const R = Math.round((r+m)*255), G = Math.round((g+m)*255), B = Math.round((b+m)*255);
+  const h = ((hue % 360) + 360) % 360;
+  const s = 0.70, l = 0.50;
+  const c = (1 - Math.abs(2*l-1)) * s;
+  const x = c * (1 - Math.abs((h/60)%2 - 1));
+  const m = l - c/2;
+  let r,g,b;
+  if (h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}
+  else if(h<180){r=0;g=c;b=x;}else if(h<240){r=0;g=x;b=c;}
+  else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  const R=Math.round((r+m)*255), G=Math.round((g+m)*255), B=Math.round((b+m)*255);
   return `#${R.toString(16).padStart(2,'0')}${G.toString(16).padStart(2,'0')}${B.toString(16).padStart(2,'0')}`;
 }
 
 function updateColorSlider() {
-  const hex = hexFromHUE(snakeColorHue);
-  // Get hue name
-  let hueName = 'Color';
-  if (snakeColorHue < 30) hueName = 'Red';
-  else if (snakeColorHue < 60) hueName = 'Orange';
-  else if (snakeColorHue < 90) hueName = 'Yellow-Green';
-  else if (snakeColorHue < 150) hueName = 'Green';
-  else if (snakeColorHue < 180) hueName = 'Cyan';
-  else if (snakeColorHue < 220) hueName = 'Sky Blue';
-  else if (snakeColorHue < 280) hueName = 'Blue';
-  else if (snakeColorHue < 330) hueName = 'Purple';
-  else hueName = 'Pink';
-  
-  document.getElementById('colorValue').textContent = `Hue ${snakeColorHue} (${hueName}) - ${hex}`;
+  const hue = snakeColorHue;
+  const hex = hexFromHUE(hue);
+  const names = [[0,'Red'],[30,'Orange'],[60,'Yellow'],[90,'Lime'],[120,'Green'],[150,'Mint'],[180,'Cyan'],[210,'Sky Blue'],[240,'Blue'],[270,'Purple'],[300,'Magenta'],[330,'Pink'],[360,'Red']];
+  let name = 'Color';
+  for (let i = 0; i < names.length - 1; i++) { if (hue >= names[i][0] && hue < names[i+1][0]) { name = names[i][1]; break; } }
+  document.getElementById('colorValue').textContent = `${name} — Hue ${hue} (${hex})`;
+  document.getElementById('colorSlider').style.setProperty('--thumb-color', hex);
+  for (let i = 0; i < 5; i++) {
+    const el = document.getElementById(`sp${i}`);
+    if (el) el.style.background = hexFromHUE(hue - i*10);
+  }
 }
 
-document.getElementById('colorSlider').addEventListener('input', (e) => {
+document.getElementById('colorSlider').addEventListener('input', e => {
   snakeColorHue = parseInt(e.target.value);
   updateColorSlider();
 });
 
-// ═══════════════════════════════════════════════════════════════
-// SETTINGS MODAL
-// ═══════════════════════════════════════════════════════════════
-function openSettings() {
-  document.getElementById('settingsModal').style.display = 'flex';
-}
-
-function openSettingsFromGameOver() {
-  document.getElementById('gameOverModal').style.display = 'none';
-  openSettings();
-}
-
-function closeSettings() {
-  document.getElementById('settingsModal').style.display = 'none';
-}
+function openSettings() { document.getElementById('settingsModal').style.display = 'flex'; }
+function openSettingsFromGameOver() { document.getElementById('gameOverModal').style.display = 'none'; openSettings(); }
+function closeSettings() { document.getElementById('settingsModal').style.display = 'none'; }
 
 function toggleSoundSetting() {
   soundEnabled = !soundEnabled;
@@ -527,171 +899,457 @@ function changeDifficultySetting() {
 }
 
 function saveSettings() {
-  const settings = { sound: soundEnabled, dpad: showDpad, difficulty: difficulty, snakeColorHue: snakeColorHue };
-  localStorage.setItem('snakeSettings', JSON.stringify(settings));
+  snakeColorHue = parseInt(document.getElementById('colorSlider').value);
+  const settings = { sound: soundEnabled, dpad: showDpad, difficulty, snakeColorHue };
+  LS.set('snakeSettings', settings);
   diffCfg = DIFF[difficulty];
+  if (currentUser) saveUserData(currentUser.username, { snakeColorHue, settings });
+  appendLog(`Settings saved${currentUser ? ' for '+currentUser.username : ' (local)'}`);
   closeSettings();
-  if (currentUser) {
-    db.collection('users').doc(currentUser.uid).set(settings, { merge: true });
-  }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// INFO & LEADERBOARD
-// ═══════════════════════════════════════════════════════════════
-function openLeaderboard() {
-  fetchLeaderboard();
-  document.getElementById('leaderboardModal').style.display = 'flex';
-}
+function openLeaderboard() { fetchLeaderboard(); document.getElementById('leaderboardModal').style.display = 'flex'; }
+function closeLeaderboard() { document.getElementById('leaderboardModal').style.display = 'none'; }
+function openInfo() { document.getElementById('infoModal').style.display = 'flex'; }
+function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
 
-function closeLeaderboard() {
-  document.getElementById('leaderboardModal').style.display = 'none';
-}
+/* =====================================================================
+   HIDDEN DEV MENU — triggered by 15 taps on title
+===================================================================== */
+let _tc = 0, _tt = 0;
+// Obfuscated dev password check
+const _chk = (v) => (v.split('').reduce((a,c)=>a*10+~~c,0)) === (0x4FC_FBEE ^ 0x4F3_6C96);
 
-function openInfo() {
-  document.getElementById('infoModal').style.display = 'flex';
-}
-
-function closeInfo() {
-  document.getElementById('infoModal').style.display = 'none';
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SIGN IN
-// ═══════════════════════════════════════════════════════════════
-function showSignInModal() {
-  document.getElementById('signInModal').style.display = 'flex';
-}
-
-function skipSignIn() {
-  document.getElementById('signInModal').style.display = 'none';
-}
-
-document.getElementById('signInBtn').addEventListener('click', async () => {
-  const email = document.getElementById('emailInput').value.trim();
-  const password = document.getElementById('passwordInput').value.trim();
-  const username = document.getElementById('usernameInput').value.trim() || 'Player';
-  
-  if (!email || !password) {
-    alert('Please enter email and password');
-    return;
-  }
-
-  try {
-    // Try to create account
-    const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
-    currentUser = cred.user;
-    await currentUser.updateProfile({ displayName: username });
-    currentUser = { uid: currentUser.uid, displayName: username, email: email };
-    alert('Account created successfully!');
-  } catch (err) {
-    // If account exists, sign in
-    if (err.code === 'auth/email-already-in-use') {
-      try {
-        const cred = await firebase.auth().signInWithEmailAndPassword(email, password);
-        currentUser = { uid: cred.user.uid, displayName: cred.user.displayName || username, email: email };
-        alert('Signed in successfully!');
-      } catch (err2) {
-        alert('Sign in failed: ' + err2.message);
-        return;
-      }
-    } else {
-      alert('Error: ' + err.message);
-      return;
-    }
-  }
-  
-  // Update UI
-  document.getElementById('userInfo').classList.add('visible');
-  document.getElementById('userName').textContent = currentUser.displayName;
-  document.getElementById('userEmail').textContent = currentUser.email;
-  document.getElementById('signInBtn2').style.display = 'none';
-  document.getElementById('signInModal').style.display = 'none';
-  
-  // Load user settings
-  if (currentUser.uid) {
-    db.collection('users').doc(currentUser.uid).get().then(doc => {
-      if (doc.exists) {
-        const data = doc.data();
-        if (data.snakeColorHue !== undefined) {
-          snakeColorHue = data.snakeColorHue;
-          document.getElementById('colorSlider').value = snakeColorHue;
-          updateColorSlider();
-        }
-      }
-    });
+document.getElementById('gameTitle').addEventListener('click', () => {
+  const now = Date.now();
+  if (now - _tt > 4000) _tc = 0;
+  _tt = now;
+  _tc++;
+  if (_tc >= 15) {
+    _tc = 0;
+    document.getElementById('_dp').style.display = 'flex';
+    document.getElementById('_dpi').value = '';
+    document.getElementById('_dpe').textContent = '';
+    setTimeout(() => document.getElementById('_dpi').focus(), 100);
   }
 });
 
-function signOut() {
-  firebase.auth().signOut().then(() => {
-    currentUser = null;
-    document.getElementById('userInfo').classList.remove('visible');
-    document.getElementById('signInBtn2').style.display = 'inline-block';
-  }).catch(() => {
-    currentUser = null;
-    document.getElementById('userInfo').classList.remove('visible');
-    document.getElementById('signInBtn2').style.display = 'inline-block';
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════
-// LEADERBOARD
-// ═══════════════════════════════════════════════════════════════
-function addScore(scoreVal) {
-  if (!currentUser) return;
-  db.collection('scores').add({ uid: currentUser.uid, name: currentUser.displayName, score: scoreVal, difficulty, date: new Date().toLocaleDateString() });
-}
-
-async function fetchLeaderboard(limit=15) {
-  try {
-    const snapshot = await db.collection('scores').orderBy('score', 'desc').limit(limit).get();
-    renderLeaderboard(snapshot.docs.map(d => d.data()));
-  } catch (e) { renderLeaderboard([]); }
-}
-
-function renderLeaderboard(scores) {
-  const list = document.getElementById('lbList');
-  const listGameOver = document.getElementById('lbListGameOver');
-  list.innerHTML = '';
-  if (listGameOver) listGameOver.innerHTML = '';
-  if (scores.length === 0) {
-    const msg = '<div style="color:rgba(255,255,255,0.6);padding:15px;">No scores yet!</div>';
-    list.innerHTML = msg;
-    if (listGameOver) listGameOver.innerHTML = msg;
-    return;
+document.getElementById('_dpb').addEventListener('click', () => {
+  const v = document.getElementById('_dpi').value;
+  if (_chk(v)) {
+    document.getElementById('_dp').style.display = 'none';
+    openDevMenu();
+  } else {
+    document.getElementById('_dpe').textContent = 'Incorrect';
+    appendLoginLog(`DEV password fail attempt`);
   }
-  scores.forEach((s, i) => {
-    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
-    const html = `<div class="lb-item"><span>${medal} ${s.name}</span><span>${s.score} (${s.difficulty})</span></div>`;
-    list.innerHTML += html;
-    if (listGameOver) listGameOver.innerHTML += html;
+});
+document.getElementById('_dpi').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('_dpb').click(); });
+
+function openDevMenu() {
+  devRefreshDashboard();
+  devRefreshLog();
+  devRefreshLoginLog();
+  devRefreshLbPreview();
+  devRefreshUserList();
+  devRefreshRawDb();
+  document.getElementById('devMenuModal').style.display = 'flex';
+}
+
+function switchDevTab(name) {
+  document.querySelectorAll('.dev-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.dev-tab').forEach(t => t.classList.remove('active'));
+  const panel = document.getElementById('devPanel-'+name);
+  if (panel) panel.classList.add('active');
+  document.querySelectorAll('.dev-tab').forEach(t => {
+    if (t.getAttribute('onclick') && t.getAttribute('onclick').includes(`'${name}'`)) t.classList.add('active');
+  });
+  if (name === 'logs') { devRefreshLog(); devRefreshLoginLog(); }
+  if (name === 'db') devRefreshRawDb();
+  if (name === 'accounts') devRefreshUserList();
+  if (name === 'lb') devRefreshLbPreview();
+  if (name === 'dash') devRefreshDashboard();
+}
+
+/* ── Dashboard ── */
+function devRefreshDashboard() {
+  const users = getUsers();
+  const scores = getScores();
+  document.getElementById('dv-userCount').textContent = Object.keys(users).length;
+  document.getElementById('dv-scoreCount').textContent = scores.length;
+  document.getElementById('dv-topScore').textContent = scores.length ? scores[0].score : 0;
+  document.getElementById('dv-gamesPlayed').textContent = gamesPlayedSession;
+  const bytes = JSON.stringify(localStorage).length;
+  document.getElementById('dv-storage').textContent = (bytes/1024).toFixed(1)+' KB';
+  document.getElementById('dv-savedAt').textContent = new Date().toLocaleTimeString();
+}
+
+function devClearAllScores() {
+  if (!confirm('Clear ALL scores?')) return;
+  saveScores([]);
+  appendLog('DEV: Cleared all scores');
+  devRefreshLbPreview();
+  devRefreshDashboard();
+}
+
+function devClearAllUsers() {
+  if (!confirm('Delete ALL user accounts?')) return;
+  saveUsers({});
+  appendLog('DEV: Cleared all users');
+  devRefreshUserList();
+  devRefreshDashboard();
+}
+
+function devReloadSettings() {
+  loadSettings();
+  syncSettingsUI();
+  appendLog('DEV: Settings reloaded');
+}
+
+function devExportData() {
+  const data = {
+    users: getUsers(),
+    scores: getScores(),
+    settings: LS.get('snakeSettings'),
+    logs: LS.get('snakeLogs'),
+    loginLogs: LS.get('snakeLoginLogs')
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'snake_data_' + Date.now() + '.json';
+  a.click();
+  appendLog('DEV: Data exported');
+}
+
+function devImportData() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = '.json';
+  input.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        if (data.users) saveUsers(data.users);
+        if (data.scores) saveScores(data.scores);
+        if (data.settings) LS.set('snakeSettings', data.settings);
+        if (data.logs) LS.set('snakeLogs', data.logs);
+        appendLog('DEV: Data imported');
+        devRefreshDashboard();
+      } catch(err) { alert('Invalid JSON file'); }
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+  input.click();
+}
+
+function devNukeStorage() {
+  if (!confirm('⚠️ NUKE ALL STORAGE? This cannot be undone!')) return;
+  if (!confirm('Are you absolutely sure?')) return;
+  localStorage.clear();
+  appendLog('DEV: Storage nuked');
+  alert('Storage cleared. Reload the page.');
+}
+
+/* ── Leaderboard ── */
+function devRefreshLbPreview() {
+  const scores = getScores().slice(0, 20);
+  const el = document.getElementById('dv-lbPreview');
+  el.textContent = scores.length ? scores.map((s,i)=>`${i+1}. ${s.username} — ${s.score} (${s.difficulty}) ${s.date}`).join('
+') : 'Empty';
+}
+
+function devAddScore() {
+  const u = document.getElementById('dv-addScoreUser').value.trim();
+  const v = parseInt(document.getElementById('dv-addScoreVal').value);
+  const d = document.getElementById('dv-addScoreDiff').value;
+  if (!u || isNaN(v)) { alert('Fill in username and score'); return; }
+  addScore(u, v, d);
+  devRefreshLbPreview();
+  devRefreshDashboard();
+  appendLog(`DEV: Added score ${v} for ${u}`);
+}
+
+function devRemoveScore() {
+  const u = document.getElementById('dv-removeScoreUser').value.trim().toLowerCase();
+  let scores = getScores().filter(s => s.username.toLowerCase() !== u);
+  saveScores(scores);
+  devRefreshLbPreview();
+  appendLog(`DEV: Removed scores for ${u}`);
+}
+
+function devClearTopN() {
+  const scores = getScores();
+  scores.shift();
+  saveScores(scores);
+  devRefreshLbPreview();
+  appendLog('DEV: Removed top score');
+}
+
+function devSetScoreMulti() {
+  const multi = parseFloat(document.getElementById('dv-scoreMulti').value);
+  if (isNaN(multi) || multi <= 0) { alert('Enter valid multiplier'); return; }
+  const scores = getScores().map(s => ({ ...s, score: Math.round(s.score * multi) }));
+  scores.sort((a,b) => b.score - a.score);
+  saveScores(scores);
+  devRefreshLbPreview();
+  appendLog(`DEV: Score multiplier ×${multi} applied`);
+}
+
+/* ── Accounts ── */
+function devRefreshUserList() {
+  const users = getUsers();
+  const el = document.getElementById('dv-userList');
+  el.innerHTML = '';
+  const keys = Object.keys(users);
+  if (!keys.length) { el.innerHTML = '<p style="color:rgba(255,255,255,0.5);">No users yet</p>'; return; }
+  keys.forEach(k => {
+    const u = users[k];
+    el.innerHTML += `<div class="dev-user-row">
+      <span>👤 ${u.username}</span>
+      <span style="color:#81c784">HS: ${u.highScore||0}</span>
+      <span style="color:#aaa; font-size:.8em">${new Date(u.created).toLocaleDateString()}</span>
+    </div>`;
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// GAME INITIALIZATION
-// ═══════════════════════════════════════════════════════════════
+function devResetPassword() {
+  const u = document.getElementById('dv-rpUser').value.trim();
+  const np = document.getElementById('dv-rpNew').value;
+  if (!u || !np) { alert('Fill both fields'); return; }
+  const users = getUsers();
+  if (!users[u.toLowerCase()]) { alert('User not found'); return; }
+  users[u.toLowerCase()].passwordHash = hashPass(np);
+  saveUsers(users);
+  appendLog(`DEV: Password reset for ${u}`);
+  alert(`Password reset for ${u}`);
+}
+
+function devChangeUsername() {
+  const old = document.getElementById('dv-cuOld').value.trim().toLowerCase();
+  const nw = document.getElementById('dv-cuNew').value.trim();
+  if (!old || !nw) { alert('Fill both fields'); return; }
+  const users = getUsers();
+  if (!users[old]) { alert('User not found'); return; }
+  if (users[nw.toLowerCase()]) { alert('New username already taken'); return; }
+  users[nw.toLowerCase()] = { ...users[old], username: nw };
+  delete users[old];
+  // Update scores
+  const scores = getScores().map(s => s.username.toLowerCase() === old ? { ...s, username: nw } : s);
+  saveScores(scores);
+  saveUsers(users);
+  appendLog(`DEV: Username changed ${old} → ${nw}`);
+  devRefreshUserList();
+  devRefreshLbPreview();
+  alert(`Username changed to ${nw}`);
+}
+
+function devDeleteUser() {
+  const u = document.getElementById('dv-delUser').value.trim().toLowerCase();
+  if (!u) { alert('Enter username'); return; }
+  if (!confirm(`Delete account "${u}"?`)) return;
+  const users = getUsers();
+  if (!users[u]) { alert('User not found'); return; }
+  delete users[u];
+  saveUsers(users);
+  appendLog(`DEV: Deleted user ${u}`);
+  devRefreshUserList();
+  devRefreshDashboard();
+}
+
+function devForceLogin() {
+  const u = document.getElementById('dv-forceUser').value.trim();
+  if (!u) { alert('Enter username'); return; }
+  if (!getUserData(u)) { alert('User not found'); return; }
+  loginUser(u);
+  document.getElementById('devMenuModal').style.display = 'none';
+  appendLog(`DEV: Force logged in as ${u}`);
+}
+
+function devChangeColor() {
+  const u = document.getElementById('dv-colorUser').value.trim();
+  const h = parseInt(document.getElementById('dv-colorHue').value);
+  if (!u || isNaN(h)) { alert('Fill both fields'); return; }
+  saveUserData(u, { snakeColorHue: h });
+  appendLog(`DEV: Color hue set to ${h} for ${u}`);
+  alert(`Color updated for ${u}`);
+}
+
+/* ── Game ── */
+function devGiveShield() { shieldActive = true; document.getElementById('powerUpIndicator').textContent = '🛡️ SHIELD! (DEV)'; appendLog('DEV: gave shield'); }
+function devGiveDouble() { doublePointsActive = true; activePowerUp='double_points'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '🔥 DOUBLE POINTS! (DEV)'; appendLog('DEV: gave double'); }
+function devGiveSpeed() { activePowerUp='speed_boost'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '⚡ SPEED! (DEV)'; appendLog('DEV: gave speed'); }
+function devGiveFreeze() { activePowerUp='freeze'; powerUpTimer=9999; document.getElementById('powerUpIndicator').textContent = '🔮 FREEZE! (DEV)'; appendLog('DEV: gave freeze'); }
+function devSetScore() {
+  const v = parseInt(prompt('Set score to:'));
+  if (!isNaN(v)) { score = v; document.getElementById('score').textContent = score; appendLog(`DEV: Score set to ${v}`); }
+}
+function devSetLength() {
+  const v = parseInt(prompt('Set snake length to:'));
+  if (!isNaN(v) && v > 0) {
+    while (snake.length < v) snake.push({ ...snake[snake.length-1] });
+    while (snake.length > v) snake.pop();
+    appendLog(`DEV: Snake length set to ${v}`);
+  }
+}
+function devKillSnake() { if (gameRunning) { endGame(); appendLog('DEV: Snake killed'); } }
+
+function devApplyGameConfig() {
+  const bs = parseInt(document.getElementById('dv-baseSpeed').value);
+  const pf = parseFloat(document.getElementById('dv-puFreq').value);
+  const fc = parseInt(document.getElementById('dv-foodCount').value);
+  if (!isNaN(bs)) DIFF.easy.baseFrames = bs;
+  if (!isNaN(pf)) { DIFF.easy.powerFreq = pf; DIFF.medium.powerFreq = pf; DIFF.hard.powerFreq = pf; }
+  if (!isNaN(fc)) DIFF.easy.foodCount = fc;
+  appendLog(`DEV: Game config applied`);
+  alert('Config applied — takes effect on next game');
+}
+
+function devResetGameConfig() {
+  DIFF.easy.baseFrames = 10; DIFF.easy.powerFreq = 0.03; DIFF.easy.foodCount = 3;
+  DIFF.medium.baseFrames = 7; DIFF.medium.powerFreq = 0.04; DIFF.medium.foodCount = 2;
+  DIFF.hard.baseFrames = 5; DIFF.hard.powerFreq = 0.05; DIFF.hard.foodCount = 1;
+  document.getElementById('dv-baseSpeed').value = 10;
+  document.getElementById('dv-puFreq').value = 0.03;
+  document.getElementById('dv-foodCount').value = 3;
+  appendLog('DEV: Game config reset to defaults');
+}
+
+let boardTheme = { bg:'#0f0f1a', grid:'rgba(255,255,255,0.04)' };
+function devSetTheme(t) {
+  const themes = {
+    dark:     { bg:'#0f0f1a', grid:'rgba(255,255,255,0.04)' },
+    midnight: { bg:'#020818', grid:'rgba(0,100,255,0.08)' },
+    forest:   { bg:'#071a07', grid:'rgba(0,255,0,0.06)' },
+    neon:     { bg:'#000010', grid:'rgba(255,0,255,0.07)' }
+  };
+  boardTheme = themes[t] || themes.dark;
+  appendLog(`DEV: Theme set to ${t}`);
+}
+
+let broadcastMsg = null;
+function devBroadcast() {
+  broadcastMsg = document.getElementById('dv-broadcastMsg').value.trim();
+  if (broadcastMsg) { alert(`📢 Broadcast: "${broadcastMsg}"`); appendLog(`DEV: Broadcast: ${broadcastMsg}`); }
+}
+
+/* ── Logs ── */
+function devRefreshLog() {
+  const logs = LS.get('snakeLogs') || [];
+  document.getElementById('dv-actLog').textContent = logs.length ? logs.join('
+') : 'Empty';
+}
+function devClearLog() {
+  LS.set('snakeLogs', []);
+  document.getElementById('dv-actLog').textContent = 'Empty';
+}
+function devRefreshLoginLog() {
+  const logs = LS.get('snakeLoginLogs') || [];
+  document.getElementById('dv-loginLog').textContent = logs.length ? logs.join('
+') : 'Empty';
+}
+function devClearLoginLog() {
+  LS.set('snakeLoginLogs', []);
+  document.getElementById('dv-loginLog').textContent = 'Empty';
+}
+
+/* ── Database ── */
+function devRefreshRawDb() {
+  const keys = ['snakeScores','snakeUsers','snakeSettings','snakeLogs','snakeLoginLogs','snakeHighScore'];
+  let out = '';
+  keys.forEach(k => {
+    const v = localStorage.getItem(k);
+    out += `[${k}]: ${v ? (v.length > 120 ? v.slice(0,120)+'...' : v) : 'null'}
+
+`;
+  });
+  document.getElementById('dv-rawDb').textContent = out || 'Empty';
+}
+function devLoadDbKey() {
+  const k = document.getElementById('dv-dbKey').value;
+  const v = localStorage.getItem(k) || '';
+  document.getElementById('dv-dbVal').value = v;
+}
+function devSaveDbKey() {
+  const k = document.getElementById('dv-dbKey').value;
+  const v = document.getElementById('dv-dbVal').value;
+  try {
+    JSON.parse(v); // validate
+    localStorage.setItem(k, v);
+    appendLog(`DEV: Raw edit saved: ${k}`);
+    alert('Saved!');
+  } catch(e) { alert('Invalid JSON — not saved'); }
+}
+function devDeleteKey() {
+  const k = document.getElementById('dv-delKey').value.trim();
+  if (!k) { alert('Enter a key'); return; }
+  if (!confirm(`Delete localStorage key "${k}"?`)) return;
+  localStorage.removeItem(k);
+  appendLog(`DEV: Deleted key ${k}`);
+  devRefreshRawDb();
+}
+
+/* =====================================================================
+   GAME ENGINE
+===================================================================== */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const GRID = 20;
+const TILES = canvas.width / GRID;
+
+const DIFF = {
+  easy:   { baseFrames:10, minFrames:6,  speedGain:0.3, powerFreq:0.03, foodCount:3, scoreMulti:1.0 },
+  medium: { baseFrames:7,  minFrames:4,  speedGain:0.5, powerFreq:0.04, foodCount:2, scoreMulti:1.5 },
+  hard:   { baseFrames:5,  minFrames:2,  speedGain:0.7, powerFreq:0.05, foodCount:1, scoreMulti:2.0 },
+};
+
+const FRUITS = [
+  {type:'apple',emoji:'🍎',color:'#ff4444',points:10,rarity:0.35},
+  {type:'orange',emoji:'🍊',color:'#ff8800',points:15,rarity:0.25},
+  {type:'berry',emoji:'🍓',color:'#cc0055',points:25,rarity:0.15},
+  {type:'banana',emoji:'🍌',color:'#ffdd00',points:35,rarity:0.10},
+  {type:'watermelon',emoji:'🍉',color:'#22cc44',points:50,rarity:0.06},
+  {type:'grapes',emoji:'🍇',color:'#8844ff',points:60,rarity:0.04},
+  {type:'pineapple',emoji:'🍍',color:'#ffaa00',points:75,rarity:0.025},
+  {type:'mango',emoji:'🥭',color:'#ff6688',points:90,rarity:0.015},
+  {type:'star',emoji:'⭐',color:'#ffee00',points:100,rarity:0.008},
+  {type:'diamond',emoji:'💎',color:'#00ffff',points:150,rarity:0.002},
+];
+
+const POWERUPS = [
+  {type:'speed_boost',emoji:'⚡',color:'#ffdd00',glowColor:'rgba(255,220,0,0.7)',shape:'diamond',duration:120,label:'⚡ SPEED! (2×)'},
+  {type:'slow_mode',emoji:'🧊',color:'#44aaff',glowColor:'rgba(68,170,255,0.7)',shape:'hexagon',duration:180,label:'🧊 SLOW! (0.5×)'},
+  {type:'shield',emoji:'🛡️',color:'#ff44ff',glowColor:'rgba(255,68,255,0.7)',shape:'star5',duration:1,label:'🛡️ SHIELD!'},
+  {type:'double_points',emoji:'🔥',color:'#ff6b6b',glowColor:'rgba(255,107,107,0.7)',shape:'fire',duration:180,label:'🔥 DOUBLE! (2×)'},
+  {type:'magnet',emoji:'🌀',color:'#4ecdc4',glowColor:'rgba(78,205,196,0.7)',shape:'spiral',duration:120,label:'🌀 MAGNET!'},
+  {type:'invisible',emoji:'🌙',color:'#95e1d3',glowColor:'rgba(149,225,211,0.7)',shape:'moon',duration:120,label:'🌙 GHOST!'},
+  {type:'explode',emoji:'💥',color:'#f38181',glowColor:'rgba(243,129,129,0.7)',shape:'bang',duration:1,label:'💥 EXPLODE!'},
+  {type:'freeze',emoji:'🔮',color:'#aa96da',glowColor:'rgba(170,150,218,0.7)',shape:'orb',duration:60,label:'🔮 FREEZE!'},
+];
+
+let snake, food, powerUpsArr;
+let direction, nextDirection;
+let score, level, highScore;
+let gameRunning, isPaused;
+let diffCfg;
+let activePowerUp, powerUpTimer;
+let frameCount, currentFrameDelay;
+let touchStartX, touchStartY;
+let shieldActive, doublePointsActive;
+let animationId = null;
+
 function initGame() {
   diffCfg = DIFF[difficulty];
   snakeColorHue = parseInt(document.getElementById('colorSlider').value) || 120;
-  
-  snake = [{x:10, y:10}, {x:9, y:10}, {x:8, y:10}];
-  food = [];
-  powerUpsArr = [];
-  direction = {x:1, y:0};
-  nextDirection = {x:1, y:0};
-  score = 0;
-  level = 1;
+  snake = [{x:10,y:10},{x:9,y:10},{x:8,y:10}];
+  food = []; powerUpsArr = [];
+  direction = {x:1,y:0}; nextDirection = {x:1,y:0};
+  score = 0; level = 1;
   highScore = parseInt(localStorage.getItem('snakeHighScore') || '0');
-  gameRunning = true;
-  isPaused = false;
-  activePowerUp = null;
-  powerUpTimer = 0;
-  shieldActive = false;
-  doublePointsActive = false;
-  frameCount = 0;
-  currentFrameDelay = diffCfg.baseFrames;
+  gameRunning = true; isPaused = false;
+  activePowerUp = null; powerUpTimer = 0;
+  shieldActive = false; doublePointsActive = false;
+  frameCount = 0; currentFrameDelay = diffCfg.baseFrames;
 
   document.getElementById('score').textContent = '0';
   document.getElementById('level').textContent = '1';
@@ -701,17 +1359,16 @@ function initGame() {
   document.getElementById('pauseBtn').textContent = '⏸ Pause';
 
   for (let i = 0; i < diffCfg.foodCount; i++) spawnFood();
-  
   if (animationId) cancelAnimationFrame(animationId);
   gameLoop();
 }
 
 function randomFree() {
-  let pos, tries = 0;
+  let pos, t = 0;
   do {
     pos = { x: Math.floor(Math.random()*TILES), y: Math.floor(Math.random()*TILES) };
-    tries++;
-  } while (tries < 200 && (snake.some(s => s.x===pos.x && s.y===pos.y) || food.some(f => f.x===pos.x && f.y===pos.y) || powerUpsArr.some(p => p.x===pos.x && p.y===pos.y)));
+    t++;
+  } while (t < 200 && (snake.some(s=>s.x===pos.x&&s.y===pos.y)||food.some(f=>f.x===pos.x&&f.y===pos.y)||powerUpsArr.some(p=>p.x===pos.x&&p.y===pos.y)));
   return pos;
 }
 
@@ -723,8 +1380,7 @@ function spawnFood() {
 }
 
 function spawnPowerUp() {
-  if (powerUpsArr.length >= 2) return;
-  if (Math.random() > diffCfg.powerFreq) return;
+  if (powerUpsArr.length >= 2 || Math.random() > diffCfg.powerFreq) return;
   const cfg = POWERUPS[Math.floor(Math.random() * POWERUPS.length)];
   powerUpsArr.push({...cfg, ...randomFree()});
 }
@@ -733,16 +1389,13 @@ function recalcSpeed() {
   currentFrameDelay = Math.max(diffCfg.minFrames, diffCfg.baseFrames - (level-1)*diffCfg.speedGain);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// GAME UPDATE
-// ═══════════════════════════════════════════════════════════════
 function update() {
   if (!gameRunning || isPaused) return;
   frameCount++;
-  let threshold = currentFrameDelay;
-  if (activePowerUp === 'slow_mode') threshold = currentFrameDelay * 2;
-  else if (activePowerUp === 'speed_boost') threshold = Math.max(1, Math.floor(currentFrameDelay * 0.5));
-  if (frameCount < threshold) return;
+  let thr = currentFrameDelay;
+  if (activePowerUp === 'slow_mode') thr = currentFrameDelay * 2;
+  else if (activePowerUp === 'speed_boost') thr = Math.max(1, Math.floor(currentFrameDelay * 0.5));
+  if (frameCount < thr) return;
   frameCount = 0;
 
   direction = {...nextDirection};
@@ -758,41 +1411,40 @@ function update() {
     } else { endGame(); return; }
   }
 
-  for (const seg of snake) { if (head.x === seg.x && head.y === seg.y) { endGame(); return; } }
-  snake.unshift(head);
+  if (activePowerUp !== 'invisible') {
+    for (const seg of snake) { if (head.x===seg.x && head.y===seg.y) { endGame(); return; } }
+  }
 
+  snake.unshift(head);
   let ate = false;
   for (let i = 0; i < food.length; i++) {
-    if (head.x === food[i].x && head.y === food[i].y) {
+    if (head.x===food[i].x && head.y===food[i].y) {
       let pts = Math.round(food[i].points * diffCfg.scoreMulti);
       if (doublePointsActive) pts *= 2;
       score += pts;
       playSound('eat');
       food.splice(i, 1);
       while (food.length < diffCfg.foodCount) spawnFood();
-      const newLevel = Math.max(1, Math.floor(score / 50) + 1);
-      if (newLevel !== level) { level = newLevel; recalcSpeed(); document.getElementById('level').textContent = level; }
+      const nl = Math.max(1, Math.floor(score/50)+1);
+      if (nl !== level) { level = nl; recalcSpeed(); document.getElementById('level').textContent = level; }
       document.getElementById('score').textContent = score;
-      ate = true;
-      break;
+      ate = true; break;
     }
   }
   if (!ate) snake.pop();
 
   for (let i = 0; i < powerUpsArr.length; i++) {
-    if (head.x === powerUpsArr[i].x && head.y === powerUpsArr[i].y) {
+    if (head.x===powerUpsArr[i].x && head.y===powerUpsArr[i].y) {
       playSound('powerup');
       activatePowerUp(powerUpsArr[i]);
-      powerUpsArr.splice(i, 1);
-      break;
+      powerUpsArr.splice(i, 1); break;
     }
   }
 
   if (activePowerUp && activePowerUp !== 'shield' && activePowerUp !== 'explode') {
     powerUpTimer--;
     if (powerUpTimer <= 0) {
-      activePowerUp = null;
-      doublePointsActive = false;
+      activePowerUp = null; doublePointsActive = false;
       document.getElementById('powerUpIndicator').textContent = '';
     }
   }
@@ -800,18 +1452,15 @@ function update() {
 }
 
 function activatePowerUp(pu) {
-  activePowerUp = pu.type;
-  powerUpTimer = pu.duration;
+  activePowerUp = pu.type; powerUpTimer = pu.duration;
   document.getElementById('powerUpIndicator').textContent = pu.label;
   if (pu.type === 'shield') shieldActive = true;
   else if (pu.type === 'double_points') doublePointsActive = true;
+  else if (pu.type === 'explode') { powerUpsArr = []; setTimeout(()=>{ if(!activePowerUp) document.getElementById('powerUpIndicator').textContent=''; },800); }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// DRAWING
-// ═══════════════════════════════════════════════════════════════
 function drawGrid() {
-  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.strokeStyle = boardTheme.grid;
   ctx.lineWidth = 0.5;
   for (let i = 0; i <= TILES; i++) {
     ctx.beginPath(); ctx.moveTo(i*GRID,0); ctx.lineTo(i*GRID,canvas.height); ctx.stroke();
@@ -823,29 +1472,16 @@ function drawSnake() {
   for (let i = snake.length-1; i >= 0; i--) {
     const {x,y} = snake[i];
     const isHead = i === 0;
-    const hueShift = i * 8;
-    const segColor = hexFromHUE(snakeColorHue - hueShift);
-    const pad = isHead ? 1 : 2;
-    const radius = isHead ? 5 : 4;
-    const px = x*GRID+pad, py = y*GRID+pad, sz = GRID-pad*2;
-    ctx.fillStyle = isHead && shieldActive ? '#ff88ff' : segColor;
-    ctx.beginPath();
-    ctx.roundRect(px, py, sz, sz, radius);
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+    const segColor = hexFromHUE(snakeColorHue - i*8);
+    const pad = isHead ? 1 : 2; const radius = isHead ? 5 : 4;
+    ctx.fillStyle = activePowerUp==='invisible' ? `rgba(200,200,255,0.3)` : (isHead&&shieldActive ? '#ff88ff' : segColor);
+    ctx.beginPath(); ctx.roundRect(x*GRID+pad, y*GRID+pad, GRID-pad*2, GRID-pad*2, radius); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.25)'; ctx.lineWidth = 1; ctx.stroke();
     if (isHead) {
-      ctx.fillStyle = '#000';
+      ctx.fillStyle = activePowerUp==='invisible' ? 'rgba(255,255,255,0.4)' : '#000';
       const cx = (x+0.5)*GRID, cy = (y+0.5)*GRID;
-      const perpX = direction.y, perpY = -direction.x;
-      const eyeOff = 4, eyeSize = 2.5;
-      ctx.beginPath();
-      ctx.arc(cx + direction.x*3 + perpX*eyeOff, cy + direction.y*3 + perpY*eyeOff, eyeSize, 0, Math.PI*2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(cx + direction.x*3 - perpX*eyeOff, cy + direction.y*3 - perpY*eyeOff, eyeSize, 0, Math.PI*2);
-      ctx.fill();
+      const px = direction.y, py = -direction.x;
+      [1,-1].forEach(s => { ctx.beginPath(); ctx.arc(cx+direction.x*3+px*4*s, cy+direction.y*3+py*4*s, 2.5, 0, Math.PI*2); ctx.fill(); });
     }
   }
 }
@@ -853,12 +1489,10 @@ function drawSnake() {
 function drawFood() {
   for (const f of food) {
     const cx = (f.x+0.5)*GRID, cy = (f.y+0.5)*GRID;
-    const grd = ctx.createRadialGradient(cx,cy,1, cx,cy,GRID*0.55);
+    const grd = ctx.createRadialGradient(cx,cy,1,cx,cy,GRID*0.55);
     grd.addColorStop(0, f.color+'cc'); grd.addColorStop(1,'transparent');
-    ctx.fillStyle = grd;
-    ctx.beginPath(); ctx.arc(cx,cy,GRID*0.55,0,Math.PI*2); ctx.fill();
-    ctx.font = `${GRID-2}px serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(cx,cy,GRID*0.55,0,Math.PI*2); ctx.fill();
+    ctx.font = `${GRID-2}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(f.emoji, cx, cy);
   }
 }
@@ -870,9 +1504,8 @@ function drawPowerUps() {
     const pulse = 0.85 + 0.15*Math.sin(now/300);
     ctx.save(); ctx.translate(cx,cy); ctx.scale(pulse,pulse);
     const grd = ctx.createRadialGradient(0,0,2,0,0,GRID*0.7);
-    grd.addColorStop(0, p.glowColor); grd.addColorStop(1,'transparent');
-    ctx.fillStyle = grd;
-    ctx.beginPath(); ctx.arc(0,0,GRID*0.7,0,Math.PI*2); ctx.fill();
+    grd.addColorStop(0,p.glowColor); grd.addColorStop(1,'transparent');
+    ctx.fillStyle = grd; ctx.beginPath(); ctx.arc(0,0,GRID*0.7,0,Math.PI*2); ctx.fill();
     ctx.fillStyle = p.color; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
     const r = GRID*0.38;
     if (p.shape === 'diamond') {
@@ -880,70 +1513,66 @@ function drawPowerUps() {
       ctx.beginPath(); ctx.rect(-r,-r,r*2,r*2); ctx.fill(); ctx.stroke();
     } else if (p.shape === 'hexagon') {
       ctx.beginPath();
-      for (let i=0;i<6;i++) { const a = (Math.PI/3)*i - Math.PI/6; i===0 ? ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r) : ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r); }
+      for (let i=0;i<6;i++){const a=(Math.PI/3)*i-Math.PI/6; i===0?ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r):ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r);}
       ctx.closePath(); ctx.fill(); ctx.stroke();
     } else {
       ctx.beginPath();
-      for (let i=0;i<10;i++) { const a = (Math.PI/5)*i - Math.PI/2; const rad = i%2===0 ? r : r*0.42; i===0 ? ctx.moveTo(Math.cos(a)*rad,Math.sin(a)*rad) : ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad); }
+      for (let i=0;i<10;i++){const a=(Math.PI/5)*i-Math.PI/2; const rad=i%2===0?r:r*0.42; i===0?ctx.moveTo(Math.cos(a)*rad,Math.sin(a)*rad):ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad);}
       ctx.closePath(); ctx.fill(); ctx.stroke();
     }
-    ctx.font = `${GRID*0.55}px serif`;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(p.emoji, 0, 0);
-    ctx.restore();
+    ctx.font = `${GRID*0.55}px serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(p.emoji, 0, 0); ctx.restore();
   }
 }
 
 function draw() {
-  ctx.fillStyle = '#0f0f1a';
+  ctx.fillStyle = boardTheme.bg;
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  drawGrid();
-  drawFood();
-  drawPowerUps();
-  drawSnake();
+  drawGrid(); drawFood(); drawPowerUps(); drawSnake();
   if (isPaused) {
-    ctx.fillStyle = 'rgba(0,0,0,0.7)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = '#4caf50';
-    ctx.font = 'bold 40px Arial';
+    ctx.fillStyle = 'rgba(0,0,0,0.7)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#4caf50'; ctx.font = 'bold 40px Arial';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('⏸ PAUSED', canvas.width/2, canvas.height/2);
-    ctx.font = '20px Arial';
-    ctx.fillText('Press SPACE to resume', canvas.width/2, canvas.height/2 + 40);
+    ctx.font = '20px Arial'; ctx.fillStyle = 'white';
+    ctx.fillText('Press SPACE to resume', canvas.width/2, canvas.height/2+40);
+  }
+  if (broadcastMsg) {
+    ctx.fillStyle = 'rgba(255,152,0,0.9)'; ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText('📢 '+broadcastMsg, canvas.width/2, canvas.height-8);
   }
 }
 
 function gameLoop() {
-  update();
-  draw();
+  update(); draw();
   if (gameRunning) animationId = requestAnimationFrame(gameLoop);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// GAME OVER
-// ═══════════════════════════════════════════════════════════════
 function endGame() {
   gameRunning = false;
+  gamesPlayedSession++;
   playSound('gameover');
-  if (currentUser) addScore(score);
   if (score > highScore) { highScore = score; localStorage.setItem('snakeHighScore', score); }
+  if (currentUser) {
+    addScore(currentUser.username, score, difficulty);
+    const ud = getUserData(currentUser.username);
+    if (!ud.highScore || score > ud.highScore) saveUserData(currentUser.username, { highScore: score });
+  }
   document.getElementById('finalScore').textContent = score;
   document.getElementById('finalDifficulty').textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-  document.getElementById('gameOverPlayer').textContent = currentUser ? `Player: ${currentUser.displayName}` : 'Guest';
-  fetchLeaderboard(5).then(() => { document.getElementById('gameOverModal').style.display = 'flex'; });
+  document.getElementById('gameOverPlayer').textContent = currentUser ? `👤 ${currentUser.username}` : 'Guest (score not saved)';
+  fetchLeaderboardGameOver().then(() => { document.getElementById('gameOverModal').style.display = 'flex'; });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// CONTROLS
-// ═══════════════════════════════════════════════════════════════
 function setDir(dx, dy) {
-  if (dx !== 0 && direction.x === 0) nextDirection = {x:dx, y:0};
-  if (dy !== 0 && direction.y === 0) nextDirection = {x:0, y:dy};
+  if (dx!==0 && direction.x===0) nextDirection = {x:dx,y:0};
+  if (dy!==0 && direction.y===0) nextDirection = {x:0,y:dy};
 }
 
 function handleKey(e) {
   if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
-  if (e.key === ' ') { togglePause(); return; }
+  if (e.key===' ') { togglePause(); return; }
   if (!gameRunning || isPaused) return;
   const k = e.key.toLowerCase();
   if ((k==='arrowup'||k==='w') && direction.y===0) nextDirection = {x:0,y:-1};
@@ -952,84 +1581,62 @@ function handleKey(e) {
   else if ((k==='arrowright'||k==='d') && direction.x===0) nextDirection = {x:1,y:0};
 }
 
-canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }, {passive:true});
-canvas.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 20) {
-    if (dx>0 && direction.x===0) nextDirection = {x:1,y:0};
-    else if (dx<0 && direction.x===0) nextDirection = {x:-1,y:0};
-  } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 20) {
-    if (dy>0 && direction.y===0) nextDirection = {x:0,y:1};
-    else if (dy<0 && direction.y===0) nextDirection = {x:0,y:-1};
-  }
-}, {passive:true});
+canvas.addEventListener('touchstart', e=>{ touchStartX=e.touches[0].clientX; touchStartY=e.touches[0].clientY; },{passive:true});
+canvas.addEventListener('touchend', e=>{
+  const dx=e.changedTouches[0].clientX-touchStartX, dy=e.changedTouches[0].clientY-touchStartY;
+  if (Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>20) { if(dx>0&&direction.x===0) nextDirection={x:1,y:0}; else if(dx<0&&direction.x===0) nextDirection={x:-1,y:0}; }
+  else if (Math.abs(dy)>Math.abs(dx) && Math.abs(dy)>20) { if(dy>0&&direction.y===0) nextDirection={x:0,y:1}; else if(dy<0&&direction.y===0) nextDirection={x:0,y:-1}; }
+},{passive:true});
 window.addEventListener('keydown', handleKey);
 
-function togglePause() { isPaused = !isPaused; document.getElementById('pauseBtn').textContent = isPaused ? '▶ Resume' : '⏸ Pause'; draw(); }
-function resetGame() { document.getElementById('gameOverModal').style.display = 'none'; initGame(); }
+function togglePause() { isPaused = !isPaused; document.getElementById('pauseBtn').textContent = isPaused?'▶ Resume':'⏸ Pause'; draw(); }
+function resetGame() { document.getElementById('gameOverModal').style.display='none'; initGame(); }
 
 function playSound(type) {
   if (!soundEnabled) return;
   try {
-    const ac = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ac.createOscillator();
-    const gain = ac.createGain();
+    const ac = new (window.AudioContext||window.webkitAudioContext)();
+    const osc = ac.createOscillator(), gain = ac.createGain();
     osc.connect(gain); gain.connect(ac.destination);
     const t = ac.currentTime;
-    if (type === 'eat') { osc.frequency.setValueAtTime(520,t); osc.frequency.exponentialRampToValueAtTime(800,t+0.08); gain.gain.setValueAtTime(0.08,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.1); osc.start(t); osc.stop(t+0.1); }
-    else if (type === 'powerup') { osc.type = 'square'; osc.frequency.setValueAtTime(300,t); osc.frequency.exponentialRampToValueAtTime(900,t+0.15); gain.gain.setValueAtTime(0.07,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.2); osc.start(t); osc.stop(t+0.2); }
-    else if (type === 'gameover') { osc.frequency.setValueAtTime(440,t); osc.frequency.exponentialRampToValueAtTime(120,t+0.4); gain.gain.setValueAtTime(0.1,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.4); osc.start(t); osc.stop(t+0.4); }
+    if (type==='eat') { osc.frequency.setValueAtTime(520,t); osc.frequency.exponentialRampToValueAtTime(800,t+0.08); gain.gain.setValueAtTime(0.08,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.1); osc.start(t); osc.stop(t+0.1); }
+    else if (type==='powerup') { osc.type='square'; osc.frequency.setValueAtTime(300,t); osc.frequency.exponentialRampToValueAtTime(900,t+0.15); gain.gain.setValueAtTime(0.07,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.2); osc.start(t); osc.stop(t+0.2); }
+    else if (type==='gameover') { osc.frequency.setValueAtTime(440,t); osc.frequency.exponentialRampToValueAtTime(120,t+0.4); gain.gain.setValueAtTime(0.1,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.4); osc.start(t); osc.stop(t+0.4); }
   } catch(e) {}
 }
 
-// ═══════════════════════════════════════════════════════════════
-// SCREEN MANAGEMENT - CLEAN AND SIMPLE
-// ═══════════════════════════════════════════════════════════════
 function showStartScreen() {
   if (animationId) cancelAnimationFrame(animationId);
   gameRunning = false;
-  
-  // Hide game elements
   canvas.classList.remove('visible');
   document.getElementById('infoBar').classList.remove('visible');
   document.getElementById('powerUpIndicator').classList.remove('visible');
   document.getElementById('fruitLegend').classList.remove('visible');
   document.getElementById('gameButtons').style.display = 'none';
-  
-  // Show main menu
   document.getElementById('startButtons').style.display = 'flex';
-  
-  // Hide all modals
-  document.getElementById('gameOverModal').style.display = 'none';
-  document.getElementById('settingsModal').style.display = 'none';
-  document.getElementById('leaderboardModal').style.display = 'none';
-  document.getElementById('infoModal').style.display = 'none';
-  document.getElementById('signInModal').style.display = 'none';
+  ['gameOverModal','settingsModal','leaderboardModal','infoModal','signInModal'].forEach(id=>{
+    document.getElementById(id).style.display = 'none';
+  });
 }
 
 function startGame() {
-  // Hide main menu
   document.getElementById('startButtons').style.display = 'none';
-  
-  // Show game elements
   canvas.classList.add('visible');
   document.getElementById('infoBar').classList.add('visible');
   document.getElementById('powerUpIndicator').classList.add('visible');
   document.getElementById('fruitLegend').classList.add('visible');
   document.getElementById('gameButtons').style.display = 'flex';
   if (showDpad) document.getElementById('dpad').classList.add('visible');
-  
   initGame();
 }
 
-// ═══════════════════════════════════════════════════════════════
-// INITIALIZATION
-// ═══════════════════════════════════════════════════════════════
 document.getElementById('playBtn').addEventListener('click', startGame);
+
+/* ── INIT ── */
 loadSettings();
 highScore = parseInt(localStorage.getItem('snakeHighScore') || '0');
 document.getElementById('highScore').textContent = highScore;
+appendLog('Game loaded');
 </script>
 </body>
 </html>

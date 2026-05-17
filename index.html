@@ -64,7 +64,6 @@
       box-shadow:0 6px 20px rgba(255,255,255,0.3);
     }
 
-    /* Modal overlays */
     .modal-overlay {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
       background:rgba(0,0,0,0.8); z-index:999; justify-content:center; align-items:center;
@@ -83,6 +82,11 @@
     .modal h3 { color:white; margin:15px 0 10px 0; font-size:1.2em; }
     .modal p { color:rgba(255,255,255,0.85); margin:8px 0; line-height:1.5; }
     .modal .small { font-size:.85em; color:rgba(255,255,255,0.6); margin-top:10px; }
+    .modal input {
+      width:100%; padding:12px; margin:10px 0; border-radius:8px; border:2px solid #4caf50;
+      background:rgba(255,255,255,0.1); color:white; font-size:1em; outline:none; text-align:center;
+    }
+    .modal input::placeholder { color:rgba(255,255,255,0.5); }
     
     .leaderboard-list {
       background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
@@ -102,14 +106,12 @@
     }
     .close-btn:hover { box-shadow:0 6px 20px rgba(244,67,54,0.6); }
 
-    /* Settings modal specific */
     .settings-row {
       display:flex; justify-content:space-between; align-items:center;
       margin:12px 0; padding:10px; background:rgba(255,255,255,0.05);
       border-radius:8px;
     }
     .settings-row label { color:white; font-weight:bold; }
-    .settings-row input[type="radio"] { transform:scale(1.3); cursor:pointer; }
     .settings-row select {
       padding:8px 12px; border-radius:6px; border:none;
       background:rgba(255,255,255,0.2); color:white; font-size:1em;
@@ -124,21 +126,20 @@
     }
     .toggle-btn.active { background:#4caf50; }
     
-    /* Color slider */
     .color-slider-container { margin:20px 0; }
     .color-slider-container label { color:white; font-weight:bold; display:block; margin-bottom:10px; }
     .snake-preview {
       width:100%; height:60px; background:rgba(0,0,0,0.3);
       border-radius:10px; margin-bottom:10px; display:flex;
-      align-items:center; justify-content:center; overflow:hidden;
+      align-items:center; justify-content:center; overflow:hidden; gap:2px;
     }
+    .snake-slot { width:30px; height:30px; border-radius:5px; }
     #colorSlider {
       width:100%; height:40px; border:none; border-radius:10px;
       cursor:pointer;
     }
     .color-value { color:#4caf50; font-weight:bold; margin-top:5px; font-size:1.1em; }
 
-    /* D-Pad */
     .dpad { display:none; margin-top:15px; }
     .dpad.visible { display:grid; }
     .dpad button.control-btn {
@@ -172,10 +173,6 @@
     .fruit-legend.visible { display:block; }
     .fruit-legend strong { color:#4caf50; }
 
-    .diff-easy   { color:#4caf50; }
-    .diff-medium { color:#ff9800; }
-    .diff-hard   { color:#f44336; }
-
     .user-info {
       display:none; align-items:center; gap:12px; margin:12px 0;
       padding:12px 20px; background:rgba(76,175,80,0.2); 
@@ -189,7 +186,8 @@
     .user-name { font-weight:bold; font-size:1.1em; }
     .user-email { font-size:.85em; color:rgba(255,255,255,0.7); }
 
-    /* Desktop improvements */
+    .hidden { display:none !important; }
+
     @media (min-width: 768px) {
       .container { padding:20px; }
       h1 { font-size:3em; }
@@ -209,40 +207,32 @@
   </style>
 </head>
 <body>
-<!-- FIREBASE SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<!-- SIGN IN MODAL -->
 <div class="modal-overlay" id="signInModal">
   <div class="modal">
     <h2>🔐 Sign In</h2>
-    <p>Enter a username to save your scores globally</p>
-    <input type="text" id="usernameInput" placeholder="Choose a username" maxlength="20" 
-           style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:2px solid #4caf50; 
-                  background:rgba(255,255,255,0.1); color:white; font-size:1em; outline:none;" />
-    <button id="signInBtn" style="margin:10px 0;">✓ Sign In</button>
-    <button class="secondary" onclick="skipSignIn()" style="margin:8px 0;">⏭ Play as Guest</button>
-    <p class="small">Signing in saves your snake color, settings, and scores across devices!</p>
+    <p>Enter a username to save scores globally</p>
+    <input type="text" id="usernameInput" placeholder="Choose a username" maxlength="20" />
+    <button id="signInBtn">✓ Sign In</button>
+    <button class="secondary" onclick="skipSignIn()">⏭ Play as Guest</button>
+    <p class="small">Sign in saves your color, settings, and scores!</p>
   </div>
 </div>
 
-<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
     <h2>⚙️ Settings</h2>
-    
     <div class="settings-row">
       <label>🔊 Sound</label>
       <button class="toggle-btn" id="soundToggleBtn" onclick="toggleSoundSetting()">ON</button>
     </div>
-    
     <div class="settings-row">
       <label>🎮 D-Pad</label>
       <button class="toggle-btn" id="dpadToggleBtn" onclick="toggleDpadSetting()">OFF</button>
     </div>
-    
     <div class="settings-row">
       <label>📊 Difficulty</label>
       <select id="difficultySelect" onchange="changeDifficultySetting()">
@@ -251,90 +241,67 @@
         <option value="hard">Hard</option>
       </select>
     </div>
-    
     <div class="color-slider-container">
       <label>🐍 Snake Color</label>
       <div class="snake-preview" id="snakePreview">
-        <div style="display:flex; align-items:center; gap:2px;" id="previewSnake">
-          <div style="width:30px; height:30px; background:#4caf50; border-radius:5px;"></div>
-          <div style="width:30px; height:30px; background:#45a049; border-radius:5px;"></div>
-          <div style="width:30px; height:30px; background:#3e8e41; border-radius:5px;"></div>
-        </div>
+        <div class="snake-slot" style="background:#4caf50;"></div>
+        <div class="snake-slot" style="background:#45a049;"></div>
+        <div class="snake-slot" style="background:#3e8e41;"></div>
       </div>
-      <input type="range" id="colorSlider" min="0" max="360" value="120" 
-             style="width:100%; height:30px; cursor:pointer;" />
-      <div class="color-value" id="colorValue">Green (#4caf50)</div>
+      <input type="range" id="colorSlider" min="0" max="360" value="120" />
+      <div class="color-value" id="colorValue">Hue 120 (Green)</div>
     </div>
-    
-    <button class="secondary" onclick="saveSettings()">💾 Save Settings</button>
-    <p class="small">⚠️ Settings will save globally if you're signed in</p>
-    
+    <button onclick="saveSettings()">💾 Save Settings</button>
+    <p class="small">⚠️ Saves globally if signed in</p>
     <button class="close-btn" onclick="closeSettings()">Close</button>
   </div>
 </div>
 
-<!-- LEADERBOARD MODAL -->
 <div class="modal-overlay" id="leaderboardModal">
   <div class="modal">
     <h2>🏆 Global Leaderboard</h2>
-    <h3>Top Scores</h3>
     <div class="leaderboard-list" id="lbList"></div>
     <button class="close-btn" onclick="closeLeaderboard()">Close</button>
   </div>
 </div>
 
-<!-- INFO MODAL -->
 <div class="modal-overlay" id="infoModal">
   <div class="modal">
     <h2>📖 Game Info</h2>
-    
     <h3>🍎 Fruits</h3>
     <div class="fruit-legend" style="display:block;">
-      <strong>🍎 Apple</strong> +10 pts (Common)<br>
-      <strong>🍊 Orange</strong> +15 pts (Common)<br>
-      <strong>🍓 Berry</strong> +25 pts (Uncommon)<br>
-      <strong>🍌 Banana</strong> +35 pts (Rare)<br>
-      <strong>🍉 Watermelon</strong> +50 pts (Rare)<br>
-      <strong>🍇 Grapes</strong> +60 pts (Very Rare)<br>
-      <strong>🍍 Pineapple</strong> +75 pts (Very Rare)<br>
-      <strong>🥭 Mango</strong> +90 pts (Ultra Rare)<br>
-      <strong>⭐ Star</strong> +100 pts (Legendary)<br>
-      <strong>💎 Diamond</strong> +150 pts (Mythic)
+      <strong>🍎 Apple</strong> +10 (Common)<br>
+      <strong>🍊 Orange</strong> +15 (Common)<br>
+      <strong>🍓 Berry</strong> +25 (Uncommon)<br>
+      <strong>🍌 Banana</strong> +35 (Rare)<br>
+      <strong>🍉 Watermelon</strong> +50 (Rare)<br>
+      <strong>🍇 Grapes</strong> +60 (Very Rare)<br>
+      <strong>🍍 Pineapple</strong> +75 (Very Rare)<br>
+      <strong>🥭 Mango</strong> +90 (Ultra Rare)<br>
+      <strong>⭐ Star</strong> +100 (Legendary)<br>
+      <strong>💎 Diamond</strong> +150 (Mythic)
     </div>
-    
     <h3 style="margin-top:15px;">⚡ Power-Ups</h3>
     <div class="fruit-legend" style="display:block;">
-      <strong style="color:#ffdd00">⚡ Speed Boost</strong> 2× speed (2s)<br>
-      <strong style="color:#44aaff">🧊 Slow Motion</strong> 0.5× speed (3s)<br>
-      <strong style="color:#ff44ff">🛡️ Shield</strong> Survive 1 wall hit<br>
-      <strong style="color:#ff6b6b">🔥 Double Points</strong> 2× score (3s)<br>
-      <strong style="color:#4ecdc4">🌀 Magnet</strong> Attract food (2s)<br>
-      <strong style="color:#95e1d3">🌙 Invisible</strong> Ghost mode (2s)<br>
-      <strong style="color:#f38181">💥 Explode</strong> Clear all power-ups<br>
-      <strong style="color:#aa96da">🔮 Time Freeze</strong> Stop for 1s (1s)
+      <strong style="color:#ffdd00">⚡ Speed</strong> 2× speed<br>
+      <strong style="color:#44aaff">🧊 Slow</strong> 0.5× speed<br>
+      <strong style="color:#ff44ff">🛡️ Shield</strong> 1 wall save<br>
+      <strong style="color:#ff6b6b">🔥 Double</strong> 2× points<br>
+      <strong style="color:#4ecdc4">🌀 Magnet</strong> Attract food<br>
+      <strong style="color:#95e1d3">🌙 Invisible</strong> Ghost mode<br>
+      <strong style="color:#f38181">💥 Explode</strong> Clear all<br>
+      <strong style="color:#aa96da">🔮 Freeze</strong> Stop 1s
     </div>
-    
-    <h3 style="margin-top:15px;">📊 How to Play</h3>
-    <div style="text-align:left; color:rgba(255,255,255,0.85); font-size:.9em; line-height:1.6;">
-      • Use Arrow Keys, WASD, swipe, or D-Pad to move<br>
-      • Eat fruit to grow and score points<br>
-      • Grab power-ups for special abilities<br>
-      • Don't hit the walls or yourself!<br>
-      • Sign in to save scores globally<br>
-      • Higher difficulties = faster speed & more points
-    </div>
-    
     <button class="close-btn" onclick="closeInfo()">Close</button>
   </div>
 </div>
 
-<!-- GAME OVER MODAL -->
 <div class="modal-overlay" id="gameOverModal">
   <div class="modal">
     <h2 style="color:#ff5555">💀 GAME OVER</h2>
-    <p>Final Score: <strong style="color:#4caf50; font-size:1.3em;"><span id="finalScore">0</span></strong></p>
+    <p>Score: <strong style="color:#4caf50; font-size:1.3em;"><span id="finalScore">0</span></strong></p>
     <p>Difficulty: <span id="finalDifficulty">Easy</span></p>
-    <div id="gameOverPlayer" style="margin:10px 0; color:#4caf50; font-weight:bold; font-size:1.1em;"></div>
+    <div id="gameOverPlayer" style="margin:10px 0; color:#4caf50; font-weight:bold;"></div>
     <div class="leaderboard-list" id="lbListGameOver"></div>
     <div class="button-group">
       <button onclick="resetGame()">▶ Play Again</button>
@@ -347,9 +314,8 @@
 <div class="container">
   <h1>🐍 Snake</h1>
 
-  <!-- USER INFO -->
   <div class="user-info" id="userInfo">
-    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+    <img id="userAvatar" class="user-avatar" src="" alt="">
     <div style="text-align:left; flex:1;">
       <div class="user-name" id="userName"></div>
       <div class="user-email" id="userEmail"></div>
@@ -357,16 +323,14 @@
     <button class="close-btn" onclick="signOut()" style="margin:0; padding:8px 16px; min-width:auto; font-size:.9em;">Sign Out</button>
   </div>
 
-  <!-- START SCREEN -->
   <div class="button-group" id="startButtons">
     <button id="playBtn">▶ PLAY</button>
-    <button class="secondary" id="signInStartBtn" onclick="showSignInModal()">🔐 Sign In</button>
+    <button class="secondary" id="signInBtn2" onclick="showSignInModal()">🔐 Sign In</button>
     <button class="secondary" onclick="openLeaderboard()">🏆 Leaderboard</button>
     <button class="secondary" onclick="openSettings()">⚙️ Settings</button>
     <button class="secondary" onclick="openInfo()">📖 Info</button>
   </div>
 
-  <!-- GAME AREA -->
   <canvas id="gameCanvas" width="400" height="400"></canvas>
 
   <div class="info" id="infoBar">
@@ -381,7 +345,7 @@
     <strong>🍎+10</strong> <strong>🍊+15</strong> <strong>🍓+25</strong> <strong>🍌+35</strong> 
     <strong>🍉+50</strong> <strong>🍇+60</strong> <strong>🍍+75</strong> <strong>🥭+90</strong> 
     <strong>⭐+100</strong> <strong>💎+150</strong> || 
-    <span style="color:#ffdd00">⚡Speed</span> <span style="color:#44aaff">🧊Slow</span> 
+    <span style="color:#ffdd44">⚡Speed</span> <span style="color:#44aaff">🧊Slow</span> 
     <span style="color:#ff44ff">🛡️Shield</span> <span style="color:#ff6b6b">🔥2×</span>
   </div>
 
@@ -408,7 +372,6 @@
 </div>
 
 <script>
-// ─── FIREBASE CONFIG (REPLACE WITH YOUR OWN) ─────────────────────────
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -422,7 +385,6 @@ if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ─── GAME CONSTANTS ──────────────────────────────────────────────────
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const GRID = 20;
@@ -435,30 +397,29 @@ const DIFF = {
 };
 
 const FRUITS = [
-  {type:'apple',      emoji:'🍎', color:'#ff4444', points:10,  rarity:0.35},
-  {type:'orange',     emoji:'🍊', color:'#ff8800', points:15,  rarity:0.25},
-  {type:'berry',      emoji:'🍓', color:'#cc0055', points:25,  rarity:0.15},
-  {type:'banana',     emoji:'🍌', color:'#ffdd00', points:35,  rarity:0.10},
+  {type:'apple', emoji:'🍎', color:'#ff4444', points:10,  rarity:0.35},
+  {type:'orange', emoji:'🍊', color:'#ff8800', points:15,  rarity:0.25},
+  {type:'berry', emoji:'🍓', color:'#cc0055', points:25,  rarity:0.15},
+  {type:'banana', emoji:'🍌', color:'#ffdd00', points:35,  rarity:0.10},
   {type:'watermelon', emoji:'🍉', color:'#22cc44', points:50,  rarity:0.06},
-  {type:'grapes',     emoji:'🍇', color:'#8844ff', points:60,  rarity:0.04},
-  {type:'pineapple',  emoji:'🍍', color:'#ffaa00', points:75,  rarity:0.025},
-  {type:'mango',      emoji:'🥭', color:'#ff6688', points:90,  rarity:0.015},
-  {type:'star',       emoji:'⭐', color:'#ffee00', points:100, rarity:0.008},
-  {type:'diamond',    emoji:'💎', color:'#00ffff', points:150, rarity:0.002},
+  {type:'grapes', emoji:'🍇', color:'#8844ff', points:60,  rarity:0.04},
+  {type:'pineapple', emoji:'🍍', color:'#ffaa00', points:75,  rarity:0.025},
+  {type:'mango', emoji:'🥭', color:'#ff6688', points:90,  rarity:0.015},
+  {type:'star', emoji:'⭐', color:'#ffee00', points:100, rarity:0.008},
+  {type:'diamond', emoji:'💎', color:'#00ffff', points:150, rarity:0.002},
 ];
 
 const POWERUPS = [
-  {type:'speed_boost', emoji:'⚡', color:'#ffdd00', glowColor:'rgba(255,220,0,0.7)', shape:'diamond', duration:120, label:'⚡ SPEED BOOST! (2×)'},
-  {type:'slow_mode',   emoji:'🧊', color:'#44aaff', glowColor:'rgba(68,170,255,0.7)', shape:'hexagon', duration:180, label:'🧊 SLOW MO! (0.5×)'},
-  {type:'shield',      emoji:'🛡️', color:'#ff44ff', glowColor:'rgba(255,68,255,0.7)', shape:'star5', duration:1, label:'🛡️ SHIELD! (1 hit)'},
-  {type:'double_points', emoji:'🔥', color:'#ff6b6b', glowColor:'rgba(255,107,107,0.7)', shape:'fire', duration:180, label:'🔥 DOUBLE POINTS! (2×)'},
-  {type:'magnet',      emoji:'🌀', color:'#4ecdc4', glowColor:'rgba(78,205,196,0.7)', shape:'spiral', duration:120, label:'🌀 MAGNET! (Attract)'},
-  {type:'invisible',   emoji:'🌙', color:'#95e1d3', glowColor:'rgba(149,225,211,0.7)', shape:'moon', duration:120, label:'🌙 INVISIBLE! (Ghost)'},
-  {type:'explode',     emoji:'💥', color:'#f38181', glowColor:'rgba(243,129,129,0.7)', shape:'bang', duration:1, label:'💥 EXPLODE! (Clear)'},
-  {type:'freeze',      emoji:'🔮', color:'#aa96da', glowColor:'rgba(170,150,218,0.7)', shape:'orb', duration:60, label:'🔮 FREEZE! (1s stop)'},
+  {type:'speed_boost', emoji:'⚡', color:'#ffdd00', glowColor:'rgba(255,220,0,0.7)', shape:'diamond', duration:120, label:'⚡ SPEED! (2×)'},
+  {type:'slow_mode', emoji:'🧊', color:'#44aaff', glowColor:'rgba(68,170,255,0.7)', shape:'hexagon', duration:180, label:'🧊 SLOW! (0.5×)'},
+  {type:'shield', emoji:'🛡️', color:'#ff44ff', glowColor:'rgba(255,68,255,0.7)', shape:'star5', duration:1, label:'🛡️ SHIELD!'},
+  {type:'double_points', emoji:'🔥', color:'#ff6b6b', glowColor:'rgba(255,107,107,0.7)', shape:'fire', duration:180, label:'🔥 DOUBLE! (2×)'},
+  {type:'magnet', emoji:'🌀', color:'#4ecdc4', glowColor:'rgba(78,205,196,0.7)', shape:'spiral', duration:120, label:'🌀 MAGNET!'},
+  {type:'invisible', emoji:'🌙', color:'#95e1d3', glowColor:'rgba(149,225,211,0.7)', shape:'moon', duration:120, label:'🌙 GHOST!'},
+  {type:'explode', emoji:'💥', color:'#f38181', glowColor:'rgba(243,129,129,0.7)', shape:'bang', duration:1, label:'💥 EXPLODE!'},
+  {type:'freeze', emoji:'🔮', color:'#aa96da', glowColor:'rgba(170,150,218,0.7)', shape:'orb', duration:60, label:'🔮 FREEZE!'},
 ];
 
-// ─── GAME STATE ──────────────────────────────────────────────────────
 let snake, food, powerUpsArr;
 let direction, nextDirection;
 let score, level, highScore;
@@ -467,34 +428,31 @@ let difficulty, diffCfg;
 let activePowerUp, powerUpTimer;
 let frameCount, currentFrameDelay;
 let touchStartX, touchStartY;
-let shieldActive, doublePointsActive, magnetActive, invisibleActive;
+let shieldActive, doublePointsActive;
 let showDpad = false;
 let currentUser = null;
 let snakeColorHue = 120;
 let animationId = null;
 
-// Load settings
 function loadSettings() {
   const saved = localStorage.getItem('snakeSettings');
   if (saved) {
-    const settings = JSON.parse(saved);
-    soundEnabled = settings.sound !== undefined ? settings.sound : true;
-    showDpad = settings.dpad !== undefined ? settings.dpad : false;
-    difficulty = settings.difficulty || 'easy';
-    snakeColorHue = settings.snakeColorHue || 120;
-    document.querySelector(`input[name="difficulty"][value="${difficulty}"]`)?.setAttribute('checked', 'true');
+    const s = JSON.parse(saved);
+    soundEnabled = s.sound !== undefined ? s.sound : true;
+    showDpad = s.dpad !== undefined ? s.dpad : false;
+    difficulty = s.difficulty || 'easy';
+    snakeColorHue = s.snakeColorHue || 120;
     document.getElementById('difficultySelect').value = difficulty;
     document.getElementById('colorSlider').value = snakeColorHue;
     updateColorSlider();
-    updateDpadUI();
     document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'ON' : 'OFF';
     document.getElementById('soundToggleBtn').className = soundEnabled ? 'toggle-btn active' : 'toggle-btn';
     document.getElementById('dpadToggleBtn').textContent = showDpad ? 'ON' : 'OFF';
     document.getElementById('dpadToggleBtn').className = showDpad ? 'toggle-btn active' : 'toggle-btn';
+    if (showDpad) document.getElementById('dpad').classList.add('visible');
   }
 }
 
-// ─── COLOR SLIDER ────────────────────────────────────────────────────
 function hexFromHUE(hue) {
   const s = 70, l = 50;
   const c = (1 - Math.abs(2 * l / 100 - 1)) * s / 100;
@@ -514,10 +472,9 @@ function hexFromHUE(hue) {
 function updateColorSlider() {
   const hex = hexFromHUE(snakeColorHue);
   document.getElementById('colorValue').textContent = `Hue ${snakeColorHue} (${hex})`;
-  const segments = document.getElementById('previewSnake').children;
-  for (let i = 0; i < segments.length; i++) {
-    const shade = snakeColorHue - i * 10;
-    segments[i].style.background = hexFromHUE(shade);
+  const slots = document.getElementById('snakePreview').children;
+  for (let i = 0; i < slots.length; i++) {
+    slots[i].style.background = hexFromHUE(snakeColorHue - i * 10);
   }
 }
 
@@ -526,7 +483,6 @@ document.getElementById('colorSlider').addEventListener('input', (e) => {
   updateColorSlider();
 });
 
-// ─── SETTINGS ────────────────────────────────────────────────────────
 function openSettings() {
   document.getElementById('settingsModal').style.display = 'flex';
 }
@@ -548,168 +504,77 @@ function toggleSoundSetting() {
 
 function toggleDpadSetting() {
   showDpad = !showDpad;
-  updateDpadUI();
-}
-
-function updateDpadUI() {
   document.getElementById('dpadToggleBtn').textContent = showDpad ? 'ON' : 'OFF';
   document.getElementById('dpadToggleBtn').className = showDpad ? 'toggle-btn active' : 'toggle-btn';
-  const dpad = document.getElementById('dpad');
-  if (showDpad) dpad.classList.add('visible');
-  else dpad.classList.remove('visible');
+  if (showDpad) document.getElementById('dpad').classList.add('visible');
+  else document.getElementById('dpad').classList.remove('visible');
 }
 
 function changeDifficultySetting() {
   difficulty = document.getElementById('difficultySelect').value;
-  document.querySelector(`input[name="difficulty"][value="${difficulty}"]`)?.checked = true;
 }
 
 function saveSettings() {
-  const settings = {
-    sound: soundEnabled,
-    dpad: showDpad,
-    difficulty: difficulty,
-    snakeColorHue: snakeColorHue
-  };
+  const settings = { sound: soundEnabled, dpad: showDpad, difficulty: difficulty, snakeColorHue: snakeColorHue };
   localStorage.setItem('snakeSettings', JSON.stringify(settings));
-  
-  if (currentUser) {
-    db.collection('users').doc(currentUser.uid).set({
-      sound: soundEnabled,
-      dpad: showDpad,
-      difficulty: difficulty,
-      snakeColorHue: snakeColorHue,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true }).then(() => {
-      alert('Settings saved globally! 🌍');
-    }).catch(err => {
-      console.error('Failed to save settings:', err);
-    });
-  } else {
-    alert('Settings saved locally! Sign in to save globally.');
-  }
-  
   diffCfg = DIFF[difficulty];
   closeSettings();
-}
-
-// ─── INFO & LEADERBOARD ──────────────────────────────────────────────
-function openInfo() {
-  document.getElementById('infoModal').style.display = 'flex';
-}
-function closeInfo() {
-  document.getElementById('infoModal').style.display = 'none';
+  if (currentUser) {
+    db.collection('users').doc(currentUser.uid).set(settings, { merge: true });
+  }
 }
 
 function openLeaderboard() {
   fetchLeaderboard();
   document.getElementById('leaderboardModal').style.display = 'flex';
 }
+
 function closeLeaderboard() {
   document.getElementById('leaderboardModal').style.display = 'none';
 }
 
-// ─── AUTH ────────────────────────────────────────────────────────────
-function updateAuthUI(user) {
-  const userInfo = document.getElementById('userInfo');
-  const signInStartBtn = document.getElementById('signInStartBtn');
-
-  if (user) {
-    currentUser = user;
-    userInfo.classList.add('visible');
-    signInStartBtn.style.display = 'none';
-    document.getElementById('userAvatar').src = user.photoURL || '';
-    document.getElementById('userName').textContent = user.displayName || user.email.split('@')[0];
-    document.getElementById('userEmail').textContent = user.email;
-    loadUserSettings();
-  } else {
-    currentUser = null;
-    userInfo.classList.remove('visible');
-    signInStartBtn.style.display = 'inline-block';
-  }
+function openInfo() {
+  document.getElementById('infoModal').style.display = 'flex';
 }
 
-auth.onAuthStateChanged(updateAuthUI);
-
-document.getElementById('signInBtn').addEventListener('click', () => {
-  const username = document.getElementById('usernameInput').value.trim() || 'Player';
-  const email = username.toLowerCase().replace(/s+/g, '.') + '@localsnake.game';
-  
-  const credential = firebase.auth.EmailAuthProvider.credential(email, 'snake' + Date.now());
-  
-  firebase.auth().createUserWithEmailAndPassword(email, 'placeholder').then(() => {
-    currentUser = auth.currentUser;
-    currentUser.updateProfile({ displayName: username });
-    updateAuthUI(currentUser);
-    document.getElementById('signInModal').style.display = 'none';
-  }).catch(err => {
-    // Try sign in (for demo, we'll just create a local user)
-    currentUser = { uid: 'local_' + Date.now(), displayName: username, email: email };
-    updateAuthUI(currentUser);
-    document.getElementById('signInModal').style.display = 'none';
-  });
-});
-
-function loadUserSettings() {
-  if (!currentUser) return;
-  db.collection('users').doc(currentUser.uid).get().then(doc => {
-    if (doc.exists) {
-      const data = doc.data();
-      if (data.snakeColorHue !== undefined) {
-        snakeColorHue = data.snakeColorHue;
-        document.getElementById('colorSlider').value = snakeColorHue;
-        updateColorSlider();
-      }
-      if (data.sound !== undefined) {
-        soundEnabled = data.sound;
-        document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'ON' : 'OFF';
-      }
-      if (data.dpad !== undefined) {
-        showDpad = data.dpad;
-        updateDpadUI();
-      }
-    }
-  });
+function closeInfo() {
+  document.getElementById('infoModal').style.display = 'none';
 }
 
-function signOut() {
-  auth.signOut().then(() => {
-    currentUser = null;
-    showStartScreen();
-  }).catch(() => {
-    // Local user, just clear
-    currentUser = null;
-    showStartScreen();
-  });
+function showSignInModal() {
+  document.getElementById('signInModal').style.display = 'flex';
 }
 
 function skipSignIn() {
   document.getElementById('signInModal').style.display = 'none';
 }
 
-// ─── LEADERBOARD ─────────────────────────────────────────────────────
+document.getElementById('signInBtn').addEventListener('click', () => {
+  const username = document.getElementById('usernameInput').value.trim() || 'Player';
+  currentUser = { uid: 'user_' + Date.now(), displayName: username, email: username + '@local.game' };
+  document.getElementById('userInfo').classList.add('visible');
+  document.getElementById('userName').textContent = username;
+  document.getElementById('userEmail').textContent = currentUser.email;
+  document.getElementById('signInBtn2').style.display = 'none';
+  document.getElementById('signInModal').style.display = 'none';
+});
+
+function signOut() {
+  currentUser = null;
+  document.getElementById('userInfo').classList.remove('visible');
+  document.getElementById('signInBtn2').style.display = 'inline-block';
+}
+
 function addScore(scoreVal) {
   if (!currentUser) return;
-  const entry = {
-    uid: currentUser.uid,
-    name: currentUser.displayName || currentUser.email.split('@')[0],
-    score: scoreVal,
-    difficulty,
-    date: new Date().toLocaleDateString(),
-    ts: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  db.collection('scores').add(entry).catch(err => console.error('Failed to save:', err));
+  db.collection('scores').add({ uid: currentUser.uid, name: currentUser.displayName, score: scoreVal, difficulty, date: new Date().toLocaleDateString() });
 }
 
 async function fetchLeaderboard(limit=15) {
   try {
     const snapshot = await db.collection('scores').orderBy('score', 'desc').limit(limit).get();
-    const scores = snapshot.docs.map(d => d.data());
-    renderLeaderboard(scores);
-  } catch (err) {
-    console.error('Leaderboard error:', err);
-    renderLeaderboard([]);
-  }
+    renderLeaderboard(snapshot.docs.map(d => d.data()));
+  } catch (e) { renderLeaderboard([]); }
 }
 
 function renderLeaderboard(scores) {
@@ -717,14 +582,12 @@ function renderLeaderboard(scores) {
   const listGameOver = document.getElementById('lbListGameOver');
   list.innerHTML = '';
   if (listGameOver) listGameOver.innerHTML = '';
-
   if (scores.length === 0) {
-    const msg = '<div style="color:rgba(255,255,255,0.6);padding:15px;">No scores yet. Be the first!</div>';
+    const msg = '<div style="color:rgba(255,255,255,0.6);padding:15px;">No scores yet!</div>';
     list.innerHTML = msg;
     if (listGameOver) listGameOver.innerHTML = msg;
     return;
   }
-
   scores.forEach((s, i) => {
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
     const html = `<div class="lb-item"><span>${medal} ${s.name}</span><span>${s.score} (${s.difficulty})</span></div>`;
@@ -733,11 +596,9 @@ function renderLeaderboard(scores) {
   });
 }
 
-// ─── GAME FUNCTIONS ──────────────────────────────────────────────────
 function initGame() {
   diffCfg = DIFF[difficulty];
   snakeColorHue = parseInt(document.getElementById('colorSlider').value) || 120;
-  
   snake = [{x:10, y:10}, {x:9, y:10}, {x:8, y:10}];
   food = [];
   powerUpsArr = [];
@@ -752,8 +613,6 @@ function initGame() {
   powerUpTimer = 0;
   shieldActive = false;
   doublePointsActive = false;
-  magnetActive = false;
-  invisibleActive = false;
   frameCount = 0;
   currentFrameDelay = diffCfg.baseFrames;
 
@@ -765,7 +624,6 @@ function initGame() {
   document.getElementById('pauseBtn').textContent = '⏸ Pause';
 
   for (let i = 0; i < diffCfg.foodCount; i++) spawnFood();
-  
   if (animationId) cancelAnimationFrame(animationId);
   gameLoop();
 }
@@ -799,15 +657,10 @@ function recalcSpeed() {
 
 function update() {
   if (!gameRunning || isPaused) return;
-
   frameCount++;
   let threshold = currentFrameDelay;
   if (activePowerUp === 'slow_mode') threshold = currentFrameDelay * 2;
   else if (activePowerUp === 'speed_boost') threshold = Math.max(1, Math.floor(currentFrameDelay * 0.5));
-  else if (activePowerUp === 'freeze') {
-    if (frameCount % 2 === 0) return;
-  }
-
   if (frameCount < threshold) return;
   frameCount = 0;
 
@@ -821,14 +674,10 @@ function update() {
       shieldActive = false;
       document.getElementById('powerUpIndicator').textContent = '🛡️ Shield used!';
       setTimeout(() => { if (!activePowerUp) document.getElementById('powerUpIndicator').textContent = ''; }, 1200);
-    } else {
-      endGame();
-      return;
-    }
+    } else { endGame(); return; }
   }
 
   for (const seg of snake) { if (head.x === seg.x && head.y === seg.y) { endGame(); return; } }
-
   snake.unshift(head);
 
   let ate = false;
@@ -840,7 +689,6 @@ function update() {
       playSound('eat');
       food.splice(i, 1);
       while (food.length < diffCfg.foodCount) spawnFood();
-
       const newLevel = Math.max(1, Math.floor(score / 50) + 1);
       if (newLevel !== level) { level = newLevel; recalcSpeed(); document.getElementById('level').textContent = level; }
       document.getElementById('score').textContent = score;
@@ -867,7 +715,6 @@ function update() {
       document.getElementById('powerUpIndicator').textContent = '';
     }
   }
-
   spawnPowerUp();
 }
 
@@ -875,13 +722,20 @@ function activatePowerUp(pu) {
   activePowerUp = pu.type;
   powerUpTimer = pu.duration;
   document.getElementById('powerUpIndicator').textContent = pu.label;
-
   if (pu.type === 'shield') shieldActive = true;
   else if (pu.type === 'double_points') doublePointsActive = true;
 }
 
+function drawGrid() {
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= TILES; i++) {
+    ctx.beginPath(); ctx.moveTo(i*GRID,0); ctx.lineTo(i*GRID,canvas.height); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,i*GRID); ctx.lineTo(canvas.width,i*GRID); ctx.stroke();
+  }
+}
+
 function drawSnake() {
-  const baseColor = hexFromHUE(snakeColorHue);
   for (let i = snake.length-1; i >= 0; i--) {
     const {x,y} = snake[i];
     const isHead = i === 0;
@@ -890,17 +744,15 @@ function drawSnake() {
     const pad = isHead ? 1 : 2;
     const radius = isHead ? 5 : 4;
     const px = x*GRID+pad, py = y*GRID+pad, sz = GRID-pad*2;
-
-    ctx.fillStyle = invisibleActive ? 'rgba(200,200,255,0.4)' : (isHead && shieldActive ? '#ff88ff' : segColor);
+    ctx.fillStyle = isHead && shieldActive ? '#ff88ff' : segColor;
     ctx.beginPath();
     ctx.roundRect(px, py, sz, sz, radius);
     ctx.fill();
     ctx.strokeStyle = 'rgba(0,0,0,0.3)';
     ctx.lineWidth = 1;
     ctx.stroke();
-
     if (isHead) {
-      ctx.fillStyle = invisibleActive ? 'rgba(255,255,255,0.5)' : '#000';
+      ctx.fillStyle = '#000';
       const cx = (x+0.5)*GRID, cy = (y+0.5)*GRID;
       const perpX = direction.y, perpY = -direction.x;
       const eyeOff = 4, eyeSize = 2.5;
@@ -930,8 +782,31 @@ function drawFood() {
 function drawPowerUps() {
   const now = performance.now();
   for (const p of powerUpsArr) {
-    const    
+    const cx = (p.x+0.5)*GRID, cy = (p.y+0.5)*GRID;
+    const pulse = 0.85 + 0.15*Math.sin(now/300);
+    ctx.save(); ctx.translate(cx,cy); ctx.scale(pulse,pulse);
+    const grd = ctx.createRadialGradient(0,0,2,0,0,GRID*0.7);
+    grd.addColorStop(0, p.glowColor); grd.addColorStop(1,'transparent');
+    ctx.fillStyle = grd;
+    ctx.beginPath(); ctx.arc(0,0,GRID*0.7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = p.color; ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
+    const r = GRID*0.38;
+    if (p.shape === 'diamond') {
+      ctx.rotate(Math.PI/4 + now/2000);
+      ctx.beginPath(); ctx.rect(-r,-r,r*2,r*2); ctx.fill(); ctx.stroke();
+    } else if (p.shape === 'hexagon') {
+      ctx.beginPath();
+      for (let i=0;i<6;i++) { const a = (Math.PI/3)*i - Math.PI/6; i===0 ? ctx.moveTo(Math.cos(a)*r,Math.sin(a)*r) : ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r); }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+    } else {
+      ctx.beginPath();
+      for (let i=0;i<10;i++) { const a = (Math.PI/5)*i - Math.PI/2; const rad = i%2===0 ? r : r*0.42; i===0 ? ctx.moveTo(Math.cos(a)*rad,Math.sin(a)*rad) : ctx.lineTo(Math.cos(a)*rad,Math.sin(a)*rad); }
+      ctx.closePath(); ctx.fill(); ctx.stroke();
     }
+    ctx.font = `${GRID*0.55}px serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(p.emoji, 0, 0);
+    ctx.restore();
   }
 }
 
@@ -964,18 +839,11 @@ function endGame() {
   gameRunning = false;
   playSound('gameover');
   if (currentUser) addScore(score);
-  if (score > highScore) {
-    highScore = score;
-    localStorage.setItem('snakeHighScore', highScore);
-  }
+  if (score > highScore) { highScore = score; localStorage.setItem('snakeHighScore', score); }
   document.getElementById('finalScore').textContent = score;
   document.getElementById('finalDifficulty').textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-  document.getElementById('gameOverPlayer').innerHTML = currentUser 
-    ? `Player: <span style="color:#4caf50">${currentUser.displayName || currentUser.email.split('@')[0]}</span>`
-    : '<span style="color:#aaa">Guest (score not saved)</span>';
-  fetchLeaderboard(5).then(() => {
-    document.getElementById('gameOverModal').style.display = 'flex';
-  });
+  document.getElementById('gameOverPlayer').textContent = currentUser ? `Player: ${currentUser.displayName}` : 'Guest';
+  fetchLeaderboard(5).then(() => { document.getElementById('gameOverModal').style.display = 'flex'; });
 }
 
 function setDir(dx, dy) {
@@ -994,45 +862,34 @@ function handleKey(e) {
   else if ((k==='arrowright'||k==='d') && direction.x===0) nextDirection = {x:1,y:0};
 }
 
-canvas.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, {passive:true});
-
+canvas.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }, {passive:true});
 canvas.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
   const dy = e.changedTouches[0].clientY - touchStartY;
-  const min = 20;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > min) {
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 20) {
     if (dx>0 && direction.x===0) nextDirection = {x:1,y:0};
     else if (dx<0 && direction.x===0) nextDirection = {x:-1,y:0};
-  } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > min) {
+  } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 20) {
     if (dy>0 && direction.y===0) nextDirection = {x:0,y:1};
     else if (dy<0 && direction.y===0) nextDirection = {x:0,y:-1};
   }
 }, {passive:true});
-
 window.addEventListener('keydown', handleKey);
 
-function togglePause() {
-  isPaused = !isPaused;
-  document.getElementById('pauseBtn').textContent = isPaused ? '▶ Resume' : '⏸ Pause';
-  draw();
-}
-
-function resetGame() {
-  document.getElementById('gameOverModal').style.display = 'none';
-  initGame();
-}
-
-function toggleSound() {
-  soundEnabled = !soundEnabled;
-  document.getElementById('soundBtn').textContent = soundEnabled ? '🔊 Sound' : '🔇 Sound';
-}
-
-function toggleFullscreen() {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-  else document.exitFullscreen().catch(()=>{});
+function togglePause() { isPaused = !isPaused; document.getElementById('pauseBtn').textContent = isPaused ? '▶ Resume' : '⏸ Pause'; draw(); }
+function resetGame() { document.getElementById('gameOverModal').style.display = 'none'; initGame(); }
+function playSound(type) {
+  if (!soundEnabled) return;
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ac.createOscillator();
+    const gain = ac.createGain();
+    osc.connect(gain); gain.connect(ac.destination);
+    const t = ac.currentTime;
+    if (type === 'eat') { osc.frequency.setValueAtTime(520,t); osc.frequency.exponentialRampToValueAtTime(800,t+0.08); gain.gain.setValueAtTime(0.08,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.1); osc.start(t); osc.stop(t+0.1); }
+    else if (type === 'powerup') { osc.type = 'square'; osc.frequency.setValueAtTime(300,t); osc.frequency.exponentialRampToValueAtTime(900,t+0.15); gain.gain.setValueAtTime(0.07,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.2); osc.start(t); osc.stop(t+0.2); }
+    else if (type === 'gameover') { osc.frequency.setValueAtTime(440,t); osc.frequency.exponentialRampToValueAtTime(120,t+0.4); gain.gain.setValueAtTime(0.1,t); gain.gain.exponentialRampToValueAtTime(0.001,t+0.4); osc.start(t); osc.stop(t+0.4); }
+  } catch(e) {}
 }
 
 function showStartScreen() {
@@ -1045,6 +902,7 @@ function showStartScreen() {
   document.getElementById('gameButtons').style.display = 'none';
   document.getElementById('startButtons').style.display = 'flex';
   document.getElementById('gameOverModal').style.display = 'none';
+  document.getElementById('settingsModal').style.display = 'none';
 }
 
 function startGame() {

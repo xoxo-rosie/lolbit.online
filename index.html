@@ -19,12 +19,12 @@
     h1 { color:white; margin:0 0 5px 0; font-size:2em; text-shadow:2px 2px 4px rgba(0,0,0,.3); }
     .subtitle { color:rgba(255,255,255,.7); margin:0 0 8px 0; font-size:.8em; }
     #gameCanvas {
-      background:#1a1a2e; border:3px solid #4caf50; display:none; margin:0;
+      background:#1a1a2e; border:3px solid #4caf50; display:block; margin:0;
       box-shadow:0 0 30px rgba(76,175,80,.4); max-width:90vmin; height:auto;
       aspect-ratio:1/1; touch-action:none; border-radius:6px;
     }
     .info {
-      display:none; justify-content:space-around; gap:10px; margin:10px 0;
+      display:flex; justify-content:space-around; gap:10px; margin:10px 0;
       flex-wrap:wrap; width:100%; max-width:500px;
     }
     .info-box {
@@ -32,16 +32,7 @@
       padding:8px 15px; border-radius:8px; font-size:.9em; font-weight:bold; color:white;
       flex:1; min-width:80px;
     }
-    .controls { display:none; color:rgba(255,255,255,.6); font-size:.75em; margin:5px 0; max-width:600px; }
-    .difficulty-selector {
-      display:none; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2);
-      padding:8px 16px; border-radius:8px; margin:5px 0; display:none; inline-flex; gap:12px;
-      align-items:center;
-    }
-    .difficulty-selector label {
-      font-weight:bold; color:rgba(255,255,255,.85); cursor:pointer; font-size:.85em;
-      display:flex; align-items:center; gap:4px;
-    }
+    .controls { color:rgba(255,255,255,.6); font-size:.75em; margin:5px 0; max-width:600px; }
     .button-group {
       margin:8px 0; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; width:100%;
     }
@@ -104,11 +95,9 @@
     }
     .dpad-center { grid-column:2; grid-row:2; visibility:hidden; }
 
-    .power-up-indicator {
-      display:none; color:#ffff00; font-weight:bold; margin:4px 0; min-height:18px; font-size:.9em;
-    }
+    .power-up-indicator { color:#ffff00; font-weight:bold; margin:4px 0; min-height:18px; font-size:.9em; }
     .fruit-legend {
-      display:none; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15);
       padding:8px 12px; border-radius:8px; margin:5px 0; font-size:.72em;
       color:rgba(255,255,255,.75); max-width:600px; line-height:1.4;
     }
@@ -118,7 +107,7 @@
     .diff-hard   { color:#f44336; }
 
     .user-info {
-      display:flex; align-items:center; gap:10px; margin:10px 0;
+      display:none; align-items:center; gap:10px; margin:10px 0;
       padding:10px 16px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
       border-radius:10px; color:white;
     }
@@ -128,9 +117,8 @@
     .user-name { font-weight:bold; }
     .user-email { font-size:.8em; color:rgba(255,255,255,.65); }
 
-    /* Start screen */
-    .start-screen { display:flex; flex-direction:column; align-items:center; gap:12px; }
-    .start-screen.hidden { display:none; }
+    .game-area { display:none; }
+    .game-area.active { display:flex; flex-direction:column; align-items:center; }
 
     @media (max-width:480px) {
       h1 { font-size:1.5em; }
@@ -190,66 +178,69 @@
   <p class="subtitle">Eat fruit, grab power-ups, don't hit the walls!</p>
 
   <!-- START SCREEN -->
-  <div class="start-screen" id="startScreen">
-    <div class="user-info" id="userInfo" style="display:none;">
-      <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
-      <div style="text-align:left;">
-        <div class="user-name" id="userName"></div>
-        <div class="user-email" id="userEmail"></div>
-      </div>
-      <button class="close-btn" onclick="signOut()" style="margin-left:auto; padding:6px 12px; min-width:auto;">Sign Out</button>
+  <div class="user-info" id="userInfo">
+    <img id="userAvatar" class="user-avatar" src="" alt="Avatar">
+    <div style="text-align:left;">
+      <div class="user-name" id="userName"></div>
+      <div class="user-email" id="userEmail"></div>
     </div>
+    <button class="close-btn" onclick="signOut()" style="margin-left:auto; padding:6px 12px; min-width:auto;">Sign Out</button>
+  </div>
 
+  <div class="button-group" id="startButtons">
     <button id="playBtn">▶ Play</button>
     <button class="secondary" id="signInStartBtn" onclick="showSignInModal()">🔐 Sign In</button>
     <button class="secondary" id="leaderboardMainBtn" onclick="openLeaderboard()">🏆 Leaderboard</button>
     <button class="secondary" id="toggleDpadBtn" onclick="toggleDpad()">🎮 D-Pad: OFF</button>
+  </div>
 
-    <div class="difficulty-selector" id="diffSelector" style="display:inline-flex;">
-      <label><input type="radio" name="difficulty" value="easy" checked> <span class="diff-easy">Easy</span></label>
-      <label><input type="radio" name="difficulty" value="medium"> <span class="diff-medium">Medium</span></label>
-      <label><input type="radio" name="difficulty" value="hard"> <span class="diff-hard">Hard</span></label>
+  <div class="difficulty-selector button-group" id="diffSelector">
+    <label><input type="radio" name="difficulty" value="easy" checked> <span class="diff-easy">Easy</span></label>
+    <label><input type="radio" name="difficulty" value="medium"> <span class="diff-medium">Medium</span></label>
+    <label><input type="radio" name="difficulty" value="hard"> <span class="diff-hard">Hard</span></label>
+  </div>
+
+  <!-- GAME AREA -->
+  <div class="game-area" id="gameArea">
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <div class="info">
+      <div class="info-box">Score: <span id="score">0</span></div>
+      <div class="info-box">Level: <span id="level">1</span></div>
+      <div class="info-box">Best: <span id="highScore">0</span></div>
     </div>
-  </div>
 
-  <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div class="power-up-indicator" id="powerUpIndicator"></div>
 
-  <div class="info" id="infoBar">
-    <div class="info-box">Score: <span id="score">0</span></div>
-    <div class="info-box">Level: <span id="level">1</span></div>
-    <div class="info-box">Best: <span id="highScore">0</span></div>
-  </div>
+    <div class="fruit-legend">
+      🍎 +10 | 🍊 +15 | 🍓 +25 | 🍌 +35 | 🍉 +50 | ⭐ +100
+      &nbsp;&nbsp;||&nbsp;&nbsp;
+      <span style="color:#ffdd44">⚡ Speed</span> | <span style="color:#44aaff">🧊 Slow</span> | <span style="color:#ff44ff">🛡️ Shield</span>
+    </div>
 
-  <div class="power-up-indicator" id="powerUpIndicator"></div>
+    <div class="controls">
+      📱 Arrow keys / WASD / swipe to move &nbsp;|&nbsp; Click canvas first on desktop
+    </div>
 
-  <div class="fruit-legend" id="fruitLegend">
-    🍎 +10 | 🍊 +15 | 🍓 +25 | 🍌 +35 | 🍉 +50 | ⭐ +100
-    &nbsp;&nbsp;||&nbsp;&nbsp;
-    <span style="color:#ffdd44">⚡ Speed</span> | <span style="color:#44aaff">🧊 Slow</span> | <span style="color:#ff44ff">🛡️ Shield</span>
-  </div>
+    <div class="button-group">
+      <button id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
+      <button onclick="resetGame()">🔄 Reset</button>
+      <button id="soundBtn" onclick="toggleSound()">🔊 Sound</button>
+      <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
+    </div>
 
-  <div class="controls" id="controlsText">
-    📱 Arrow keys / WASD / swipe to move &nbsp;|&nbsp; Click canvas first on desktop
-  </div>
-
-  <div class="button-group" id="gameButtons" style="display:none;">
-    <button id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
-    <button onclick="resetGame()">🔄 Reset</button>
-    <button id="soundBtn" onclick="toggleSound()">🔊 Sound</button>
-    <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
-  </div>
-
-  <div class="dpad" id="dpad">
-    <div class="dpad-grid">
-      <div></div>
-      <button class="control-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">⬆️</button>
-      <div></div>
-      <button class="control-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">⬅️</button>
-      <div class="dpad-center"></div>
-      <button class="control-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">➡️</button>
-      <div></div>
-      <button class="control-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">⬇️</button>
-      <div></div>
+    <div class="dpad" id="dpad">
+      <div class="dpad-grid">
+        <div></div>
+        <button class="control-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">⬆️</button>
+        <div></div>
+        <button class="control-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">⬅️</button>
+        <div class="dpad-center"></div>
+        <button class="control-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">➡️</button>
+        <div></div>
+        <button class="control-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">⬇️</button>
+        <div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -314,28 +305,20 @@ let currentUser = null;
 // ─── AUTH HANDLERS ───────────────────────────────────────────────────
 function updateAuthUI(user) {
   const userInfo = document.getElementById('userInfo');
-  const signInModal = document.getElementById('signInModal');
-  const playBtn = document.getElementById('playBtn');
   const signInStartBtn = document.getElementById('signInStartBtn');
 
   if (user) {
     currentUser = user;
     userInfo.style.display = 'flex';
-    signInModal.style.display = 'none';
     signInStartBtn.style.display = 'none';
     document.getElementById('userAvatar').src = user.photoURL || '';
     document.getElementById('userName').textContent = user.displayName || 'Player';
     document.getElementById('userEmail').textContent = user.email || '';
-    playBtn.disabled = false;
-    playBtn.textContent = '▶ Play';
   } else {
     currentUser = null;
     userInfo.style.display = 'none';
-    // Don't show modal on auth change anymore - user chose to skip
     signInStartBtn.style.display = 'inline-block';
     signInStartBtn.textContent = '🔐 Sign In';
-    playBtn.disabled = false;
-    playBtn.textContent = '▶ Play as Guest';
   }
 }
 
@@ -361,12 +344,11 @@ function showSignInModal() {
 
 function skipSignIn() {
   document.getElementById('signInModal').style.display = 'none';
-  // Play as guest
 }
 
 // ─── LEADERBOARD (FIRESTORE) ─────────────────────────────────────────
 function addScore(scoreVal) {
-  if (!currentUser) return; // Only signed-in users save scores
+  if (!currentUser) return;
   const entry = {
     uid: currentUser.uid,
     name: currentUser.displayName || 'Player',
@@ -392,7 +374,7 @@ async function fetchLeaderboard(limit=15) {
     return scores;
   } catch (err) {
     console.error('Leaderboard fetch error:', err);
-    document.getElementById('lbList').innerHTML = '<div style="color:#ff5555;padding:10px;">Failed to load leaderboard. Check Firebase config.</div>';
+    document.getElementById('lbList').innerHTML = '<div style="color:#ff5555;padding:10px;">Failed to load leaderboard</div>';
   }
 }
 
@@ -801,26 +783,17 @@ function toggleDpad() {
 }
 
 function showStartScreen() {
-  document.getElementById('startScreen').classList.remove('hidden');
-  canvas.style.display = 'none';
-  document.getElementById('infoBar').style.display = 'none';
-  document.getElementById('powerUpIndicator').style.display = 'none';
-  document.getElementById('fruitLegend').style.display = 'none';
-  document.getElementById('controlsText').style.display = 'none';
-  document.getElementById('gameButtons').style.display = 'none';
+  document.getElementById('gameArea').classList.remove('active');
+  document.getElementById('startButtons').style.display = 'flex';
   document.getElementById('diffSelector').style.display = 'inline-flex';
   gameRunning = false;
+  isPaused = false;
 }
 
 function startGame() {
-  document.getElementById('startScreen').classList.add('hidden');
-  canvas.style.display = 'block';
-  document.getElementById('infoBar').style.display = 'flex';
-  document.getElementById('powerUpIndicator').style.display = 'block';
-  document.getElementById('fruitLegend').style.display = 'block';
-  document.getElementById('controlsText').style.display = 'block';
-  document.getElementById('gameButtons').style.display = 'flex';
+  document.getElementById('startButtons').style.display = 'none';
   document.getElementById('diffSelector').style.display = 'none';
+  document.getElementById('gameArea').classList.add('active');
   initGame();
 }
 

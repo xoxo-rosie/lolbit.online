@@ -146,16 +146,17 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-<!-- SIGN IN MODAL -->
+<!-- SIGN IN MODAL (OPTIONAL) -->
 <div class="modal-overlay" id="signInModal">
   <div class="modal">
-    <h2>🔐 Sign In Required</h2>
-    <p>Sign in with Google to save your scores and compete fairly</p>
+    <h2>💡 Sign In (Optional)</h2>
+    <p>Sign in with Google to save your scores globally with your real name</p>
     <button id="googleSignInBtn" style="margin:12px 0;">
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="20" style="vertical-align:middle; margin-right:6px;">
       Sign in with Google
     </button>
-    <p class="small">Your Google account keeps scores secure and prevents fake names</p>
+    <button class="secondary" onclick="skipSignIn()" style="margin:8px 0;">⏭ Skip & Play as Guest</button>
+    <p class="small">Guests can still play but scores won't save online</p>
   </div>
 </div>
 
@@ -163,7 +164,7 @@
 <div class="modal-overlay" id="leaderboardModal">
   <div class="modal">
     <h2>🏆 Global Leaderboard</h2>
-    <h3>Top Scores</h3>
+    <h3>Top Scores (Signed-In Players Only)</h3>
     <div class="leaderboard-list" id="lbList"></div>
     <button class="close-btn" onclick="closeLeaderboard()">Close</button>
   </div>
@@ -200,6 +201,7 @@
     </div>
 
     <button id="playBtn">▶ Play</button>
+    <button class="secondary" id="signInStartBtn" onclick="showSignInModal()">🔐 Sign In</button>
     <button class="secondary" id="leaderboardMainBtn" onclick="openLeaderboard()">🏆 Leaderboard</button>
     <button class="secondary" id="toggleDpadBtn" onclick="toggleDpad()">🎮 D-Pad: OFF</button>
 
@@ -254,11 +256,6 @@
 
 <script>
 // ─── FIREBASE CONFIG (REPLACE WITH YOUR OWN) ─────────────────────────
-// 1. Go to https://console.firebase.google.com
-// 2. Create a new project
-// 3. Add a Web app (</>) and copy the config object
-// 4. Enable Authentication → Google provider
-// 5. Enable Firestore Database (start in test mode for now)
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
@@ -319,11 +316,13 @@ function updateAuthUI(user) {
   const userInfo = document.getElementById('userInfo');
   const signInModal = document.getElementById('signInModal');
   const playBtn = document.getElementById('playBtn');
+  const signInStartBtn = document.getElementById('signInStartBtn');
 
   if (user) {
     currentUser = user;
     userInfo.style.display = 'flex';
     signInModal.style.display = 'none';
+    signInStartBtn.style.display = 'none';
     document.getElementById('userAvatar').src = user.photoURL || '';
     document.getElementById('userName').textContent = user.displayName || 'Player';
     document.getElementById('userEmail').textContent = user.email || '';
@@ -332,9 +331,11 @@ function updateAuthUI(user) {
   } else {
     currentUser = null;
     userInfo.style.display = 'none';
-    signInModal.style.display = 'flex';
-    playBtn.disabled = true;
-    playBtn.textContent = 'Sign In to Play';
+    // Don't show modal on auth change anymore - user chose to skip
+    signInStartBtn.style.display = 'inline-block';
+    signInStartBtn.textContent = '🔐 Sign In';
+    playBtn.disabled = false;
+    playBtn.textContent = '▶ Play as Guest';
   }
 }
 
@@ -354,9 +355,18 @@ function signOut() {
   });
 }
 
+function showSignInModal() {
+  document.getElementById('signInModal').style.display = 'flex';
+}
+
+function skipSignIn() {
+  document.getElementById('signInModal').style.display = 'none';
+  // Play as guest
+}
+
 // ─── LEADERBOARD (FIRESTORE) ─────────────────────────────────────────
 function addScore(scoreVal) {
-  if (!currentUser) return;
+  if (!currentUser) return; // Only signed-in users save scores
   const entry = {
     uid: currentUser.uid,
     name: currentUser.displayName || 'Player',
@@ -703,7 +713,7 @@ function endGame() {
   if (currentUser) {
     playerEl.innerHTML = `Player: <span style="color:#4caf50">${currentUser.displayName || 'Player'}</span>`;
   } else {
-    playerEl.innerHTML = '';
+    playerEl.innerHTML = '<span style="color:#aaa">Guest (score not saved)</span>';
   }
 
   fetchLeaderboard(5).then(() => {
@@ -803,10 +813,6 @@ function showStartScreen() {
 }
 
 function startGame() {
-  if (!currentUser) {
-    alert('Please sign in with Google first!');
-    return;
-  }
   document.getElementById('startScreen').classList.add('hidden');
   canvas.style.display = 'block';
   document.getElementById('infoBar').style.display = 'flex';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game Pro</title>
+    <title>🐍 Snake</title>
     <style>
         * {
             margin: 0;
@@ -229,7 +229,7 @@
     </div>
 
     <div class="container">
-        <h1>🐍 Snake Game Pro</h1>
+        <h1>🐍 Snake</h1>
         <p class="subtitle">Eat food, gain power-ups, climb the leaderboard!</p>
         
         <canvas id="gameCanvas" width="400" height="400"></canvas>
@@ -392,13 +392,14 @@
             let foodEaten = false;
             for (let i = 0; i < food.length; i++) {
                 if (head.x === food[i].x && head.y === food[i].y) {
-                    const points = food[i].type === 'normal' ? 10 : 50;
+                    const eatenFood = food[i];
+                    const points = eatenFood.type === 'normal' ? 10 : 50;
                     score += points;
                     playSound('eat');
                     food.splice(i, 1);
                     ensureFood();
                     
-                    if (food[i]?.type === 'gold') {
+                    if (eatenFood.type === 'gold') {
                         activatePowerUp('speed_boost');
                     }
                     

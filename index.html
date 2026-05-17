@@ -19,7 +19,7 @@
     }
     h1 {
       color:white; margin:0 0 10px 0; font-size:2.5em;
-      text-shadow:0 0 20px rgba(76,175,80,0.5);
+      text-shadow:0 0 20px rgba(76,175,80,0.5); cursor:pointer;
     }
     canvas {
       background:#0f0f1a; border:4px solid #4caf50; display:none; margin:0;
@@ -142,6 +142,8 @@
     .user-info.visible { display:flex; }
     .user-name { font-weight:bold; font-size:1.05em; }
     .user-sub { font-size:.82em; color:rgba(255,255,255,0.65); }
+    .err { color:#ff5555; font-weight:bold; margin:8px 0; min-height:18px; }
+    .dev-console-output { text-align:left; background:rgba(0,0,0,0.3); padding:12px; border-radius:8px; margin:12px 0; max-height:200px; overflow-y:auto; font-family:monospace; font-size:.85em; color:#81c784; }
     
     @media (min-width: 768px) {
       h1 { font-size:3em; }
@@ -171,6 +173,18 @@
     <button id="btnLoginAcc" class="secondary" style="margin-top:8px;">Log In</button>
     <button class="secondary" onclick="skipSignIn()" style="margin-top:8px;">⏭ Play as Guest</button>
     <p class="small">Username + password saves your scores, color & settings!</p>
+  </div>
+</div>
+
+<!-- DEV MENU MODAL -->
+<div class="modal-overlay" id="devModal">
+  <div class="modal dev-modal">
+    <h2 class="dev-title">🔧 DEV MENU</h2>
+    <input type="text" id="devConsoleInput" placeholder="Enter command..." class="dev-input" />
+    <div class="err" id="devErr"></div>
+    <div class="dev-console-output" id="devConsoleOutput"></div>
+    <button onclick="devConsoleSubmit()">Execute</button>
+    <button class="close-btn" onclick="closeDevMenu()">Close</button>
   </div>
 </div>
 
@@ -206,6 +220,19 @@
       <input type="range" id="colorSlider" min="0" max="360" value="120" />
       <div class="color-value" id="colorValue">Green — Hue 120</div>
     </div>
+    <h3 style="margin-top:20px;">🍎 Fruits</h3>
+    <div class="fruit-legend" style="display:block; text-align:left;">
+      <strong>🍎 Apple</strong> +10 — Common (35%)<br>
+      <strong>🍊 Orange</strong> +15 — Common (25%)<br>
+      <strong>🍓 Berry</strong> +25 — Uncommon (15%)<br>
+      <strong>🍌 Banana</strong> +35 — Rare (10%)<br>
+      <strong>🍉 Watermelon</strong> +50 — Rare (6%)<br>
+      <strong>🍇 Grapes</strong> +60 — Very Rare (4%)<br>
+      <strong>🍍 Pineapple</strong> +75 — Very Rare (2.5%)<br>
+      <strong>🥭 Mango</strong> +90 — Ultra Rare (1.5%)<br>
+      <strong>⭐ Star</strong> +100 — Legendary (0.8%)<br>
+      <strong>💎 Diamond</strong> +150 — Mythic (0.2%)
+    </div>
     <button onclick="saveSettings()">💾 Save Settings</button>
     <p class="small">⚠️ Saves to your account if signed in</p>
     <button class="close-btn" onclick="closeSettings()">Close</button>
@@ -225,20 +252,7 @@
 <div class="modal-overlay" id="infoModal">
   <div class="modal">
     <h2>📖 Game Info</h2>
-    <h3>🍎 Fruits</h3>
-    <div class="fruit-legend" style="display:block; text-align:left;">
-      <strong>🍎 Apple</strong> +10 — Common (35%)<br>
-      <strong>🍊 Orange</strong> +15 — Common (25%)<br>
-      <strong>🍓 Berry</strong> +25 — Uncommon (15%)<br>
-      <strong>🍌 Banana</strong> +35 — Rare (10%)<br>
-      <strong>🍉 Watermelon</strong> +50 — Rare (6%)<br>
-      <strong>🍇 Grapes</strong> +60 — Very Rare (4%)<br>
-      <strong>🍍 Pineapple</strong> +75 — Very Rare (2.5%)<br>
-      <strong>🥭 Mango</strong> +90 — Ultra Rare (1.5%)<br>
-      <strong>⭐ Star</strong> +100 — Legendary (0.8%)<br>
-      <strong>💎 Diamond</strong> +150 — Mythic (0.2%)
-    </div>
-    <h3 style="margin-top:15px;">🕹️ Controls</h3>
+    <h3>🕹️ Controls</h3>
     <div style="text-align:left; color:rgba(255,255,255,0.85); font-size:.9em; line-height:1.7;">
       Arrow Keys or WASD to move<br>
       Swipe on mobile to move<br>
@@ -268,7 +282,7 @@
 
 <!-- MAIN PAGE -->
 <div class="container">
-  <h1 id="gameTitle">🐍 Snake</h1>
+  <h1 id="gameTitle" onclick="handleTitleClick()">🐍 Snake</h1>
 
   <div class="user-info" id="userInfo">
     <div style="flex:1; text-align:left;">
@@ -334,6 +348,90 @@ const LS = {
   del: k => localStorage.removeItem(k),
   keys: () => Object.keys(localStorage)
 };
+
+/* DEV MENU */
+let titleClickCount = 0;
+let titleClickTimeout;
+
+function handleTitleClick() {
+  titleClickCount++;
+  clearTimeout(titleClickTimeout);
+  titleClickTimeout = setTimeout(() => { titleClickCount = 0; }, 1000);
+  
+  if (titleClickCount === 5) {
+    titleClickCount = 0;
+    openDevMenu();
+  }
+}
+
+function openDevMenu() {
+  document.getElementById('devModal').classList.add('visible');
+  document.getElementById('devErr').textContent = '';
+  document.getElementById('devConsoleInput').value = '';
+  document.getElementById('devConsoleInput').focus();
+}
+
+function closeDevMenu() {
+  document.getElementById('devModal').classList.remove('visible');
+}
+
+function devConsoleSubmit() {
+  const cmd = document.getElementById('devConsoleInput').value.trim().toLowerCase();
+  const errEl = document.getElementById('devErr');
+  const outEl = document.getElementById('devConsoleOutput');
+  
+  errEl.textContent = '';
+  
+  if (!cmd) return;
+  
+  const parts = cmd.split(' ');
+  const action = parts[0];
+  
+  try {
+    if (action === 'score') {
+      const val = parseInt(parts[1]) || 100;
+      score += val;
+      updateScore();
+      appendLog(`[DEV] Added ${val} score`);
+      logDevOutput(`Added ${val} to score. New score: ${score}`);
+    } else if (action === 'level') {
+      const val = parseInt(parts[1]) || 2;
+      level = val;
+      updateScore();
+      appendLog(`[DEV] Set level to ${val}`);
+      logDevOutput(`Level set to ${val}`);
+    } else if (action === 'logs') {
+      const logs = LS.get('snakeLogs') || [];
+      logDevOutput(`Last 5 logs:\n${logs.slice(0,5).join('\n')}`);
+    } else if (action === 'clear') {
+      LS.del('snakeLogs');
+      LS.del('snakeLoginLogs');
+      logDevOutput('All logs cleared');
+    } else if (action === 'data') {
+      const keys = LS.keys();
+      logDevOutput(`Storage keys: ${keys.join(', ')}`);
+    } else if (action === 'reset') {
+      LS.del('snakeSettings');
+      LS.del('snakeHighScore');
+      LS.del('snakeScores');
+      logDevOutput('Settings and scores reset');
+    } else if (action === 'help') {
+      logDevOutput(`Commands:\nscore [n] - Add score\nlevel [n] - Set level\nlogs - View logs\nclear - Clear logs\ndata - Show storage\nreset - Reset all\nhelp - Show this`);
+    } else {
+      errEl.textContent = 'Unknown command';
+    }
+  } catch (e) {
+    errEl.textContent = 'Error: ' + e.message;
+  }
+  
+  document.getElementById('devConsoleInput').value = '';
+}
+
+function logDevOutput(msg) {
+  const outEl = document.getElementById('devConsoleOutput');
+  const timestamp = new Date().toLocaleTimeString();
+  outEl.innerHTML = `<div>[${timestamp}] ${msg}</div>` + outEl.innerHTML;
+}
 
 /* AUTH - LOCAL ONLY */
 function getUsers() { return LS.get('snakeUsers') || {}; }
@@ -458,6 +556,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('playBtn').addEventListener('click', startGame);
   loadSettings();
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('devModal').classList.contains('visible')) {
+      devConsoleSubmit();
+    }
+  });
 });
 
 function loginUser(username) {
@@ -652,12 +756,28 @@ const DIFF = {
 
 let diffCfg = DIFF[difficulty];
 
+// GAME STATE
+let snake = [{x: 10, y: 10}];
+let fruit = {x: 15, y: 15};
+let direction = {x: 1, y: 0};
+let nextDirection = {x: 1, y: 0};
+let gameFrameCounter = 0;
+
 function startGame() {
   gameRunning = true;
   gamePaused = false;
   score = 0;
   level = 1;
   gamesPlayedSession++;
+  
+  // Reset game state
+  snake = [{x: 10, y: 10}];
+  fruit = {x: 15, y: 15};
+  direction = {x: 1, y: 0};
+  nextDirection = {x: 1, y: 0};
+  gameFrameCounter = 0;
+  
+  diffCfg = DIFF[difficulty];
   
   document.getElementById('startButtons').style.display = 'none';
   document.getElementById('gameButtons').style.display = 'flex';
@@ -697,18 +817,96 @@ function updateScore() {
   document.getElementById('highScore').textContent = Math.max(highScore, score);
 }
 
+function renderGame() {
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const gridSize = canvas.width / 20;
+  
+  // Clear canvas
+  ctx.fillStyle = boardTheme.bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  // Draw grid
+  ctx.strokeStyle = boardTheme.grid;
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 20; i++) {
+    ctx.beginPath();
+    ctx.moveTo(i * gridSize, 0);
+    ctx.lineTo(i * gridSize, canvas.height);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, i * gridSize);
+    ctx.lineTo(canvas.width, i * gridSize);
+    ctx.stroke();
+  }
+  
+  // Draw snake
+  snake.forEach((seg, idx) => {
+    const hue = snakeColorHue - (idx * 5);
+    ctx.fillStyle = hexFromHUE(hue);
+    ctx.fillRect(seg.x * gridSize + 2, seg.y * gridSize + 2, gridSize - 4, gridSize - 4);
+  });
+  
+  // Draw fruit
+  ctx.font = `${gridSize - 4}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🍎', fruit.x * gridSize + gridSize/2, fruit.y * gridSize + gridSize/2);
+}
+
 function gameLoop() {
   if (gameRunning && !gamePaused) {
-    // Placeholder for game logic
+    gameFrameCounter++;
+    
+    direction = {...nextDirection};
+    
+    // Move snake
+    const head = {...snake[0]};
+    head.x += direction.x;
+    head.y += direction.y;
+    
+    // Check bounds
+    if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) {
+      endGame();
+      return;
+    }
+    
+    // Check self collision
+    if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+      endGame();
+      return;
+    }
+    
+    snake.unshift(head);
+    
+    // Check fruit collision
+    if (head.x === fruit.x && head.y === fruit.y) {
+      score += 10 * diffCfg.multiplier;
+      level = Math.floor(score / 100) + 1;
+      
+      // Spawn new fruit
+      fruit = {
+        x: Math.floor(Math.random() * 20),
+        y: Math.floor(Math.random() * 20)
+      };
+    } else {
+      snake.pop();
+    }
+    
     updateScore();
+    renderGame();
+  } else if (gameRunning && gamePaused) {
+    renderGame();
   }
+  
   if (gameRunning) {
     setTimeout(gameLoop, diffCfg.speed);
   }
 }
 
 function setDir(x, y) {
-  // Placeholder for direction setting
+  if ((direction.x === -x && direction.y === -y) || (direction.x === x && direction.y === y)) return;
+  nextDirection = {x, y};
 }
 
 function endGame() {
@@ -730,6 +928,16 @@ function endGame() {
   document.getElementById('gameOverModal').classList.add('visible');
   appendLog(`Game ended: ${score} points on ${difficulty}`);
 }
+
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
+  if (!gameRunning || gamePaused) return;
+  if (e.key === ' ') { e.preventDefault(); togglePause(); }
+  if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { e.preventDefault(); setDir(0, -1); }
+  if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') { e.preventDefault(); setDir(0, 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { e.preventDefault(); setDir(-1, 0); }
+  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); setDir(1, 0); }
+});
 
 // Initialize
 loadSettings();

@@ -2,107 +2,137 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>🐍 Snake</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
         }
 
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Arial', sans-serif;
-            padding: 20px;
+            padding: 0;
+        }
+
+        body.fullscreen {
+            padding: 0;
         }
 
         .container {
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            padding: 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         h1 {
             color: white;
-            margin-bottom: 10px;
-            font-size: 2.5em;
+            margin: 0 0 5px 0;
+            font-size: 2em;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .subtitle {
             color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 20px;
-            font-size: 0.9em;
+            margin: 0 0 10px 0;
+            font-size: 0.8em;
         }
 
         #gameCanvas {
             background-color: #1a1a2e;
-            border: 4px solid white;
+            border: 3px solid white;
             display: block;
-            margin: 0 auto 20px;
+            margin: 0;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 100%;
+            max-width: 90vmin;
             height: auto;
+            aspect-ratio: 1 / 1;
+            touch-action: none;
+        }
+
+        #gameCanvas.fullscreen-canvas {
+            max-width: 100vmin;
+            margin: 0 auto;
         }
 
         .info {
             display: flex;
             justify-content: space-around;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin: 10px 0;
             flex-wrap: wrap;
+            width: 100%;
+            max-width: 500px;
         }
 
         .info-box {
             background: rgba(255, 255, 255, 0.9);
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 1em;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9em;
             font-weight: bold;
             color: #333;
-            min-width: 120px;
+            flex: 1;
+            min-width: 80px;
         }
 
         .controls {
             color: white;
-            margin-top: 15px;
-            font-size: 0.9em;
-            margin-bottom: 15px;
+            font-size: 0.75em;
+            margin: 5px 0;
+            max-width: 600px;
+            line-height: 1.3;
         }
 
         .difficulty-selector {
             background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
             display: inline-block;
+            font-size: 0.85em;
         }
 
         .difficulty-selector label {
-            margin: 0 10px;
+            margin: 0 8px;
             font-weight: bold;
             color: #333;
         }
 
-        .difficulty-selector input[type="radio"] {
-            margin-right: 5px;
-            cursor: pointer;
-        }
-
         .button-group {
-            margin-top: 15px;
+            margin: 8px 0;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             flex-wrap: wrap;
+            width: 100%;
         }
 
         button {
-            padding: 12px 25px;
-            font-size: 1em;
+            padding: 10px 20px;
+            font-size: 0.85em;
             background: white;
             border: none;
             border-radius: 8px;
@@ -110,6 +140,7 @@
             font-weight: bold;
             color: #667eea;
             transition: all 0.3s;
+            white-space: nowrap;
         }
 
         button:hover {
@@ -130,33 +161,34 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 40px;
+            padding: 30px;
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             z-index: 1000;
             text-align: center;
-            min-width: 300px;
+            min-width: 280px;
+            max-width: 90vw;
             max-height: 80vh;
             overflow-y: auto;
         }
 
         .game-over h2 {
             color: #c33;
-            font-size: 2em;
-            margin-bottom: 15px;
+            font-size: 1.8em;
+            margin-bottom: 10px;
         }
 
         .game-over p {
             color: #333;
-            font-size: 1.1em;
-            margin-bottom: 10px;
+            font-size: 1em;
+            margin-bottom: 8px;
         }
 
         .leaderboard {
             background: #f5f5f5;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
-            margin: 20px 0;
+            margin: 15px 0;
             text-align: left;
             max-height: 200px;
             overflow-y: auto;
@@ -164,20 +196,17 @@
 
         .leaderboard h3 {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: #333;
+            font-size: 0.9em;
         }
 
         .leaderboard-item {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #ddd;
-            font-size: 0.95em;
-        }
-
-        .leaderboard-item:last-child {
-            border-bottom: none;
+            font-size: 0.85em;
         }
 
         .overlay {
@@ -194,23 +223,54 @@
         .power-up-indicator {
             color: #ffff00;
             font-weight: bold;
-            margin-top: 5px;
-            min-height: 20px;
+            margin: 5px 0;
+            min-height: 18px;
+            font-size: 0.9em;
+        }
+
+        .fruit-legend {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+            font-size: 0.75em;
+            color: #333;
+            max-width: 600px;
+            line-height: 1.2;
         }
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.8em;
+                font-size: 1.5em;
             }
             
+            .subtitle {
+                font-size: 0.7em;
+            }
+
             .info-box {
-                min-width: 100px;
-                font-size: 0.9em;
+                font-size: 0.8em;
+                min-width: 70px;
+                padding: 6px 10px;
             }
 
             button {
-                padding: 10px 15px;
-                font-size: 0.9em;
+                padding: 8px 15px;
+                font-size: 0.75em;
+            }
+
+            .controls {
+                font-size: 0.65em;
+            }
+
+            .fruit-legend {
+                font-size: 0.65em;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .subtitle, .controls, .fruit-legend, .difficulty-selector {
+                display: none;
             }
         }
     </style>
@@ -230,7 +290,7 @@
 
     <div class="container">
         <h1>🐍 Snake</h1>
-        <p class="subtitle">Eat food, gain power-ups, climb the leaderboard!</p>
+        <p class="subtitle">Eat fruit, gain power-ups, climb the leaderboard!</p>
         
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         
@@ -241,6 +301,10 @@
         </div>
 
         <div class="power-up-indicator" id="powerUpIndicator"></div>
+
+        <div class="fruit-legend">
+            🍎 Apple +10 | 🍊 Orange +15 | 🍓 Berry +25 | 🍌 Banana +35 | 🍉 Watermelon +50 | ⭐ Star +100 | ⚡ Speed | 🐢 Slow | ❄️ Freeze
+        </div>
         
         <div class="difficulty-selector">
             <label><input type="radio" name="difficulty" value="easy" checked> Easy</label>
@@ -249,14 +313,14 @@
         </div>
         
         <div class="controls">
-            <p>📱 Use ⬅️ ➡️ ⬇️ ⬆️ arrow keys, WASD, or swipe on mobile</p>
-            <p>🎮 Eat 🔴 Red for +10pts | 🟡 Gold for +50pts & speed boost | 🟢 Green for slow mode</p>
+            <p>📱 Arrow keys/WASD or swipe to move | Keyboard players: avoid scrolling by clicking game first</p>
         </div>
 
         <div class="button-group">
             <button onclick="togglePause()">Pause</button>
             <button onclick="resetGame()">Reset</button>
             <button onclick="toggleSound()">🔊 Sound: ON</button>
+            <button onclick="toggleFullscreen()">⛶ Fullscreen</button>
         </div>
     </div>
 
@@ -274,7 +338,7 @@
         let nextDirection = {x: 1, y: 0};
         let score = 0;
         let highScore = localStorage.getItem('snakeHighScore') || 0;
-        let gameSpeed = 8;
+        let gameSpeed = 3;
         let framCount = 0;
         let isPaused = false;
         let gameRunning = true;
@@ -284,37 +348,88 @@
         let powerUpTimer = 0;
         let touchStartX = 0;
         let touchStartY = 0;
+        let frozenFrames = 0;
+
+        // Fruit definitions
+        const fruits = {
+            apple: { type: 'apple', points: 10, emoji: '🍎', color: '#ff3333', rarity: 0.5 },
+            orange: { type: 'orange', points: 15, emoji: '🍊', color: '#ff9933', rarity: 0.3 },
+            berry: { type: 'berry', points: 25, emoji: '🍓', color: '#cc0033', rarity: 0.15 },
+            banana: { type: 'banana', points: 35, emoji: '🍌', color: '#ffdd00', rarity: 0.08 },
+            watermelon: { type: 'watermelon', points: 50, emoji: '🍉', color: '#00dd00', rarity: 0.04 },
+            star: { type: 'star', points: 100, emoji: '⭐', color: '#ffff00', rarity: 0.01 }
+        };
+
+        const powerUpTypes = {
+            speed_boost: { type: 'speed_boost', emoji: '⚡', color: '#ffaa00', duration: 200 },
+            slow_mode: { type: 'slow_mode', emoji: '🐢', color: '#00aaff', duration: 200 },
+            freeze: { type: 'freeze', emoji: '❄️', color: '#00ddff', duration: 100 }
+        };
 
         document.getElementById('highScore').textContent = highScore;
 
-        // Initialize food
+        // Prevent body scrolling on touch
+        document.addEventListener('touchmove', (e) => {
+            if (e.target === canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Prevent scrolling on keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        function getRandomFruit() {
+            const rand = Math.random();
+            let cumulative = 0;
+            for (let fruit in fruits) {
+                cumulative += fruits[fruit].rarity;
+                if (rand <= cumulative) {
+                    return { ...fruits[fruit] };
+                }
+            }
+            return { ...fruits.apple };
+        }
+
         function spawnFood() {
             let newFood;
             do {
-                newFood = {x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount), type: 'normal'};
-            } while (snake.some(s => s.x === newFood.x && s.y === newFood.y) || food.some(f => f.x === newFood.x && f.y === newFood.y));
+                newFood = {
+                    x: Math.floor(Math.random() * tileCount),
+                    y: Math.floor(Math.random() * tileCount),
+                    ...getRandomFruit()
+                };
+            } while (
+                snake.some(s => s.x === newFood.x && s.y === newFood.y) ||
+                food.some(f => f.x === newFood.x && f.y === newFood.y) ||
+                powerUps.some(p => p.x === newFood.x && p.y === newFood.y)
+            );
             food.push(newFood);
         }
 
-        // Spawn power-ups randomly
         function spawnPowerUp() {
-            if (Math.random() < 0.05 && powerUps.length < 2) {
+            if (Math.random() < 0.03 && powerUps.length < 2) {
                 let newPowerUp;
-                const types = ['speed_boost', 'slow_mode'];
+                const types = Object.keys(powerUpTypes);
                 do {
+                    const typeKey = types[Math.floor(Math.random() * types.length)];
                     newPowerUp = {
                         x: Math.floor(Math.random() * tileCount),
                         y: Math.floor(Math.random() * tileCount),
-                        type: types[Math.floor(Math.random() * types.length)]
+                        ...powerUpTypes[typeKey]
                     };
-                } while (snake.some(s => s.x === newPowerUp.x && s.y === newPowerUp.y) || 
-                         food.some(f => f.x === newPowerUp.x && f.y === newPowerUp.y) ||
-                         powerUps.some(p => p.x === newPowerUp.x && p.y === newPowerUp.y));
+                } while (
+                    snake.some(s => s.x === newPowerUp.x && s.y === newPowerUp.y) ||
+                    food.some(f => f.x === newPowerUp.x && f.y === newPowerUp.y) ||
+                    powerUps.some(p => p.x === newPowerUp.x && p.y === newPowerUp.y)
+                );
                 powerUps.push(newPowerUp);
             }
         }
 
-        // Spawn more food
         function ensureFood() {
             if (food.length < 2) {
                 spawnFood();
@@ -325,33 +440,43 @@
 
         function playSound(type) {
             if (!soundEnabled) return;
-            
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            if (type === 'eat') {
-                oscillator.frequency.value = 600;
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.1);
-            } else if (type === 'powerup') {
-                oscillator.frequency.value = 800;
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.2);
-            } else if (type === 'gameover') {
-                oscillator.frequency.value = 300;
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                oscillator.start(audioContext.currentTime);
-                oscillator.stop(audioContext.currentTime + 0.3);
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                if (type === 'eat') {
+                    oscillator.frequency.value = 600;
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } else if (type === 'powerup') {
+                    oscillator.frequency.value = 800;
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                } else if (type === 'gameover') {
+                    oscillator.frequency.value = 300;
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }
+            } catch (e) {
+                // Silent fail if audio context unavailable
             }
+        }
+
+        function drawCircle(x, y, radius, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc((x + 0.5) * gridSize, (y + 0.5) * gridSize, radius, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         function drawRect(x, y, size, color) {
@@ -359,12 +484,28 @@
             ctx.fillRect(x * gridSize, y * gridSize, size * gridSize, size * gridSize);
         }
 
+        function drawEmoji(x, y, emoji) {
+            ctx.font = `bold ${gridSize - 2}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(emoji, (x + 0.5) * gridSize, (y + 0.5) * gridSize);
+        }
+
         function update() {
             if (!gameRunning || isPaused) return;
 
+            // Handle freeze power-up
+            if (frozenFrames > 0) {
+                frozenFrames--;
+                return;
+            }
+
             framCount++;
-            const speedMultiplier = activePowerUp === 'slow_mode' ? 0.5 : (activePowerUp === 'speed_boost' ? 1.5 : 1);
-            const updateRate = Math.floor(10 / (gameSpeed * speedMultiplier));
+            let speedMultiplier = 1;
+            if (activePowerUp === 'slow_mode') speedMultiplier = 0.4;
+            else if (activePowerUp === 'speed_boost') speedMultiplier = 1.8;
+            
+            const updateRate = Math.max(1, Math.floor(12 / (gameSpeed * speedMultiplier)));
             
             if (framCount < updateRate) return;
             framCount = 0;
@@ -372,13 +513,11 @@
             direction = nextDirection;
             const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
 
-            // Check wall collision (wraps around)
             if (head.x < 0) head.x = tileCount - 1;
             if (head.x >= tileCount) head.x = 0;
             if (head.y < 0) head.y = tileCount - 1;
             if (head.y >= tileCount) head.y = 0;
 
-            // Check self collision
             for (let segment of snake) {
                 if (head.x === segment.x && head.y === segment.y) {
                     endGame();
@@ -388,24 +527,18 @@
 
             snake.unshift(head);
 
-            // Check food collision
             let foodEaten = false;
             for (let i = 0; i < food.length; i++) {
                 if (head.x === food[i].x && head.y === food[i].y) {
                     const eatenFood = food[i];
-                    const points = eatenFood.type === 'normal' ? 10 : 50;
-                    score += points;
+                    score += eatenFood.points;
                     playSound('eat');
                     food.splice(i, 1);
                     ensureFood();
                     
-                    if (eatenFood.type === 'gold') {
-                        activatePowerUp('speed_boost');
-                    }
-                    
-                    gameSpeed = Math.min(15, 8 + Math.floor(score / 50));
+                    gameSpeed = Math.min(10, 3 + Math.floor(score / 100));
                     document.getElementById('score').textContent = score;
-                    document.getElementById('level').textContent = Math.ceil(gameSpeed / 8);
+                    document.getElementById('level').textContent = Math.ceil(gameSpeed / 2);
                     foodEaten = true;
                     break;
                 }
@@ -415,7 +548,6 @@
                 snake.pop();
             }
 
-            // Check power-up collision
             for (let i = 0; i < powerUps.length; i++) {
                 if (head.x === powerUps[i].x && head.y === powerUps[i].y) {
                     playSound('powerup');
@@ -425,11 +557,11 @@
                 }
             }
 
-            // Update power-up timer
             if (activePowerUp) {
                 powerUpTimer--;
                 if (powerUpTimer <= 0) {
                     activePowerUp = null;
+                    frozenFrames = 0;
                     document.getElementById('powerUpIndicator').textContent = '';
                 }
             }
@@ -439,21 +571,23 @@
 
         function activatePowerUp(type) {
             activePowerUp = type;
-            powerUpTimer = 150; // ~5 seconds at normal speed
+            const config = powerUpTypes[type];
+            powerUpTimer = config.duration;
             
             if (type === 'speed_boost') {
-                document.getElementById('powerUpIndicator').textContent = '⚡ SPEED BOOST ACTIVE!';
+                document.getElementById('powerUpIndicator').textContent = '⚡ SPEED BOOST! (2x Speed)';
             } else if (type === 'slow_mode') {
-                document.getElementById('powerUpIndicator').textContent = '🐢 SLOW MODE ACTIVE!';
+                document.getElementById('powerUpIndicator').textContent = '🐢 SLOW MODE! (0.4x Speed)';
+            } else if (type === 'freeze') {
+                document.getElementById('powerUpIndicator').textContent = '❄️ FREEZE! (Opponents frozen)';
+                frozenFrames = config.duration;
             }
         }
 
         function draw() {
-            // Clear canvas
             ctx.fillStyle = '#1a1a2e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Draw grid (optional)
             ctx.strokeStyle = '#2a2a4e';
             ctx.lineWidth = 0.5;
             for (let i = 0; i <= tileCount; i++) {
@@ -472,48 +606,26 @@
             for (let i = 0; i < snake.length; i++) {
                 if (i === 0) {
                     drawRect(snake[i].x, snake[i].y, 1, '#00ff00');
-                    // Draw eyes
                     ctx.fillStyle = '#000';
-                    ctx.fillRect(snake[i].x * gridSize + 5, snake[i].y * gridSize + 5, 4, 4);
-                    ctx.fillRect(snake[i].x * gridSize + 11, snake[i].y * gridSize + 5, 4, 4);
+                    ctx.fillRect(snake[i].x * gridSize + 4, snake[i].y * gridSize + 4, 4, 4);
+                    ctx.fillRect(snake[i].x * gridSize + 12, snake[i].y * gridSize + 4, 4, 4);
                 } else {
                     const color = i % 2 === 0 ? '#00dd00' : '#00bb00';
                     drawRect(snake[i].x, snake[i].y, 1, color);
                 }
             }
 
-            // Draw food
+            // Draw food with emoji
             for (let f of food) {
-                if (f.type === 'normal') {
-                    drawRect(f.x, f.y, 1, '#ff0000');
-                } else if (f.type === 'gold') {
-                    drawRect(f.x, f.y, 1, '#ffff00');
-                }
+                drawCircle(f.x, f.y, gridSize / 2 - 1, f.color);
+                drawEmoji(f.x, f.y, f.emoji);
             }
 
             // Draw power-ups
             for (let p of powerUps) {
-                if (p.type === 'speed_boost') {
-                    ctx.fillStyle = '#ffaa00';
-                    ctx.beginPath();
-                    ctx.arc((p.x + 0.5) * gridSize, (p.y + 0.5) * gridSize, gridSize / 2 - 2, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 10px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText('⚡', (p.x + 0.5) * gridSize, (p.y + 0.5) * gridSize);
-                } else if (p.type === 'slow_mode') {
-                    ctx.fillStyle = '#00aaff';
-                    ctx.beginPath();
-                    ctx.arc((p.x + 0.5) * gridSize, (p.y + 0.5) * gridSize, gridSize / 2 - 2, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 10px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText('🐢', (p.x + 0.5) * gridSize, (p.y + 0.5) * gridSize);
-                }
+                const config = powerUpTypes[p.type];
+                drawCircle(p.x, p.y, gridSize / 2 - 2, config.color);
+                drawEmoji(p.x, p.y, config.emoji);
             }
         }
 
@@ -539,24 +651,29 @@
 
         // Touch controls
         canvas.addEventListener('touchstart', (e) => {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        });
+            if (e.touches.length > 0) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+        }, false);
 
         canvas.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
+            if (e.changedTouches.length > 0) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const deltaX = touchEndX - touchStartX;
+                const deltaY = touchEndY - touchStartY;
+                const minSwipe = 20;
 
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (deltaX > 0 && direction.x === 0) nextDirection = {x: 1, y: 0};
-                else if (deltaX < 0 && direction.x === 0) nextDirection = {x: -1, y: 0};
-            } else {
-                if (deltaY > 0 && direction.y === 0) nextDirection = {x: 0, y: 1};
-                else if (deltaY < 0 && direction.y === 0) nextDirection = {x: 0, y: -1};
+                if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipe) {
+                    if (deltaX > 0 && direction.x === 0) nextDirection = {x: 1, y: 0};
+                    else if (deltaX < 0 && direction.x === 0) nextDirection = {x: -1, y: 0};
+                } else if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > minSwipe) {
+                    if (deltaY > 0 && direction.y === 0) nextDirection = {x: 0, y: 1};
+                    else if (deltaY < 0 && direction.y === 0) nextDirection = {x: 0, y: -1};
+                }
             }
-        });
+        }, false);
 
         function endGame() {
             gameRunning = false;
@@ -586,7 +703,7 @@
             scores.forEach((s, i) => {
                 const item = document.createElement('div');
                 item.className = 'leaderboard-item';
-                item.innerHTML = `<span>#${i + 1} ${s.score} pts</span><span>${s.difficulty}</span>`;
+                item.innerHTML = `<span>#${i + 1} ${s.score}</span><span>${s.difficulty}</span>`;
                 leaderboardList.appendChild(item);
             });
         }
@@ -601,6 +718,23 @@
             document.querySelectorAll('button')[2].textContent = soundEnabled ? '🔊 Sound: ON' : '🔇 Sound: OFF';
         }
 
+        function toggleFullscreen() {
+            const container = document.querySelector('.container');
+            const gameCanvas = document.getElementById('gameCanvas');
+            
+            if (!document.fullscreenElement) {
+                if (container.requestFullscreen) {
+                    container.requestFullscreen().catch(err => console.log(err));
+                    gameCanvas.classList.add('fullscreen-canvas');
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    gameCanvas.classList.remove('fullscreen-canvas');
+                }
+            }
+        }
+
         function resetGame() {
             snake = [{x: 10, y: 10}];
             food = [];
@@ -608,12 +742,13 @@
             direction = {x: 1, y: 0};
             nextDirection = {x: 1, y: 0};
             score = 0;
-            gameSpeed = 8 + (difficulty === 'medium' ? 2 : difficulty === 'hard' ? 4 : 0);
+            gameSpeed = difficulty === 'easy' ? 3 : (difficulty === 'medium' ? 5 : 7);
             isPaused = false;
             gameRunning = true;
             framCount = 0;
             activePowerUp = null;
             powerUpTimer = 0;
+            frozenFrames = 0;
             document.getElementById('score').textContent = '0';
             document.getElementById('level').textContent = '1';
             document.getElementById('powerUpIndicator').textContent = '';
@@ -623,7 +758,6 @@
             ensureFood();
         }
 
-        // Difficulty selector
         document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
             radio.addEventListener('change', (e) => {
                 difficulty = e.target.value;

@@ -1,229 +1,942 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🐍 Snake</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <!-- SIGN IN MODAL -->
-    <div class="modal-overlay" id="signInModal">
-      <div class="modal">
-        <h2>
-          <i data-lucide="user"></i>
-          account
-        </h2>
-        <p>create or log into your account</p>
-        <p class="small">saves your scores and settings</p>
-        <input type="text" id="siUsername" placeholder="username" maxlength="20" autocomplete="off" />
-        <input type="password" id="siPassword" placeholder="password" maxlength="50" autocomplete="off" />
-        <div class="err" id="siErr"></div>
-        <div class="button-group">
-          <button id="btnCreateAcc">
-            <i data-lucide="user-plus"></i> create
-          </button>
-          <button id="btnLoginAcc" class="secondary">
-            <i data-lucide="log-in"></i> login
-          </button>
-        </div>
-        <button class="close-btn" onclick="closeSignIn()">
-          <i data-lucide="x"></i> skip
-        </button>
-      </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <title>snake</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-user-select:none; user-select:none; }
+    html,body { width:100%; height:100%; overflow:hidden; position:fixed; }
+    body {
+      display:flex; justify-content:center; align-items:center;
+      background:linear-gradient(135deg, #3a1c36 0%, #1c0e1f 100%);
+      font-family:'Quicksand', sans-serif;
+    }
+    .container {
+      text-align:center; display:flex; flex-direction:column; align-items:center;
+      width:100%; height:100%; justify-content:center; padding:15px;
+      overflow-y:auto; overflow-x:hidden;
+    }
+    .menu-glass {
+      background:rgba(255, 255, 255, 0.05);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border:2px solid rgba(255, 102, 178, 0.2);
+      padding:40px 30px;
+      border-radius:30px;
+      box-shadow:0 15px 35px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,102,178,0.1);
+      max-width:500px; width:100%;
+    }
+    h1 {
+      color:#ffe6f2; margin:0 0 20px 0; font-size:3.2em;
+      text-shadow:0 0 20px rgba(255,102,178,0.7); cursor:pointer; font-weight:900;
+      letter-spacing:2px;
+    }
+    canvas {
+      background:#160918; border:4px solid #ff66b2; display:none; margin:0;
+      box-shadow:0 0 40px rgba(255,102,178,0.4); max-width:90vmin; height:auto;
+      aspect-ratio:1/1; touch-action:none; border-radius:24px;
+    }
+    canvas.visible { display:block; }
+    .info {
+      display:none; justify-content:space-around; gap:15px; margin:15px 0;
+      flex-wrap:wrap; width:100%; max-width:600px;
+    }
+    .info.visible { display:flex; }
+    .info-box {
+      background:linear-gradient(135deg, rgba(255,102,178,0.2), rgba(204,51,153,0.2));
+      border:2px solid rgba(255,102,178,0.4);
+      padding:12px 20px; border-radius:18px; font-size:1em; font-weight:bold; color:#ffe6f2;
+      flex:1; min-width:100px; box-shadow:0 4px 15px rgba(0,0,0,0.15);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    .info-box span { color:#ffb3d9; font-size:1.2em; }
+    .button-group {
+      margin:15px 0; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; width:100%;
+    }
+    button {
+      padding:14px 26px; font-size:1em;
+      background:linear-gradient(135deg, #ff66b2, #e60073);
+      border:none; border-radius:16px; cursor:pointer;
+      font-weight:bold; color:white; transition:all 0.3s; white-space:nowrap;
+      min-width:150px; box-shadow:0 6px 20px rgba(255,102,178,0.3);
+      display:flex; align-items:center; justify-content:center; gap:8px;
+    }
+    button:hover { transform:translateY(-4px); box-shadow:0 8px 25px rgba(255,102,178,0.5); }
+    button:active { transform:translateY(-1px); }
+    button.secondary {
+      background:linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+      border:2px solid rgba(255,153,204,0.3); box-shadow:0 4px 15px rgba(0,0,0,0.2); color:#ffe6f2;
+    }
+    button.secondary:hover {
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+    }
+    .modal-overlay {
+      display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+      background:rgba(20,5,20,0.85); z-index:999; justify-content:center; align-items:center;
+      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    }
+    .modal-overlay.visible { display:flex; }
+    .modal {
+      background:linear-gradient(135deg, #2b112b, #1d091e);
+      border:2px solid #ff66b2; padding:35px; border-radius:30px;
+      box-shadow:0 20px 80px rgba(255,102,178,0.4); text-align:center;
+      min-width:340px; max-width:92vw; max-height:90vh; overflow-y:auto;
+    }
+    .modal h2 { color:#ff99cc; margin-bottom:15px; font-size:1.8em; text-shadow:0 0 10px rgba(255,102,178,0.5); display:flex; align-items:center; justify-content:center; gap:10px; }
+    .modal p { color:rgba(255,230,242,0.85); margin:8px 0; line-height:1.5; }
+    .modal .small { font-size:.85em; color:rgba(255,230,242,0.6); margin-top:10px; }
+    .modal input {
+      width:100%; padding:15px; margin:10px 0; border-radius:14px; border:2px solid rgba(255,102,178,0.5);
+      background:rgba(255,255,255,0.05); color:white; font-size:1em; outline:none; text-align:center;
+      font-family:'Quicksand', sans-serif; font-weight:bold;
+    }
+    .modal input:focus { border-color:#ff66b2; background:rgba(255,255,255,0.1); }
+    .modal input::placeholder { color:rgba(255,230,242,0.4); font-weight:normal; }
+    .leaderboard-list {
+      background:rgba(255,255,255,0.03); border:1px solid rgba(255,153,204,0.15);
+      padding:15px; border-radius:20px; margin:15px 0; text-align:left; max-height:300px; overflow-y:auto;
+    }
+    .lb-item {
+      display:flex; justify-content:space-between; align-items:center; padding:12px 5px;
+      border-bottom:1px solid rgba(255,153,204,0.1); font-size:.95em; color:rgba(255,230,242,0.9);
+    }
+    .lb-item:last-child { border-bottom:none; }
+    .close-btn { margin-top:20px; background:linear-gradient(135deg, #ff4d4d, #cc0000); box-shadow:0 4px 15px rgba(255,77,77,0.3); }
+    .close-btn:hover { box-shadow:0 6px 20px rgba(255,77,77,0.5); }
+    .settings-row {
+      display:flex; justify-content:space-between; align-items:center; margin:12px 0; padding:14px;
+      background:rgba(255,255,255,0.03); border-radius:16px; border:1px solid rgba(255,153,204,0.1);
+    }
+    .settings-row label { color:#ffe6f2; font-weight:bold; display:flex; align-items:center; gap:8px; }
+    .settings-row select {
+      padding:8px 14px; border-radius:10px; border:1px solid rgba(255,153,204,0.4);
+      background:rgba(255,102,178,0.1); color:#ffe6f2; font-size:1em; cursor:pointer; outline:none;
+      font-family:'Quicksand', sans-serif; font-weight:bold;
+    }
+    .settings-row select option { background:#2b112b; color:#ffe6f2; }
+    .toggle-btn {
+      padding:8px 18px; border-radius:10px; border:none;
+      background:rgba(255,255,255,0.1); color:white; font-weight:bold; cursor:pointer; transition:all 0.3s; min-width:80px;
+    }
+    .toggle-btn.active { background:#ff66b2; box-shadow:0 0 15px rgba(255,102,178,0.4); }
+    .color-slider-wrap { margin:20px 0; background:rgba(255,255,255,0.02); padding:20px; border-radius:20px; border:1px solid rgba(255,153,204,0.1); }
+    .color-slider-wrap label { color:#ffe6f2; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; }
+    #colorSlider {
+      -webkit-appearance:none; appearance:none;
+      width:100%; height:16px; border-radius:8px; border:none; outline:none; cursor:pointer;
+      background:linear-gradient(to right, hsl(0,70%,60%),hsl(30,70%,60%),hsl(60,70%,60%),hsl(90,70%,60%),hsl(120,70%,60%),hsl(150,70%,60%),hsl(180,70%,60%),hsl(210,70%,60%),hsl(240,70%,60%),hsl(270,70%,60%),hsl(300,70%,60%),hsl(330,70%,60%),hsl(360,70%,60%));
+      box-shadow:inset 0 2px 5px rgba(0,0,0,0.3);
+    }
+    #colorSlider::-webkit-slider-thumb { -webkit-appearance:none; width:28px; height:28px; border-radius:50%; border:3px solid white; background:var(--thumb-color,#ff66b2); box-shadow:0 2px 8px rgba(0,0,0,0.5); cursor:pointer; }
+    #colorSlider::-moz-range-thumb { width:28px; height:28px; border-radius:50%; border:3px solid white; background:var(--thumb-color,#ff66b2); box-shadow:0 2px 8px rgba(0,0,0,0.5); cursor:pointer; }
+    .snake-preview-row { display:flex; align-items:center; justify-content:center; gap:0px; margin:15px 0; height:40px; }
+    .snake-preview-seg { width:26px; height:26px; border-radius:50%; margin:0 -3px; border:2px solid rgba(255,255,255,0.3); z-index:1; }
+    .color-value { color:#ffb3d9; font-size:.9em; margin-top:12px; font-weight:bold; }
+    .dpad { display:none; margin-top:20px; }
+    .dpad.visible { display:grid; }
+    .dpad button.control-btn {
+      width:75px; height:75px; font-size:1.8em; padding:0; margin:6px;
+      background:linear-gradient(135deg, rgba(255,102,178,0.15), rgba(204,51,153,0.25));
+      border:2px solid rgba(255,102,178,0.4); border-radius:24px; min-width:auto; color:white;
+      box-shadow:0 6px 15px rgba(0,0,0,0.2); touch-action:manipulation;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .dpad button.control-btn:active { background:rgba(255,102,178,0.5); transform:scale(0.9); }
+    .dpad-grid { display:grid; grid-template-columns:85px 85px 85px; grid-template-rows:85px 85px 85px; justify-items:center; align-items:center; }
+    .power-up-indicator { color:#ffe6f2; font-weight:bold; margin:8px 0; min-height:28px; font-size:1.1em; display:none; text-shadow:0 0 12px rgba(255,102,178,0.6); background:rgba(255,102,178,0.15); padding:6px 18px; border-radius:14px; border:1px solid rgba(255,102,178,0.3); }
+    .power-up-indicator.visible { display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+    .fruit-legend {
+      display:none; background:rgba(255,255,255,0.03); border:1px solid rgba(255,153,204,0.15);
+      padding:15px 20px; border-radius:20px; margin:15px 0; font-size:.9em; color:rgba(255,230,242,0.9); max-width:700px; line-height:2;
+    }
+    .fruit-legend.visible { display:block; }
+    .fruit-legend strong { color:#ff99cc; }
+    .user-info { display:none; align-items:center; gap:15px; margin:15px 0; padding:12px 24px; background:rgba(255,102,178,0.1); border:2px solid rgba(255,102,178,0.3); border-radius:20px; color:#ffe6f2; box-shadow:0 6px 20px rgba(0,0,0,0.1); }
+    .user-info.visible { display:flex; }
+    .user-name { font-weight:bold; font-size:1.15em; color:#ff99cc; }
+    .user-sub { font-size:.85em; color:rgba(255,230,242,0.6); }
+    .err { color:#ff4d4d; font-weight:bold; margin:8px 0; min-height:18px; text-shadow:0 0 5px rgba(255,77,77,0.3); }
+    .dev-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:15px 0; }
+    .dev-btn { padding:12px 14px; font-size:0.9em; border:none; border-radius:14px; cursor:pointer; font-weight:bold; color:white; transition:all 0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; gap:6px; }
+    .dev-btn.pink { background:#ff66b2; } .dev-btn.pink:hover { background:#ff99cc; }
+    .dev-btn.red { background:#f44336; } .dev-btn.red:hover { background:#ef5350; }
+    .dev-btn.purple { background:#9c27b0; } .dev-btn.purple:hover { background:#ba68c8; }
+    .dev-btn.blue { background:#00bcd4; } .dev-btn.blue:hover { background:#4dd0e1; }
+    
+    @media (min-width: 768px) {
+      h1 { font-size:4em; }
+      canvas { max-width:600px; }
+      button { padding:16px 36px; font-size:1.1em; min-width:180px; }
+    }
+    @media (max-width: 480px) {
+      h1 { font-size:2.5em; }
+      .menu-glass { padding:30px 20px; border-radius:24px; }
+      button { padding:12px 20px; font-size:.95em; min-width:120px; }
+      .dpad button.control-btn { width:65px; height:65px; margin:4px; }
+      .dpad-grid { grid-template-columns:70px 70px 70px; grid-template-rows:70px 70px 70px; }
+      .info-box { padding:10px; font-size:.9em; min-width:80px; }
+      .dev-btn-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="modal-overlay" id="signInModal">
+  <div class="modal">
+    <h2><i data-lucide="user-circle"></i> sign in</h2>
+    <p>create or log into your account</p>
+    <input type="text" id="siUsername" placeholder="username" maxlength="20" />
+    <input type="password" id="siPassword" placeholder="password" />
+    <div class="err" id="siErr"></div>
+    <button id="btnCreateAcc"><i data-lucide="user-plus"></i> create account</button>
+    <button id="btnLoginAcc" class="secondary" style="margin-top:10px;"><i data-lucide="log-in"></i> log in</button>
+    <button class="secondary" onclick="skipSignIn()" style="margin-top:10px;"><i data-lucide="ghost"></i> play as guest</button>
+    <p class="small">saves your scores and pretty settings</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="devPassModal">
+  <div class="modal">
+    <h2><i data-lucide="lock"></i> dev access</h2>
+    <p style="color:#ffb3d9;">enter secret password</p>
+    <input type="password" id="devPass" placeholder="password" />
+    <div class="err" id="devPassErr"></div>
+    <button class="dev-btn pink" onclick="devCheckPass()"><i data-lucide="check"></i> submit</button>
+    <button class="close-btn" onclick="closeDevPass()"><i data-lucide="x"></i> close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="devMenuModal">
+  <div class="modal">
+    <h2><i data-lucide="wrench"></i> dev menu</h2>
+    <div class="dev-btn-grid">
+      <button class="dev-btn pink" onclick="devAddScore100()"><i data-lucide="plus"></i> score +100</button>
+      <button class="dev-btn pink" onclick="devLevelUp()"><i data-lucide="trending-up"></i> level +1</button>
+      <button class="dev-btn blue" id="devGridBtn" onclick="devToggleGrid()"><i data-lucide="grid"></i> toggle grid</button>
+      <button class="dev-btn blue" id="devFpsBtn" onclick="devToggleFps()"><i data-lucide="monitor"></i> toggle fps</button>
+      <button class="dev-btn purple" onclick="devClearAllScores()"><i data-lucide="trash-2"></i> clear scores</button>
+      <button class="dev-btn purple" onclick="devClearAllUsers()"><i data-lucide="users-x"></i> delete users</button>
+      <button class="dev-btn red" onclick="devResetAll()"><i data-lucide="rotate-ccw"></i> reset all</button>
+      <button class="dev-btn red" onclick="devNukeStorage()"><i data-lucide="bomb"></i> nuke storage</button>
     </div>
-    <!-- LEADERBOARD MODAL -->
-    <div class="modal-overlay" id="lbModal">
-      <div class="modal">
-        <h2>
-          <i data-lucide="trophy"></i> leaderboard
-        </h2>
-        <div class="leaderboard-list" id="lbList"></div>
-        <button class="close-btn" onclick="closeLb()">
-          <i data-lucide="x"></i> close
-        </button>
-      </div>
+    <div style="background:rgba(255,102,178,0.05); border:1px solid rgba(255,102,178,0.3); padding:15px; border-radius:16px; margin:15px 0; text-align:left;">
+      <div id="devStatus" style="font-size:0.9em; color:#ffb3d9; font-family:monospace; white-space:pre-wrap;"></div>
     </div>
-    <!-- SETTINGS MODAL -->
-    <div class="modal-overlay" id="settingsModal">
-      <div class="modal">
-        <h2>
-          <i data-lucide="settings"></i> settings
-        </h2>
-        <div class="settings-row">
-          <label>
-            <i data-lucide="volume-2"></i> sound
-          </label>
-          <button class="toggle-btn" id="soundToggle" onclick="toggleSound()">on</button>
-        </div>
-        <div class="settings-row">
-          <label>
-            <i data-lucide="gamepad-2"></i> d-pad
-          </label>
-          <button class="toggle-btn" id="dpadToggle" onclick="toggleDpad()">off</button>
-        </div>
-        <div class="settings-row">
-          <label>
-            <i data-lucide="zap"></i> difficulty
-          </label>
-          <select id="diffSelect" onchange="changeDiff(this.value)">
-            <option value="easy">easy</option>
-            <option value="medium">medium</option>
-            <option value="hard">hard</option>
-          </select>
-        </div>
-        <div class="settings-row">
-          <label>
-            <i data-lucide="cherry"></i> fruit density
-          </label>
-          <select id="fruitSelect" onchange="changeFruit(this.value)">
-            <option value="1">1x</option>
-            <option value="2" selected>2x</option>
-            <option value="3">3x</option>
-            <option value="4">4x</option>
-          </select>
-        </div>
-        <div class="color-slider-wrap">
-          <label>
-            <i data-lucide="palette"></i> snake color
-          </label>
-          <input
-            type="range"
-            id="colorSlider"
-            min="0"
-            max="359"
-            value="330"
-            oninput="updateColorPreview(this.value)"
-            onchange="saveColorHue(this.value)"
-          />
-          <div class="snake-preview-row" id="snakePreview"></div>
-          <div class="color-value" id="colorValue">hue: 330°</div>
-        </div>
-        <button class="close-btn" onclick="closeSettings()">
-          <i data-lucide="x"></i> close
-        </button>
-      </div>
+    <button class="close-btn" onclick="closeDevMenu()"><i data-lucide="x"></i> close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2><i data-lucide="settings"></i> settings</h2>
+    <div class="settings-row">
+      <label><i data-lucide="volume-2"></i> sound</label>
+      <button class="toggle-btn" id="soundToggleBtn" onclick="toggleSoundSetting()">on</button>
     </div>
-    <!-- DEV PASS MODAL -->
-    <div class="modal-overlay" id="devPassModal">
-      <div class="modal">
-        <h2>
-          <i data-lucide="terminal"></i> dev access
-        </h2>
-        <input type="password" id="devPass" placeholder="password" autocomplete="off" />
-        <div class="err" id="devPassErr"></div>
-        <div class="button-group">
-          <button onclick="devCheckPass()">
-            <i data-lucide="unlock"></i> enter
-          </button>
-          <button class="close-btn" onclick="closeDevPass()">
-            <i data-lucide="x"></i> cancel
-          </button>
-        </div>
-      </div>
+    <div class="settings-row">
+      <label><i data-lucide="gamepad-2"></i> d-pad controls</label>
+      <button class="toggle-btn" id="dpadToggleBtn" onclick="toggleDpadSetting()">off</button>
     </div>
-    <!-- DEV MENU MODAL -->
-    <div class="modal-overlay" id="devMenuModal">
-      <div class="modal">
-        <h2>
-          <i data-lucide="terminal"></i> dev menu
-        </h2>
-        <pre id="devStatus" style="color:#ffb3d9;font-size:.85em;margin:10px 0;text-align:left;"></pre>
-        <div class="dev-btn-grid">
-          <button class="dev-btn pink" onclick="devAddScore100()">+100 score</button>
-          <button class="dev-btn pink" onclick="devLevelUp()">level up</button>
-          <button class="dev-btn purple" id="devGridBtn" onclick="devToggleGrid()">grid off</button>
-          <button class="dev-btn purple" id="devFpsBtn" onclick="devToggleFps()">fps off</button>
-          <button class="dev-btn red" onclick="devClearAllScores()">clear scores</button>
-          <button class="dev-btn red" onclick="devClearAllUsers()">clear users</button>
-          <button class="dev-btn blue" onclick="devResetAll()">reset settings</button>
-          <button class="dev-btn red" onclick="devNukeStorage()">nuke storage</button>
-        </div>
-        <button class="close-btn" onclick="closeDevMenu()">
-          <i data-lucide="x"></i> close
-        </button>
-      </div>
+    <div class="settings-row">
+      <label><i data-lucide="activity"></i> difficulty</label>
+      <select id="difficultySelect" onchange="changeDifficultySetting()">
+        <option value="easy">easy</option>
+        <option value="medium">medium</option>
+        <option value="hard">hard</option>
+      </select>
     </div>
-    <!-- MAIN UI -->
-    <div class="container">
-      <h1 onclick="handleTitleClick()">🐍 snake</h1>
-      <!-- user info bar -->
-      <div class="user-info" id="userInfo">
-        <div>
-          <div class="user-name" id="userName">player</div>
-          <div class="user-sub">logged in</div>
-        </div>
-        <button class="secondary" style="min-width:auto;padding:8px 14px;" onclick="openSignIn()">
-          <i data-lucide="log-out"></i>
-        </button>
-      </div>
-      <!-- score/level/hi HUD (visible during game) -->
-      <div class="info" id="infoBar">
-        <div class="info-box">
-          <i data-lucide="star"></i>
-          <span id="scoreEl">0</span>
-        </div>
-        <div class="info-box">
-          <i data-lucide="layers"></i>
-          lv <span id="levelEl">1</span>
-        </div>
-        <div class="info-box">
-          <i data-lucide="trophy"></i>
-          <span id="hiEl">0</span>
-        </div>
-        <div class="info-box">
-          <i data-lucide="settings-2"></i>
-          <span id="modeEl">easy | 2x</span>
-        </div>
-      </div>
-      <!-- canvas -->
-      <canvas id="gameCanvas" width="400" height="400"></canvas>
-      <!-- d-pad -->
-      <div class="dpad" id="dpad">
-        <div class="dpad-grid">
-          <span></span>
-          <button class="control-btn" ontouchstart="setDir(0,-1)" onclick="setDir(0,-1)">
-            <i data-lucide="arrow-up"></i>
-          </button>
-          <span></span>
-          <button class="control-btn" ontouchstart="setDir(-1,0)" onclick="setDir(-1,0)">
-            <i data-lucide="arrow-left"></i>
-          </button>
-          <span></span>
-          <button class="control-btn" ontouchstart="setDir(1,0)" onclick="setDir(1,0)">
-            <i data-lucide="arrow-right"></i>
-          </button>
-          <span></span>
-          <button class="control-btn" ontouchstart="setDir(0,1)" onclick="setDir(0,1)">
-            <i data-lucide="arrow-down"></i>
-          </button>
-          <span></span>
-        </div>
-      </div>
-      <!-- menu buttons -->
-      <div class="button-group" id="menuBtns">
-        <button id="playBtn">
-          <i data-lucide="play"></i> play
-        </button>
-        <button class="secondary" onclick="openLb()">
-          <i data-lucide="trophy"></i> scores
-        </button>
-        <button class="secondary" onclick="openSettings()">
-          <i data-lucide="settings"></i> settings
-        </button>
-        <button class="secondary" onclick="openSignIn()">
-          <i data-lucide="user"></i> account
-        </button>
-      </div>
-      <!-- fruit legend -->
-      <div class="fruit-legend" id="fruitLegend">
-        🍎 +1   🍊 +3   🍇 +5   🍓 +2   🍋 +4   🫐 +6   ⭐ +10 level up
-      </div>
+    <div class="settings-row">
+      <label><i data-lucide="cherry"></i> fruit amount</label>
+      <select id="densitySelect" onchange="changeDensitySetting()">
+        <option value="1">low (1)</option>
+        <option value="2">normal (2)</option>
+        <option value="4">high (4)</option>
+      </select>
     </div>
-    <script src="app.js"></script>
-  </body>
+    <div class="color-slider-wrap">
+      <label><i data-lucide="palette"></i> snake color</label>
+      <div class="snake-preview-row" id="snakePreviewRow">
+        <div class="snake-preview-seg" id="sp0"></div>
+        <div class="snake-preview-seg" id="sp1"></div>
+        <div class="snake-preview-seg" id="sp2"></div>
+        <div class="snake-preview-seg" id="sp3"></div>
+        <div class="snake-preview-seg" id="sp4"></div>
+      </div>
+      <input type="range" id="colorSlider" min="0" max="360" value="330" />
+      <div class="color-value" id="colorValue">pink — hue 330</div>
+    </div>
+    <button onclick="saveSettings()"><i data-lucide="save"></i> save settings</button>
+    <button class="close-btn" onclick="closeSettings()"><i data-lucide="x"></i> close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="leaderboardModal">
+  <div class="modal">
+    <h2><i data-lucide="trophy"></i> leaderboard</h2>
+    <div class="leaderboard-list" id="lbList"></div>
+    <button class="close-btn" onclick="closeLeaderboard()"><i data-lucide="x"></i> close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <h2><i data-lucide="book-open"></i> how to play</h2>
+    <div style="text-align:left; color:rgba(255,230,242,0.9); font-size:.95em; line-height:1.8; background:rgba(255,255,255,0.03); padding:18px; border-radius:20px; border:1px solid rgba(255,153,204,0.15);">
+      swipe on screen to move<br>
+      use arrow keys or wasd<br>
+      enable d-pad in settings if u want<br>
+      eat fruits to grow and score points<br>
+      dont hit the walls or urself
+    </div>
+    <button class="close-btn" onclick="closeInfo()"><i data-lucide="x"></i> close</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="gameOverModal">
+  <div class="modal">
+    <h2 style="color:#ff4d4d"><i data-lucide="skull"></i> game over</h2>
+    <p>score: <strong style="color:#ff66b2; font-size:1.6em;"><span id="finalScore">0</span></strong></p>
+    <p>mode: <span id="finalDifficulty">easy</span></p>
+    <div id="gameOverPlayer" style="margin:12px 0; color:#ffb3d9; font-weight:bold; font-size:1.2em;"></div>
+    <div class="leaderboard-list" id="lbListGameOver"></div>
+    <div class="button-group" style="margin-top:20px;">
+      <button onclick="resetGame()"><i data-lucide="rotate-cw"></i> play again</button>
+      <button class="secondary" onclick="openSettingsFromGameOver()"><i data-lucide="settings"></i> settings</button>
+    </div>
+    <button class="secondary" onclick="showStartScreen()" style="margin-top:12px; min-width:200px;"><i data-lucide="home"></i> main menu</button>
+  </div>
+</div>
+
+<div class="container">
+  
+  <div class="user-info" id="userInfo">
+    <div style="flex:1; text-align:left;">
+      <div class="user-name" id="userName"></div>
+      <div class="user-sub" id="userSub">signed in</div>
+    </div>
+    <button class="close-btn" onclick="signOut()" style="margin:0; padding:10px 18px; min-width:auto; font-size:.85em;"><i data-lucide="log-out"></i> sign out</button>
+  </div>
+
+  <div class="menu-glass" id="startMenuArea">
+    <h1 id="gameTitle" onclick="handleTitleClick()">snake</h1>
+    <div class="button-group" id="startButtons">
+      <button id="playBtn" style="width:100%; font-size:1.2em; padding:18px;"><i data-lucide="play-circle"></i> play now</button>
+      <button class="secondary" onclick="showSignInModal()"><i data-lucide="user"></i> sign in</button>
+      <button class="secondary" onclick="openLeaderboard()"><i data-lucide="award"></i> leaderboard</button>
+      <button class="secondary" onclick="openSettings()"><i data-lucide="sliders"></i> settings</button>
+      <button class="secondary" onclick="openInfo()"><i data-lucide="help-circle"></i> info</button>
+    </div>
+  </div>
+
+  <div class="info" id="infoBar">
+    <div class="info-box"><i data-lucide="star"></i> score: <span id="score">0</span></div>
+    <div class="info-box"><i data-lucide="zap"></i> level: <span id="level">1</span></div>
+    <div class="info-box"><i data-lucide="crown"></i> best: <span id="highScore">0</span></div>
+  </div>
+
+  <div class="power-up-indicator" id="powerUpIndicator"></div>
+
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+  <div class="fruit-legend" id="fruitLegend">
+    <strong>apple 10</strong> | <strong>orange 15</strong> | <strong>berry 25</strong> | <strong>banana 35</strong><br>
+    <strong>watermelon 50</strong> | <strong>grapes 60</strong> | <strong>pineapple 75</strong> | <strong>mango 90</strong><br>
+    <strong>star 100</strong> | <strong>diamond 150</strong>
+  </div>
+
+  <div class="button-group" id="gameButtons" style="display:none;">
+    <button id="pauseBtn" onclick="togglePause()"><i data-lucide="pause"></i> pause</button>
+    <button class="secondary" onclick="showStartScreen()"><i data-lucide="x-circle"></i> quit</button>
+  </div>
+
+  <div class="dpad" id="dpad">
+    <div class="dpad-grid">
+      <div></div>
+      <button class="control-btn" ontouchstart="handleDpad(event, 0,-1)" onmousedown="handleDpad(event, 0,-1)"><i data-lucide="arrow-up"></i></button>
+      <div></div>
+      <button class="control-btn" ontouchstart="handleDpad(event, -1,0)" onmousedown="handleDpad(event, -1,0)"><i data-lucide="arrow-left"></i></button>
+      <div></div>
+      <button class="control-btn" ontouchstart="handleDpad(event, 1,0)" onmousedown="handleDpad(event, 1,0)"><i data-lucide="arrow-right"></i></button>
+      <div></div>
+      <button class="control-btn" ontouchstart="handleDpad(event, 0,1)" onmousedown="handleDpad(event, 0,1)"><i data-lucide="arrow-down"></i></button>
+      <div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+const LS = {
+  get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } },
+  set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) { console.warn("storage err"); } },
+  del: k => localStorage.removeItem(k)
+};
+
+let titleClickCount = 0;
+let titleClickTimeout;
+let devGrid = false;
+let devFps = false;
+let lastFrameTime = 0;
+let currentFps = 0;
+
+function handleTitleClick() {
+  titleClickCount++;
+  clearTimeout(titleClickTimeout);
+  titleClickTimeout = setTimeout(() => { titleClickCount = 0; }, 1000);
+  if (titleClickCount === 10) {
+    titleClickCount = 0;
+    document.getElementById('devPassModal').classList.add('visible');
+    document.getElementById('devPass').value = '';
+    document.getElementById('devPassErr').textContent = '';
+    setTimeout(() => document.getElementById('devPass').focus(), 100);
+  }
+}
+
+function devCheckPass() {
+  const pass = document.getElementById('devPass').value;
+  if (pass === '83638378') {
+    document.getElementById('devPassModal').classList.remove('visible');
+    openDevMenu();
+  } else {
+    document.getElementById('devPassErr').textContent = 'wrong password';
+  }
+}
+
+function closeDevPass() { document.getElementById('devPassModal').classList.remove('visible'); }
+function openDevMenu() { 
+  updateDevStatus(); 
+  document.getElementById('devGridBtn').innerHTML = devGrid ? '<i data-lucide="grid"></i> grid on' : '<i data-lucide="grid"></i> grid off';
+  document.getElementById('devFpsBtn').innerHTML = devFps ? '<i data-lucide="monitor"></i> fps on' : '<i data-lucide="monitor"></i> fps off';
+  lucide.createIcons();
+  document.getElementById('devMenuModal').classList.add('visible'); 
+}
+function closeDevMenu() { document.getElementById('devMenuModal').classList.remove('visible'); }
+
+function updateDevStatus() {
+  const users = Object.keys(getUsers()).length;
+  const scores = getScores().length;
+  let status = `users: ${users}\nscores: ${scores}`;
+  document.getElementById('devStatus').textContent = status;
+}
+
+function devAddScore100() { score += 100; updateScore(); updateDevStatus(); }
+function devLevelUp() { level += 1; updateScore(); updateDevStatus(); }
+function devToggleGrid() { devGrid = !devGrid; openDevMenu(); }
+function devToggleFps() { devFps = !devFps; openDevMenu(); }
+function devClearAllScores() { saveScores([]); updateDevStatus(); }
+function devClearAllUsers() { saveUsers({}); updateDevStatus(); }
+function devResetAll() { LS.del('snakeSettings3'); LS.del('snakeHighScore3'); loadSettings(); updateDevStatus(); }
+function devNukeStorage() { localStorage.clear(); location.reload(); }
+
+function getUsers() { return LS.get('snakeUsers3') || {}; }
+function saveUsers(u) { LS.set('snakeUsers3', u); }
+function hashPass(p) { let h=0; for(let i=0;i<p.length;i++) h=Math.imul(31,h)+p.charCodeAt(i)|0; return h.toString(); }
+
+function createAccount(username, password) {
+  if (!username || username.length < 2) return 'username too short';
+  if (!password || password.length < 4) return 'password too short';
+  const users = getUsers();
+  const lower = username.toLowerCase();
+  if (users[lower]) return 'username taken';
+  users[lower] = { username, passwordHash: hashPass(password), snakeColorHue: 330, settings: {}, highScore: 0 };
+  saveUsers(users);
+  return null;
+}
+
+function loginAccount(username, password) {
+  const users = getUsers();
+  const u = users[username.toLowerCase()];
+  if (!u) return 'account not found';
+  if (u.passwordHash !== hashPass(password)) return 'wrong password';
+  return null;
+}
+
+function getUserData(username) { return getUsers()[username.toLowerCase()] || null; }
+function saveUserData(username, data) {
+  const users = getUsers();
+  const lower = username.toLowerCase();
+  if (users[lower]) {
+    users[lower] = { ...users[lower], ...data };
+    saveUsers(users);
+  }
+}
+
+function getScores() { return LS.get('snakeScores3') || []; }
+function saveScores(s) { LS.set('snakeScores3', s); }
+
+function getModeString() {
+  return `${difficulty} | ${fruitDensity}x fruit`;
+}
+
+function addScore(username, scoreVal, currentMode) {
+  let scores = getScores();
+  let foundIndex = scores.findIndex(s => s.username === username && s.mode === currentMode);
+  if (foundIndex !== -1) {
+    if (scores[foundIndex].score < scoreVal) {
+      scores[foundIndex].score = scoreVal;
+      scores[foundIndex].date = new Date().toLocaleDateString();
+    }
+  } else {
+    scores.push({ username, score: scoreVal, mode: currentMode, date: new Date().toLocaleDateString() });
+  }
+  scores.sort((a,b) => b.score - a.score);
+  if (scores.length > 100) scores.pop();
+  saveScores(scores);
+}
+
+function renderLeaderboard(scores, listId) {
+  const el = document.getElementById(listId);
+  if (!el) return;
+  el.innerHTML = '';
+  if (!scores.length) { el.innerHTML = '<div style="padding:15px;color:rgba(255,255,255,0.4);text-align:center;">no scores yet</div>'; return; }
+  scores.forEach((s, i) => {
+    let rank = i===0?'1st':i===1?'2nd':i===2?'3rd':`#${i+1}`;
+    el.innerHTML += `<div class="lb-item"><span>${rank} - ${s.username}</span><span style="color:#ff66b2;font-weight:bold;">${s.score}</span><span style="color:#aaa;font-size:.8em">${s.mode}</span></div>`;
+  });
+}
+
+let currentUser = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btnCreateAcc').addEventListener('click', () => {
+    const un = document.getElementById('siUsername').value.trim();
+    const pw = document.getElementById('siPassword').value;
+    const err = createAccount(un, pw);
+    if (err) { document.getElementById('siErr').textContent = err; return; }
+    loginUser(un);
+  });
+  document.getElementById('btnLoginAcc').addEventListener('click', () => {
+    const un = document.getElementById('siUsername').value.trim();
+    const pw = document.getElementById('siPassword').value;
+    const err = loginAccount(un, pw);
+    if (err) { document.getElementById('siErr').textContent = err; return; }
+    loginUser(un);
+  });
+  document.getElementById('playBtn').addEventListener('click', startGame);
+  loadSettings();
+});
+
+function loginUser(username) {
+  const udata = getUserData(username);
+  if (!udata) return;
+  currentUser = { username: udata.username };
+  snakeColorHue = udata.snakeColorHue || 330;
+  if (udata.settings) {
+    if (udata.settings.sound !== undefined) soundEnabled = udata.settings.sound;
+    if (udata.settings.dpad !== undefined) showDpad = udata.settings.dpad;
+    if (udata.settings.difficulty) difficulty = udata.settings.difficulty;
+    if (udata.settings.fruitDensity) fruitDensity = udata.settings.fruitDensity;
+  }
+  document.getElementById('userInfo').classList.add('visible');
+  document.getElementById('userName').textContent = udata.username;
+  document.getElementById('signInModal').classList.remove('visible');
+  document.getElementById('colorSlider').value = snakeColorHue;
+  syncSettingsUI();
+}
+
+function showSignInModal() { document.getElementById('siErr').textContent = ''; document.getElementById('signInModal').classList.add('visible'); }
+function skipSignIn() { document.getElementById('signInModal').classList.remove('visible'); }
+function signOut() { currentUser = null; document.getElementById('userInfo').classList.remove('visible'); }
+
+let soundEnabled = true, showDpad = false, difficulty = 'easy', fruitDensity = 2, snakeColorHue = 330;
+
+function loadSettings() {
+  const s = LS.get('snakeSettings3');
+  if (s) {
+    if (s.sound !== undefined) soundEnabled = s.sound;
+    if (s.dpad !== undefined) showDpad = s.dpad;
+    if (s.difficulty) difficulty = s.difficulty;
+    if (s.fruitDensity) fruitDensity = s.fruitDensity;
+    if (s.snakeColorHue !== undefined) snakeColorHue = s.snakeColorHue;
+  }
+  syncSettingsUI();
+}
+
+function syncSettingsUI() {
+  document.getElementById('difficultySelect').value = difficulty;
+  document.getElementById('densitySelect').value = fruitDensity;
+  document.getElementById('colorSlider').value = snakeColorHue;
+  updateColorSlider();
+  document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'on' : 'off';
+  document.getElementById('soundToggleBtn').className = soundEnabled ? 'toggle-btn active' : 'toggle-btn';
+  document.getElementById('dpadToggleBtn').textContent = showDpad ? 'on' : 'off';
+  document.getElementById('dpadToggleBtn').className = showDpad ? 'toggle-btn active' : 'toggle-btn';
+  if (showDpad) document.getElementById('dpad').classList.add('visible');
+  else document.getElementById('dpad').classList.remove('visible');
+}
+
+function hexFromHUE(hue) {
+  const h = ((hue % 360) + 360) % 360;
+  const s = 0.85, l = 0.65;
+  const c = (1 - Math.abs(2*l-1)) * s;
+  const x = c * (1 - Math.abs((h/60)%2 - 1));
+  const m = l - c/2;
+  let r,g,b;
+  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  const R=Math.round((r+m)*255), G=Math.round((g+m)*255), B=Math.round((b+m)*255);
+  return `#${R.toString(16).padStart(2,'0')}${G.toString(16).padStart(2,'0')}${B.toString(16).padStart(2,'0')}`;
+}
+
+function updateColorSlider() {
+  const hue = snakeColorHue;
+  const hex = hexFromHUE(hue);
+  const names = [[0,'red'],[30,'orange'],[60,'yellow'],[90,'lime'],[120,'green'],[150,'mint'],[180,'cyan'],[210,'sky'],[240,'blue'],[270,'purple'],[300,'magenta'],[330,'pink'],[360,'red']];
+  let name = 'color';
+  for(let i=0; i<names.length-1; i++){ if(hue>=names[i][0] && hue<names[i+1][0]){ name = names[i][1]; break; } }
+  document.getElementById('colorValue').textContent = `${name} — hue ${hue}`;
+  document.getElementById('colorSlider').style.setProperty('--thumb-color', hex);
+  for(let i=0; i<5; i++){
+    const el = document.getElementById(`sp${i}`);
+    if(el) el.style.background = hexFromHUE(hue - i*12);
+  }
+}
+
+document.getElementById('colorSlider').addEventListener('input', e => { snakeColorHue = parseInt(e.target.value); updateColorSlider(); });
+
+function openSettings() { document.getElementById('settingsModal').classList.add('visible'); }
+function closeSettings() { document.getElementById('settingsModal').classList.remove('visible'); }
+function toggleSoundSetting() { soundEnabled = !soundEnabled; syncSettingsUI(); }
+function toggleDpadSetting() { showDpad = !showDpad; syncSettingsUI(); }
+function changeDifficultySetting() { difficulty = document.getElementById('difficultySelect').value; }
+function changeDensitySetting() { fruitDensity = parseInt(document.getElementById('densitySelect').value); }
+
+function saveSettings() {
+  snakeColorHue = parseInt(document.getElementById('colorSlider').value);
+  const s = { sound: soundEnabled, dpad: showDpad, difficulty, fruitDensity, snakeColorHue };
+  LS.set('snakeSettings3', s);
+  if (currentUser) saveUserData(currentUser.username, { snakeColorHue, settings: s });
+  closeSettings();
+}
+
+function openLeaderboard() { renderLeaderboard(getScores().slice(0, 15), 'lbList'); document.getElementById('leaderboardModal').classList.add('visible'); }
+function closeLeaderboard() { document.getElementById('leaderboardModal').classList.remove('visible'); }
+function openInfo() { document.getElementById('infoModal').classList.add('visible'); }
+function closeInfo() { document.getElementById('infoModal').classList.remove('visible'); }
+function openSettingsFromGameOver() { document.getElementById('gameOverModal').classList.remove('visible'); openSettings(); }
+
+let gameRunning = false, gamePaused = false, score = 0, level = 1, highScore = LS.get('snakeHighScore3') || 0;
+const DIFF = { easy: { speed: 130, mult: 1 }, medium: { speed: 90, mult: 2 }, hard: { speed: 65, mult: 3 } };
+let diffCfg = DIFF[difficulty];
+let snake = [], direction = {x:1, y:0}, nextDirection = {x:1, y:0};
+
+const FRUITS = [
+  { name:'apple', pts:10, prob:35 },
+  { name:'orange', pts:15, prob:25 },
+  { name:'berry', pts:25, prob:15 },
+  { name:'banana', pts:35, prob:10 },
+  { name:'watermelon', pts:50, prob:6 },
+  { name:'grapes', pts:60, prob:4 },
+  { name:'pineapple', pts:75, prob:2.5 },
+  { name:'mango', pts:90, prob:1.5 },
+  { name:'star', pts:100, prob:0.8 },
+  { name:'diamond', pts:150, prob:0.2 }
+];
+
+let activeFruits = [];
+
+function spawnFruitObj() {
+  let rand = Math.random() * 100, sum = 0, chosen = FRUITS[0];
+  for(let f of FRUITS) { sum += f.prob; if(rand <= sum) { chosen = f; break; } }
+  
+  let posFound = false, fx, fy;
+  while(!posFound) {
+    fx = Math.floor(Math.random() * 20);
+    fy = Math.floor(Math.random() * 20);
+    posFound = !snake.some(s => s.x === fx && s.y === fy) && !activeFruits.some(f => f.x === fx && f.y === fy);
+  }
+  
+  const newFruit = { x: fx, y: fy, type: chosen };
+  activeFruits.push(newFruit);
+  
+  if (chosen.pts >= 50) {
+    let ind = document.getElementById('powerUpIndicator');
+    ind.innerHTML = `<i data-lucide="sparkles"></i> spawned ${chosen.name} +${chosen.pts * diffCfg.mult}`;
+    lucide.createIcons();
+    ind.classList.add('visible');
+    setTimeout(() => ind.classList.remove('visible'), 2500);
+  }
+}
+
+function startGame() {
+  gameRunning = true; gamePaused = false; score = 0; level = 1;
+  snake = [{x:10, y:10}, {x:9, y:10}, {x:8, y:10}];
+  direction = {x:1, y:0}; nextDirection = {x:1, y:0};
+  diffCfg = DIFF[difficulty];
+  activeFruits = [];
+  
+  for(let i=0; i<fruitDensity; i++) spawnFruitObj();
+  
+  document.getElementById('startMenuArea').style.display = 'none';
+  document.getElementById('gameButtons').style.display = 'flex';
+  document.getElementById('infoBar').classList.add('visible');
+  document.getElementById('fruitLegend').classList.add('visible');
+  document.getElementById('gameCanvas').classList.add('visible');
+  
+  updateScore();
+  gameLoop();
+}
+
+function resetGame() { document.getElementById('gameOverModal').classList.remove('visible'); startGame(); }
+function showStartScreen() {
+  gameRunning = false; gamePaused = false;
+  document.getElementById('gameOverModal').classList.remove('visible');
+  document.getElementById('startMenuArea').style.display = 'block';
+  document.getElementById('gameButtons').style.display = 'none';
+  document.getElementById('infoBar').classList.remove('visible');
+  document.getElementById('fruitLegend').classList.remove('visible');
+  document.getElementById('gameCanvas').classList.remove('visible');
+}
+
+function togglePause() {
+  if(!gameRunning) return;
+  gamePaused = !gamePaused;
+  document.getElementById('pauseBtn').innerHTML = gamePaused ? '<i data-lucide="play"></i> resume' : '<i data-lucide="pause"></i> pause';
+  lucide.createIcons();
+}
+
+function updateScore() {
+  document.getElementById('score').textContent = score;
+  document.getElementById('level').textContent = level;
+  document.getElementById('highScore').textContent = Math.max(highScore, score);
+}
+
+function drawCustomFruit(ctx, x, y, gs, typeName) {
+  let cx = x * gs + gs/2;
+  let cy = y * gs + gs/2;
+  let r = gs/2 - 2;
+  
+  ctx.save();
+  ctx.translate(cx, cy);
+  
+  if (typeName === 'apple') {
+    ctx.fillStyle = '#ff4d4d'; ctx.beginPath(); ctx.arc(0,1,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#4caf50'; ctx.fillRect(-1, -r, 2, 4);
+  } else if (typeName === 'orange') {
+    ctx.fillStyle = '#ff9800'; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#e65100'; ctx.beginPath(); ctx.arc(0,-r+3,1.5,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'berry') {
+    ctx.fillStyle = '#e91e63';
+    ctx.beginPath(); ctx.arc(-3,-2,r/1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(3,-2,r/1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0,3,r/1.5,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'banana') {
+    ctx.strokeStyle = '#ffeeb5'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(0, -r+3, r, 0.2, Math.PI - 0.2); ctx.stroke();
+  } else if (typeName === 'watermelon') {
+    ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.arc(0,2,r,0,Math.PI,true); ctx.fill();
+    ctx.fillStyle = '#ff5252'; ctx.beginPath(); ctx.arc(0,2,r-1.5,0,Math.PI,true); ctx.fill();
+  } else if (typeName === 'grapes') {
+    ctx.fillStyle = '#9c27b0';
+    ctx.beginPath(); ctx.arc(-3,-3,3.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(3,-3,3.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0,1,3.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-1,4,3.5,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'pineapple') {
+    ctx.fillStyle = '#ffeb3b'; ctx.fillRect(-r+2,-r+5,r*2-4,r*2-5);
+    ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.moveTo(0,-r+1); ctx.lineTo(-4,-r-3); ctx.lineTo(4,-r-3); ctx.fill();
+  } else if (typeName === 'mango') {
+    ctx.fillStyle = '#ffc107'; ctx.beginPath(); ctx.ellipse(0,0,r,r-3,Math.PI/4,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'star') {
+    ctx.fillStyle = '#ffeb3b'; ctx.beginPath();
+    for(let i=0; i<5; i++) {
+      ctx.lineTo(Math.cos((18+i*72)*Math.PI/180)*r, -Math.sin((18+i*72)*Math.PI/180)*r);
+      ctx.lineTo(Math.cos((54+i*72)*Math.PI/180)*(r/2), -Math.sin((54+i*72)*Math.PI/180)*(r/2));
+    }
+    ctx.closePath(); ctx.fill();
+  } else if (typeName === 'diamond') {
+    ctx.fillStyle = '#00bcd4';
+    ctx.beginPath(); ctx.moveTo(0,-r); ctx.lineTo(r,0); ctx.lineTo(0,r); ctx.lineTo(-r,0); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawGooglyEyes(ctx, headX, headY, gs, dir) {
+  let cx = headX * gs + gs/2;
+  let cy = headY * gs + gs/2;
+  
+  let jiggleX = (Math.random() - 0.5) * 1.5;
+  let jiggleY = (Math.random() - 0.5) * 1.5;
+  
+  let ex1, ey1, ex2, ey2;
+  let px1, py1, px2, py2;
+  
+  let dx = dir.x;
+  let dy = dir.y;
+  
+  if (dx === 1) { 
+    ex1 = cx + 2; ey1 = cy - 4; ex2 = cx + 2; ey2 = cy + 4;
+    px1 = ex1 + 1.5 + jiggleX; py1 = ey1 + jiggleY;
+    px2 = ex2 + 1.5 + jiggleX; py2 = ey2 + jiggleY;
+  } else if (dx === -1) {
+    ex1 = cx - 2; ey1 = cy - 4; ex2 = cx - 2; ey2 = cy + 4;
+    px1 = ex1 - 1.5 + jiggleX; py1 = ey1 + jiggleY;
+    px2 = ex2 - 1.5 + jiggleX; py2 = ey2 + jiggleY;
+  } else if (dy === 1) {
+    ex1 = cx - 4; ey1 = cy + 2; ex2 = cx + 4; ey2 = cy + 2;
+    px1 = ex1 + jiggleX; py1 = ey1 + 1.5 + jiggleY;
+    px2 = ex2 + jiggleX; py2 = ey2 + 1.5 + jiggleY;
+  } else {
+    ex1 = cx - 4; ey1 = cy - 2; ex2 = cx + 4; ey2 = cy - 2;
+    px1 = ex1 + jiggleX; py1 = ey1 - 1.5 + jiggleY;
+    px2 = ex2 + jiggleX; py2 = ey2 - 1.5 + jiggleY;
+  }
+
+  ctx.fillStyle = 'white';
+  ctx.beginPath(); ctx.arc(ex1, ey1, 3.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(ex2, ey2, 3.5, 0, Math.PI*2); ctx.fill();
+  
+  ctx.fillStyle = '#1c0e1f';
+  ctx.beginPath(); ctx.arc(px1, py1, 1.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(px2, py2, 1.5, 0, Math.PI*2); ctx.fill();
+}
+
+function renderGame() {
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const gs = canvas.width / 20;
+  
+  ctx.fillStyle = '#160918';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  if (devGrid) {
+    ctx.strokeStyle = 'rgba(255,102,178,0.08)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<=20; i++){
+      ctx.beginPath(); ctx.moveTo(i*gs,0); ctx.lineTo(i*gs,canvas.height); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i*gs); ctx.lineTo(canvas.width,i*gs); ctx.stroke();
+    }
+  }
+  
+  const baseHue = snakeColorHue;
+  
+  for(let i=0; i<snake.length-1; i++) {
+    let curr = snake[i], nxt = snake[i+1];
+    ctx.fillStyle = hexFromHUE(baseHue - (i * 2));
+    ctx.beginPath();
+    let minX = Math.min(curr.x, nxt.x), maxX = Math.max(curr.x, nxt.x);
+    let minY = Math.min(curr.y, nxt.y), maxY = Math.max(curr.y, nxt.y);
+    if(curr.x === nxt.x) { ctx.fillRect(curr.x*gs + 2, minY*gs + gs/2, gs-4, gs); } 
+    else { ctx.fillRect(minX*gs + gs/2, curr.y*gs + 2, gs, gs-4); }
+  }
+
+  snake.forEach((seg, i) => {
+    ctx.fillStyle = hexFromHUE(baseHue - (i * 2));
+    ctx.beginPath();
+    ctx.arc(seg.x*gs + gs/2, seg.y*gs + gs/2, gs/2 - 2, 0, Math.PI*2);
+    ctx.fill();
+  });
+  
+  drawGooglyEyes(ctx, snake[0].x, snake[0].y, gs, direction);
+  
+  activeFruits.forEach(f => {
+    drawCustomFruit(ctx, f.x, f.y, gs, f.type.name);
+  });
+  
+  if (devFps) {
+    ctx.fillStyle = '#ffb3d9';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(`fps: ${currentFps}`, 5, 5);
+  }
+}
+
+function gameLoop() {
+  let now = performance.now();
+  currentFps = Math.round(1000 / (now - lastFrameTime));
+  lastFrameTime = now;
+
+  if (gameRunning && !gamePaused) {
+    direction = {...nextDirection};
+    const head = {...snake[0]};
+    head.x += direction.x; head.y += direction.y;
+    
+    if(head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 || snake.some(s => s.x === head.x && s.y === head.y)) {
+      endGame(); return;
+    }
+    
+    snake.unshift(head);
+    
+    let ateIndex = activeFruits.findIndex(f => f.x === head.x && f.y === head.y);
+    if(ateIndex !== -1) {
+      score += activeFruits[ateIndex].type.pts * diffCfg.mult;
+      level = Math.floor(score / 150) + 1;
+      activeFruits.splice(ateIndex, 1);
+    } else {
+      snake.pop();
+    }
+    
+    while(activeFruits.length < fruitDensity) {
+      spawnFruitObj();
+    }
+    
+    updateScore(); renderGame();
+  } else if (gameRunning && gamePaused) {
+    renderGame();
+  }
+  if (gameRunning) setTimeout(gameLoop, diffCfg.speed);
+}
+
+function setDir(x, y) {
+  if ((direction.x === -x && direction.y === -y) || (direction.x === x && direction.y === y)) return;
+  nextDirection = {x, y};
+}
+
+function handleDpad(e, x, y) {
+  e.preventDefault();
+  setDir(x, y);
+}
+
+function endGame() {
+  gameRunning = false;
+  highScore = Math.max(highScore, score);
+  LS.set('snakeHighScore3', highScore);
+  
+  let modeStr = getModeString();
+  
+  if(currentUser) {
+    addScore(currentUser.username, score, modeStr);
+    renderLeaderboard(getScores().slice(0, 5), 'lbListGameOver');
+    document.getElementById('gameOverPlayer').textContent = currentUser.username;
+  } else {
+    document.getElementById('gameOverPlayer').textContent = '';
+    document.getElementById('lbListGameOver').innerHTML = '';
+  }
+  
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('finalDifficulty').textContent = modeStr;
+  document.getElementById('gameOverModal').classList.add('visible');
+}
+
+document.addEventListener('keydown', e => {
+  if(!gameRunning || gamePaused) return;
+  if(e.key === ' ') { e.preventDefault(); togglePause(); }
+  if(e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') { e.preventDefault(); setDir(0, -1); }
+  if(e.key === 'ArrowDown' || e.key.toLowerCase() === 's') { e.preventDefault(); setDir(0, 1); }
+  if(e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') { e.preventDefault(); setDir(-1, 0); }
+  if(e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') { e.preventDefault(); setDir(1, 0); }
+});
+
+const cvs = document.getElementById('gameCanvas');
+let tsX = 0, tsY = 0;
+cvs.addEventListener('touchstart', e => {
+  tsX = e.changedTouches[0].screenX; tsY = e.changedTouches[0].screenY;
+}, {passive: false});
+cvs.addEventListener('touchmove', e => e.preventDefault(), {passive: false});
+cvs.addEventListener('touchend', e => {
+  if(!gameRunning || gamePaused) return;
+  let dx = e.changedTouches[0].screenX - tsX;
+  let dy = e.changedTouches[0].screenY - tsY;
+  if(Math.abs(dx) > Math.abs(dy)) {
+    if(dx > 30) setDir(1, 0); else if(dx < -30) setDir(-1, 0);
+  } else {
+    if(dy > 30) setDir(0, 1); else if(dy < -30) setDir(0, -1);
+  }
+});
+</script>
+</body>
 </html>

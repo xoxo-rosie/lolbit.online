@@ -3,14 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>
-      🐍 Snake
-    </title>
+    <title>🐍 Snake</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&amp;display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -21,29 +18,21 @@
           <i data-lucide="user"></i>
           account
         </h2>
-        <p>
-          create or log into your account
-        </p>
-        <p class="small">
-          saves your scores and settings
-        </p>
+        <p>create or log into your account</p>
+        <p class="small">saves your scores and settings</p>
         <input type="text" id="siUsername" placeholder="username" maxlength="20" autocomplete="off" />
         <input type="password" id="siPassword" placeholder="password" maxlength="50" autocomplete="off" />
-        <div class="err" id="siErr">
-        </div>
+        <div class="err" id="siErr"></div>
         <div class="button-group">
           <button id="btnCreateAcc">
-            <i data-lucide="user-plus"></i>
-            create
+            <i data-lucide="user-plus"></i> create
           </button>
           <button id="btnLoginAcc" class="secondary">
-            <i data-lucide="log-in"></i>
-            login
+            <i data-lucide="log-in"></i> login
           </button>
         </div>
         <button class="close-btn" onclick="closeSignIn()">
-          <i data-lucide="x"></i>
-          skip
+          <i data-lucide="x"></i> skip
         </button>
       </div>
     </div>
@@ -51,14 +40,11 @@
     <div class="modal-overlay" id="lbModal">
       <div class="modal">
         <h2>
-          <i data-lucide="trophy"></i>
-          leaderboard
+          <i data-lucide="trophy"></i> leaderboard
         </h2>
-        <div class="leaderboard-list" id="lbList">
-        </div>
+        <div class="leaderboard-list" id="lbList"></div>
         <button class="close-btn" onclick="closeLb()">
-          <i data-lucide="x"></i>
-          close
+          <i data-lucide="x"></i> close
         </button>
       </div>
     </div>
@@ -66,79 +52,59 @@
     <div class="modal-overlay" id="settingsModal">
       <div class="modal">
         <h2>
-          <i data-lucide="settings"></i>
-          settings
+          <i data-lucide="settings"></i> settings
         </h2>
         <div class="settings-row">
           <label>
-            <i data-lucide="volume-2"></i>
-            sound
+            <i data-lucide="volume-2"></i> sound
           </label>
-          <button class="toggle-btn" id="soundToggle" onclick="toggleSound()">
-            on
-          </button>
+          <button class="toggle-btn" id="soundToggle" onclick="toggleSound()">on</button>
         </div>
         <div class="settings-row">
           <label>
-            <i data-lucide="gamepad-2"></i>
-            d-pad
+            <i data-lucide="gamepad-2"></i> d-pad
           </label>
-          <button class="toggle-btn" id="dpadToggle" onclick="toggleDpad()">
-            off
-          </button>
+          <button class="toggle-btn" id="dpadToggle" onclick="toggleDpad()">off</button>
         </div>
         <div class="settings-row">
           <label>
-            <i data-lucide="zap"></i>
-            difficulty
+            <i data-lucide="zap"></i> difficulty
           </label>
           <select id="diffSelect" onchange="changeDiff(this.value)">
-            <option value="easy">
-              easy
-            </option>
-            <option value="medium">
-              medium
-            </option>
-            <option value="hard">
-              hard
-            </option>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+            <option value="hard">hard</option>
           </select>
         </div>
         <div class="settings-row">
           <label>
-            <i data-lucide="cherry"></i>
-            fruit density
+            <i data-lucide="cherry"></i> fruit density
           </label>
           <select id="fruitSelect" onchange="changeFruit(this.value)">
-            <option value="1">
-              1x
-            </option>
-            <option value="2" selected="">
-              2x
-            </option>
-            <option value="3">
-              3x
-            </option>
-            <option value="4">
-              4x
-            </option>
+            <option value="1">1x</option>
+            <option value="2" selected>2x</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
           </select>
         </div>
         <div class="color-slider-wrap">
           <label>
-            <i data-lucide="palette"></i>
-            snake color
+            <i data-lucide="palette"></i> snake color
           </label>
-          <input type="range" id="colorSlider" min="0" max="359" value="330" oninput="updateColorPreview(this.value)" onchange="saveColorHue(this.value)" />
-          <div class="snake-preview-row" id="snakePreview">
-          </div>
-          <div class="color-value" id="colorValue">
-            hue: 330°
-          </div>
+          <input
+            type="range"
+            id="colorSlider"
+            min="0"
+            max="359"
+            value="330"
+            oninput="updateColorPreview(this.value)"
+            onchange="saveColorHue(this.value)"
+          />
+          <div class="snake-preview-row" id="snakePreview"></div>
+          <div class="color-value" id="colorValue">hue: 330°</div>
         </div>
         <button class="close-btn" onclick="closeSettings()">
-          <i data-lucide="x"></i>
-          close
+          <i data-lucide="x"></i> close
         </button>
       </div>
     </div>
@@ -146,20 +112,16 @@
     <div class="modal-overlay" id="devPassModal">
       <div class="modal">
         <h2>
-          <i data-lucide="terminal"></i>
-          dev access
+          <i data-lucide="terminal"></i> dev access
         </h2>
         <input type="password" id="devPass" placeholder="password" autocomplete="off" />
-        <div class="err" id="devPassErr">
-        </div>
+        <div class="err" id="devPassErr"></div>
         <div class="button-group">
           <button onclick="devCheckPass()">
-            <i data-lucide="unlock"></i>
-            enter
+            <i data-lucide="unlock"></i> enter
           </button>
           <button class="close-btn" onclick="closeDevPass()">
-            <i data-lucide="x"></i>
-            cancel
+            <i data-lucide="x"></i> cancel
           </button>
         </div>
       </div>
@@ -168,57 +130,32 @@
     <div class="modal-overlay" id="devMenuModal">
       <div class="modal">
         <h2>
-          <i data-lucide="terminal"></i>
-          dev menu
+          <i data-lucide="terminal"></i> dev menu
         </h2>
-        <pre id="devStatus" style="color:#ffb3d9;font-size:.85em;margin:10px 0;text-align:left;">
-        </pre>
+        <pre id="devStatus" style="color:#ffb3d9;font-size:.85em;margin:10px 0;text-align:left;"></pre>
         <div class="dev-btn-grid">
-          <button class="dev-btn pink" onclick="devAddScore100()">
-            +100 score
-          </button>
-          <button class="dev-btn pink" onclick="devLevelUp()">
-            level up
-          </button>
-          <button class="dev-btn purple" id="devGridBtn" onclick="devToggleGrid()">
-            grid off
-          </button>
-          <button class="dev-btn purple" id="devFpsBtn" onclick="devToggleFps()">
-            fps off
-          </button>
-          <button class="dev-btn red" onclick="devClearAllScores()">
-            clear scores
-          </button>
-          <button class="dev-btn red" onclick="devClearAllUsers()">
-            clear users
-          </button>
-          <button class="dev-btn blue" onclick="devResetAll()">
-            reset settings
-          </button>
-          <button class="dev-btn red" onclick="devNukeStorage()">
-            nuke storage
-          </button>
+          <button class="dev-btn pink" onclick="devAddScore100()">+100 score</button>
+          <button class="dev-btn pink" onclick="devLevelUp()">level up</button>
+          <button class="dev-btn purple" id="devGridBtn" onclick="devToggleGrid()">grid off</button>
+          <button class="dev-btn purple" id="devFpsBtn" onclick="devToggleFps()">fps off</button>
+          <button class="dev-btn red" onclick="devClearAllScores()">clear scores</button>
+          <button class="dev-btn red" onclick="devClearAllUsers()">clear users</button>
+          <button class="dev-btn blue" onclick="devResetAll()">reset settings</button>
+          <button class="dev-btn red" onclick="devNukeStorage()">nuke storage</button>
         </div>
         <button class="close-btn" onclick="closeDevMenu()">
-          <i data-lucide="x"></i>
-          close
+          <i data-lucide="x"></i> close
         </button>
       </div>
     </div>
     <!-- MAIN UI -->
     <div class="container">
-      <h1 onclick="handleTitleClick()">
-        🐍 snake
-      </h1>
+      <h1 onclick="handleTitleClick()">🐍 snake</h1>
       <!-- user info bar -->
       <div class="user-info" id="userInfo">
         <div>
-          <div class="user-name" id="userName">
-            player
-          </div>
-          <div class="user-sub">
-            logged in
-          </div>
+          <div class="user-name" id="userName">player</div>
+          <div class="user-sub">logged in</div>
         </div>
         <button class="secondary" style="min-width:auto;padding:8px 14px;" onclick="openSignIn()">
           <i data-lucide="log-out"></i>
@@ -228,29 +165,23 @@
       <div class="info" id="infoBar">
         <div class="info-box">
           <i data-lucide="star"></i>
-          <span id="scoreEl">          0
-</span>
+          <span id="scoreEl">0</span>
         </div>
         <div class="info-box">
           <i data-lucide="layers"></i>
-          lv
-          <span id="levelEl">          1
-</span>
+          lv <span id="levelEl">1</span>
         </div>
         <div class="info-box">
           <i data-lucide="trophy"></i>
-          <span id="hiEl">          0
-</span>
+          <span id="hiEl">0</span>
         </div>
         <div class="info-box">
           <i data-lucide="settings-2"></i>
-          <span id="modeEl">          easy | 2x
-</span>
+          <span id="modeEl">easy | 2x</span>
         </div>
       </div>
       <!-- canvas -->
-      <canvas id="gameCanvas" width="400" height="400">
-      </canvas>
+      <canvas id="gameCanvas" width="400" height="400"></canvas>
       <!-- d-pad -->
       <div class="dpad" id="dpad">
         <div class="dpad-grid">
@@ -276,20 +207,16 @@
       <!-- menu buttons -->
       <div class="button-group" id="menuBtns">
         <button id="playBtn">
-          <i data-lucide="play"></i>
-          play
+          <i data-lucide="play"></i> play
         </button>
         <button class="secondary" onclick="openLb()">
-          <i data-lucide="trophy"></i>
-          scores
+          <i data-lucide="trophy"></i> scores
         </button>
         <button class="secondary" onclick="openSettings()">
-          <i data-lucide="settings"></i>
-          settings
+          <i data-lucide="settings"></i> settings
         </button>
         <button class="secondary" onclick="openSignIn()">
-          <i data-lucide="user"></i>
-          account
+          <i data-lucide="user"></i> account
         </button>
       </div>
       <!-- fruit legend -->
@@ -297,7 +224,6 @@
         🍎 +1   🍊 +3   🍇 +5   🍓 +2   🍋 +4   🫐 +6   ⭐ +10 level up
       </div>
     </div>
-    <script src="app.js">
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>

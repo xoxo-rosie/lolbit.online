@@ -1,30 +1,44 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>🐍 Snake</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
+  <title>snake</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; -webkit-user-select:none; user-select:none; }
     html,body { width:100%; height:100%; overflow:hidden; position:fixed; }
     body {
       display:flex; justify-content:center; align-items:center;
-      background:linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-      font-family:'Segoe UI', Arial, sans-serif;
+      background:linear-gradient(135deg, #3a1c36 0%, #1c0e1f 100%);
+      font-family:'Quicksand', sans-serif;
     }
     .container {
       text-align:center; display:flex; flex-direction:column; align-items:center;
-      width:100%; height:100%; justify-content:center; padding:10px;
+      width:100%; height:100%; justify-content:center; padding:15px;
       overflow-y:auto; overflow-x:hidden;
     }
+    .menu-glass {
+      background:rgba(255, 255, 255, 0.05);
+      backdrop-filter:blur(12px);
+      -webkit-backdrop-filter:blur(12px);
+      border:2px solid rgba(255, 102, 178, 0.2);
+      padding:40px 30px;
+      border-radius:30px;
+      box-shadow:0 15px 35px rgba(0,0,0,0.3), inset 0 0 20px rgba(255,102,178,0.1);
+      max-width:500px; width:100%;
+    }
     h1 {
-      color:white; margin:0 0 10px 0; font-size:2.5em;
-      text-shadow:0 0 20px rgba(76,175,80,0.5); cursor:pointer;
+      color:#ffe6f2; margin:0 0 20px 0; font-size:3.2em;
+      text-shadow:0 0 20px rgba(255,102,178,0.7); cursor:pointer; font-weight:900;
+      letter-spacing:2px;
     }
     canvas {
-      background:#0f0f1a; border:4px solid #4caf50; display:none; margin:0;
-      box-shadow:0 0 40px rgba(76,175,80,0.6); max-width:90vmin; height:auto;
-      aspect-ratio:1/1; touch-action:none; border-radius:10px;
+      background:#160918; border:4px solid #ff66b2; display:none; margin:0;
+      box-shadow:0 0 40px rgba(255,102,178,0.4); max-width:90vmin; height:auto;
+      aspect-ratio:1/1; touch-action:none; border-radius:24px;
     }
     canvas.visible { display:block; }
     .info {
@@ -33,213 +47,218 @@
     }
     .info.visible { display:flex; }
     .info-box {
-      background:linear-gradient(135deg, rgba(76,175,80,0.3), rgba(56,142,60,0.3));
-      border:2px solid rgba(76,175,80,0.5);
-      padding:12px 20px; border-radius:12px; font-size:1em; font-weight:bold; color:white;
-      flex:1; min-width:100px;
+      background:linear-gradient(135deg, rgba(255,102,178,0.2), rgba(204,51,153,0.2));
+      border:2px solid rgba(255,102,178,0.4);
+      padding:12px 20px; border-radius:18px; font-size:1em; font-weight:bold; color:#ffe6f2;
+      flex:1; min-width:100px; box-shadow:0 4px 15px rgba(0,0,0,0.15);
+      display:flex; align-items:center; justify-content:center; gap:8px;
     }
-    .info-box span { color:#81c784; }
+    .info-box span { color:#ffb3d9; font-size:1.2em; }
     .button-group {
-      margin:10px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; width:100%;
+      margin:15px 0; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; width:100%;
     }
     button {
-      padding:12px 28px; font-size:1em;
-      background:linear-gradient(135deg, #4caf50, #45a049);
-      border:none; border-radius:10px; cursor:pointer;
+      padding:14px 26px; font-size:1em;
+      background:linear-gradient(135deg, #ff66b2, #e60073);
+      border:none; border-radius:16px; cursor:pointer;
       font-weight:bold; color:white; transition:all 0.3s; white-space:nowrap;
-      min-width:140px; box-shadow:0 4px 15px rgba(76,175,80,0.4);
+      min-width:150px; box-shadow:0 6px 20px rgba(255,102,178,0.3);
+      display:flex; align-items:center; justify-content:center; gap:8px;
     }
-    button:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(76,175,80,0.6); }
+    button:hover { transform:translateY(-4px); box-shadow:0 8px 25px rgba(255,102,178,0.5); }
     button:active { transform:translateY(-1px); }
     button.secondary {
-      background:linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.1));
-      border:2px solid rgba(255,255,255,0.3); box-shadow:0 4px 15px rgba(0,0,0,0.3);
+      background:linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+      border:2px solid rgba(255,153,204,0.3); box-shadow:0 4px 15px rgba(0,0,0,0.2); color:#ffe6f2;
     }
     button.secondary:hover {
-      background:linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+      background:linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
     }
     .modal-overlay {
       display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-      background:rgba(0,0,0,0.85); z-index:999; justify-content:center; align-items:center;
-      backdrop-filter:blur(6px);
+      background:rgba(20,5,20,0.85); z-index:999; justify-content:center; align-items:center;
+      backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
     }
     .modal-overlay.visible { display:flex; }
     .modal {
-      background:linear-gradient(135deg, #1e1e3a, #252545);
-      border:2px solid #4caf50; padding:30px; border-radius:20px;
-      box-shadow:0 20px 80px rgba(76,175,80,0.5); text-align:center;
+      background:linear-gradient(135deg, #2b112b, #1d091e);
+      border:2px solid #ff66b2; padding:35px; border-radius:30px;
+      box-shadow:0 20px 80px rgba(255,102,178,0.4); text-align:center;
       min-width:340px; max-width:92vw; max-height:90vh; overflow-y:auto;
     }
-    .modal.dev-modal { border-color:#ff9800; box-shadow:0 20px 80px rgba(255,152,0,0.5); }
-    .modal h2 { color:#4caf50; margin-bottom:15px; font-size:1.8em; text-shadow:0 0 10px rgba(76,175,80,0.5); }
-    .modal h2.dev-title { color:#ff9800; text-shadow:0 0 10px rgba(255,152,0,0.5); }
-    .modal h3 { color:white; margin:15px 0 10px 0; font-size:1.2em; }
-    .modal p { color:rgba(255,255,255,0.85); margin:8px 0; line-height:1.5; }
-    .modal .small { font-size:.85em; color:rgba(255,255,255,0.6); margin-top:10px; }
-    .modal input[type="text"], .modal input[type="password"], .modal input[type="number"], .modal input[type="email"] {
-      width:100%; padding:12px; margin:8px 0; border-radius:8px; border:2px solid #4caf50;
-      background:rgba(255,255,255,0.1); color:white; font-size:1em; outline:none; text-align:center;
+    .modal h2 { color:#ff99cc; margin-bottom:15px; font-size:1.8em; text-shadow:0 0 10px rgba(255,102,178,0.5); display:flex; align-items:center; justify-content:center; gap:10px; }
+    .modal p { color:rgba(255,230,242,0.85); margin:8px 0; line-height:1.5; }
+    .modal .small { font-size:.85em; color:rgba(255,230,242,0.6); margin-top:10px; }
+    .modal input {
+      width:100%; padding:15px; margin:10px 0; border-radius:14px; border:2px solid rgba(255,102,178,0.5);
+      background:rgba(255,255,255,0.05); color:white; font-size:1em; outline:none; text-align:center;
+      font-family:'Quicksand', sans-serif; font-weight:bold;
     }
-    .modal input::placeholder { color:rgba(255,255,255,0.45); }
-    .modal input.dev-input { border-color:#ff9800; }
+    .modal input:focus { border-color:#ff66b2; background:rgba(255,255,255,0.1); }
+    .modal input::placeholder { color:rgba(255,230,242,0.4); font-weight:normal; }
     .leaderboard-list {
-      background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
-      padding:15px; border-radius:12px; margin:12px 0; text-align:left; max-height:280px; overflow-y:auto;
+      background:rgba(255,255,255,0.03); border:1px solid rgba(255,153,204,0.15);
+      padding:15px; border-radius:20px; margin:15px 0; text-align:left; max-height:300px; overflow-y:auto;
     }
     .lb-item {
-      display:flex; justify-content:space-between; align-items:center; padding:8px 0;
-      border-bottom:1px solid rgba(255,255,255,0.1); font-size:.9em; color:rgba(255,255,255,0.85);
+      display:flex; justify-content:space-between; align-items:center; padding:12px 5px;
+      border-bottom:1px solid rgba(255,153,204,0.1); font-size:.95em; color:rgba(255,230,242,0.9);
     }
     .lb-item:last-child { border-bottom:none; }
-    .close-btn { margin-top:15px; background:linear-gradient(135deg, #f44336, #d32f2f); }
-    .close-btn:hover { box-shadow:0 6px 20px rgba(244,67,54,0.6); }
+    .close-btn { margin-top:20px; background:linear-gradient(135deg, #ff4d4d, #cc0000); box-shadow:0 4px 15px rgba(255,77,77,0.3); }
+    .close-btn:hover { box-shadow:0 6px 20px rgba(255,77,77,0.5); }
     .settings-row {
-      display:flex; justify-content:space-between; align-items:center; margin:12px 0; padding:10px;
-      background:rgba(255,255,255,0.05); border-radius:8px;
+      display:flex; justify-content:space-between; align-items:center; margin:12px 0; padding:14px;
+      background:rgba(255,255,255,0.03); border-radius:16px; border:1px solid rgba(255,153,204,0.1);
     }
-    .settings-row label { color:white; font-weight:bold; }
+    .settings-row label { color:#ffe6f2; font-weight:bold; display:flex; align-items:center; gap:8px; }
     .settings-row select {
-      padding:8px 12px; border-radius:6px; border:none;
-      background:rgba(255,255,255,0.2); color:white; font-size:1em; cursor:pointer;
+      padding:8px 14px; border-radius:10px; border:1px solid rgba(255,153,204,0.4);
+      background:rgba(255,102,178,0.1); color:#ffe6f2; font-size:1em; cursor:pointer; outline:none;
+      font-family:'Quicksand', sans-serif; font-weight:bold;
     }
-    .settings-row select option { background:#1e1e3a; color:white; }
+    .settings-row select option { background:#2b112b; color:#ffe6f2; }
     .toggle-btn {
-      padding:8px 16px; border-radius:6px; border:none;
-      background:rgba(255,255,255,0.2); color:white; font-weight:bold; cursor:pointer; transition:all 0.3s; min-width:70px;
+      padding:8px 18px; border-radius:10px; border:none;
+      background:rgba(255,255,255,0.1); color:white; font-weight:bold; cursor:pointer; transition:all 0.3s; min-width:80px;
     }
-    .toggle-btn.active { background:#4caf50; }
-    .color-slider-wrap { margin:20px 0; }
-    .color-slider-wrap label { color:white; font-weight:bold; display:block; margin-bottom:8px; }
+    .toggle-btn.active { background:#ff66b2; box-shadow:0 0 15px rgba(255,102,178,0.4); }
+    .color-slider-wrap { margin:20px 0; background:rgba(255,255,255,0.02); padding:20px; border-radius:20px; border:1px solid rgba(255,153,204,0.1); }
+    .color-slider-wrap label { color:#ffe6f2; font-weight:bold; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; }
     #colorSlider {
       -webkit-appearance:none; appearance:none;
-      width:100%; height:36px; border-radius:18px; border:none; outline:none; cursor:pointer;
-      background:linear-gradient(to right, hsl(0,70%,50%),hsl(30,70%,50%),hsl(60,70%,50%),hsl(90,70%,50%),hsl(120,70%,50%),hsl(150,70%,50%),hsl(180,70%,50%),hsl(210,70%,50%),hsl(240,70%,50%),hsl(270,70%,50%),hsl(300,70%,50%),hsl(330,70%,50%),hsl(360,70%,50%));
-      margin:10px 0;
+      width:100%; height:16px; border-radius:8px; border:none; outline:none; cursor:pointer;
+      background:linear-gradient(to right, hsl(0,70%,60%),hsl(30,70%,60%),hsl(60,70%,60%),hsl(90,70%,60%),hsl(120,70%,60%),hsl(150,70%,60%),hsl(180,70%,60%),hsl(210,70%,60%),hsl(240,70%,60%),hsl(270,70%,60%),hsl(300,70%,60%),hsl(330,70%,60%),hsl(360,70%,60%));
+      box-shadow:inset 0 2px 5px rgba(0,0,0,0.3);
     }
-    #colorSlider::-webkit-slider-thumb { -webkit-appearance:none; width:32px; height:32px; border-radius:50%; border:3px solid white; background:var(--thumb-color,#4caf50); box-shadow:0 0 8px rgba(0,0,0,0.6); cursor:pointer; }
-    #colorSlider::-moz-range-thumb { width:32px; height:32px; border-radius:50%; border:3px solid white; background:var(--thumb-color,#4caf50); box-shadow:0 0 8px rgba(0,0,0,0.6); cursor:pointer; }
-    .snake-preview-row { display:flex; align-items:center; justify-content:center; gap:3px; margin:8px 0; height:36px; }
-    .snake-preview-seg { width:28px; height:28px; border-radius:6px; }
-    .color-value { color:#aaa; font-size:.9em; margin-top:4px; }
-    .dpad { display:none; margin-top:15px; }
+    #colorSlider::-webkit-slider-thumb { -webkit-appearance:none; width:28px; height:28px; border-radius:50%; border:3px solid white; background:var(--thumb-color,#ff66b2); box-shadow:0 2px 8px rgba(0,0,0,0.5); cursor:pointer; }
+    #colorSlider::-moz-range-thumb { width:28px; height:28px; border-radius:50%; border:3px solid white; background:var(--thumb-color,#ff66b2); box-shadow:0 2px 8px rgba(0,0,0,0.5); cursor:pointer; }
+    .snake-preview-row { display:flex; align-items:center; justify-content:center; gap:0px; margin:15px 0; height:40px; }
+    .snake-preview-seg { width:26px; height:26px; border-radius:50%; margin:0 -3px; border:2px solid rgba(255,255,255,0.3); z-index:1; }
+    .color-value { color:#ffb3d9; font-size:.9em; margin-top:12px; font-weight:bold; }
+    .dpad { display:none; margin-top:20px; }
     .dpad.visible { display:grid; }
     .dpad button.control-btn {
-      width:70px; height:70px; font-size:1.8em; padding:0; margin:4px;
-      background:linear-gradient(135deg, rgba(76,175,80,0.4), rgba(56,142,60,0.4));
-      border:2px solid rgba(76,175,80,0.6); border-radius:12px; min-width:auto;
+      width:75px; height:75px; font-size:1.8em; padding:0; margin:6px;
+      background:linear-gradient(135deg, rgba(255,102,178,0.15), rgba(204,51,153,0.25));
+      border:2px solid rgba(255,102,178,0.4); border-radius:24px; min-width:auto; color:white;
+      box-shadow:0 6px 15px rgba(0,0,0,0.2); touch-action:manipulation;
+      display:flex; align-items:center; justify-content:center;
     }
-    .dpad button.control-btn:active { background:rgba(76,175,80,0.7); transform:scale(0.95); }
-    .dpad-grid { display:grid; grid-template-columns:70px 70px 70px; grid-template-rows:70px 70px 70px; justify-items:center; align-items:center; }
-    .power-up-indicator { color:#ffff00; font-weight:bold; margin:6px 0; min-height:22px; font-size:1em; display:none; text-shadow:0 0 10px rgba(255,255,0,0.5); }
-    .power-up-indicator.visible { display:block; }
+    .dpad button.control-btn:active { background:rgba(255,102,178,0.5); transform:scale(0.9); }
+    .dpad-grid { display:grid; grid-template-columns:85px 85px 85px; grid-template-rows:85px 85px 85px; justify-items:center; align-items:center; }
+    .power-up-indicator { color:#ffe6f2; font-weight:bold; margin:8px 0; min-height:28px; font-size:1.1em; display:none; text-shadow:0 0 12px rgba(255,102,178,0.6); background:rgba(255,102,178,0.15); padding:6px 18px; border-radius:14px; border:1px solid rgba(255,102,178,0.3); }
+    .power-up-indicator.visible { display:inline-flex; align-items:center; justify-content:center; gap:6px; }
     .fruit-legend {
-      display:none; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
-      padding:10px 14px; border-radius:10px; margin:6px 0; font-size:.78em; color:rgba(255,255,255,0.85); max-width:700px; line-height:1.7;
+      display:none; background:rgba(255,255,255,0.03); border:1px solid rgba(255,153,204,0.15);
+      padding:15px 20px; border-radius:20px; margin:15px 0; font-size:.9em; color:rgba(255,230,242,0.9); max-width:700px; line-height:2;
     }
     .fruit-legend.visible { display:block; }
-    .fruit-legend strong { color:#81c784; }
-    .user-info { display:none; align-items:center; gap:12px; margin:10px 0; padding:10px 18px; background:rgba(76,175,80,0.2); border:2px solid rgba(76,175,80,0.5); border-radius:12px; color:white; }
+    .fruit-legend strong { color:#ff99cc; }
+    .user-info { display:none; align-items:center; gap:15px; margin:15px 0; padding:12px 24px; background:rgba(255,102,178,0.1); border:2px solid rgba(255,102,178,0.3); border-radius:20px; color:#ffe6f2; box-shadow:0 6px 20px rgba(0,0,0,0.1); }
     .user-info.visible { display:flex; }
-    .user-name { font-weight:bold; font-size:1.05em; }
-    .user-sub { font-size:.82em; color:rgba(255,255,255,0.65); }
-    .err { color:#ff5555; font-weight:bold; margin:8px 0; min-height:18px; }
-    .dev-pass-modal { display:none; }
-    .dev-pass-input { width:100%; padding:12px; margin:12px 0; border-radius:8px; border:2px solid #ff9800; background:rgba(255,255,255,0.1); color:white; font-size:1em; }
-    .dev-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:15px 0; }
-    .dev-btn { padding:8px 14px; font-size:0.85em; border:none; border-radius:6px; cursor:pointer; font-weight:bold; color:white; transition:all 0.2s; }
-    .dev-btn.orange { background:#ff9800; } .dev-btn.orange:hover { background:#ffb74d; }
+    .user-name { font-weight:bold; font-size:1.15em; color:#ff99cc; }
+    .user-sub { font-size:.85em; color:rgba(255,230,242,0.6); }
+    .err { color:#ff4d4d; font-weight:bold; margin:8px 0; min-height:18px; text-shadow:0 0 5px rgba(255,77,77,0.3); }
+    .dev-btn-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:15px 0; }
+    .dev-btn { padding:12px 14px; font-size:0.9em; border:none; border-radius:14px; cursor:pointer; font-weight:bold; color:white; transition:all 0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; gap:6px; }
+    .dev-btn.pink { background:#ff66b2; } .dev-btn.pink:hover { background:#ff99cc; }
     .dev-btn.red { background:#f44336; } .dev-btn.red:hover { background:#ef5350; }
-    .dev-btn.blue { background:#2196f3; } .dev-btn.blue:hover { background:#64b5f6; }
-    .dev-btn.green { background:#4caf50; } .dev-btn.green:hover { background:#81c784; }
     .dev-btn.purple { background:#9c27b0; } .dev-btn.purple:hover { background:#ba68c8; }
+    .dev-btn.blue { background:#00bcd4; } .dev-btn.blue:hover { background:#4dd0e1; }
     
     @media (min-width: 768px) {
-      h1 { font-size:3em; }
+      h1 { font-size:4em; }
       canvas { max-width:600px; }
-      button { padding:14px 32px; font-size:1.05em; min-width:160px; }
+      button { padding:16px 36px; font-size:1.1em; min-width:180px; }
     }
     @media (max-width: 480px) {
-      h1 { font-size:1.8em; }
-      button { padding:10px 20px; font-size:.9em; min-width:110px; }
-      .dpad button.control-btn { width:60px; height:60px; font-size:1.5em; margin:3px; }
-      .dpad-grid { grid-template-columns:60px 60px 60px; grid-template-rows:60px 60px 60px; }
-      .info-box { padding:10px 12px; font-size:.9em; min-width:80px; }
+      h1 { font-size:2.5em; }
+      .menu-glass { padding:30px 20px; border-radius:24px; }
+      button { padding:12px 20px; font-size:.95em; min-width:120px; }
+      .dpad button.control-btn { width:65px; height:65px; margin:4px; }
+      .dpad-grid { grid-template-columns:70px 70px 70px; grid-template-rows:70px 70px 70px; }
+      .info-box { padding:10px; font-size:.9em; min-width:80px; }
       .dev-btn-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- SIGN IN MODAL -->
 <div class="modal-overlay" id="signInModal">
   <div class="modal">
-    <h2>🔐 Sign In</h2>
-    <p>Create or log into your account</p>
-    <input type="text" id="siUsername" placeholder="Username" maxlength="20" />
-    <input type="password" id="siPassword" placeholder="Password" />
+    <h2><i data-lucide="user-circle"></i> sign in</h2>
+    <p>create or log into your account</p>
+    <input type="text" id="siUsername" placeholder="username" maxlength="20" />
+    <input type="password" id="siPassword" placeholder="password" />
     <div class="err" id="siErr"></div>
-    <button id="btnCreateAcc">Create Account</button>
-    <button id="btnLoginAcc" class="secondary" style="margin-top:8px;">Log In</button>
-    <button class="secondary" onclick="skipSignIn()" style="margin-top:8px;">⏭ Play as Guest</button>
-    <p class="small">Username + password saves your scores, color & settings!</p>
+    <button id="btnCreateAcc"><i data-lucide="user-plus"></i> create account</button>
+    <button id="btnLoginAcc" class="secondary" style="margin-top:10px;"><i data-lucide="log-in"></i> log in</button>
+    <button class="secondary" onclick="skipSignIn()" style="margin-top:10px;"><i data-lucide="ghost"></i> play as guest</button>
+    <p class="small">saves your scores and pretty settings</p>
   </div>
 </div>
 
-<!-- DEV PASSWORD MODAL -->
-<div class="modal-overlay" id="devPassModal" class="dev-pass-modal">
-  <div class="modal dev-modal">
-    <h2 class="dev-title">🔐 Dev Access</h2>
-    <p style="color:#ffaa00;">Enter developer password</p>
-    <input type="password" id="devPass" class="dev-pass-input" placeholder="Password" />
+<div class="modal-overlay" id="devPassModal">
+  <div class="modal">
+    <h2><i data-lucide="lock"></i> dev access</h2>
+    <p style="color:#ffb3d9;">enter secret password</p>
+    <input type="password" id="devPass" placeholder="password" />
     <div class="err" id="devPassErr"></div>
-    <button class="dev-btn orange" onclick="devCheckPass()">✓ Submit</button>
-    <button class="close-btn" onclick="closeDevPass()">Close</button>
+    <button class="dev-btn pink" onclick="devCheckPass()"><i data-lucide="check"></i> submit</button>
+    <button class="close-btn" onclick="closeDevPass()"><i data-lucide="x"></i> close</button>
   </div>
 </div>
 
-<!-- DEV MENU MODAL -->
 <div class="modal-overlay" id="devMenuModal">
-  <div class="modal dev-modal">
-    <h2 class="dev-title">🔧 DEV MENU</h2>
+  <div class="modal">
+    <h2><i data-lucide="wrench"></i> dev menu</h2>
     <div class="dev-btn-grid">
-      <button class="dev-btn orange" onclick="devAddScore100()">➕ Score +100</button>
-      <button class="dev-btn orange" onclick="devLevelUp()">📈 Level +1</button>
-      <button class="dev-btn blue" onclick="devClearAllScores()">🗑️ Clear Scores</button>
-      <button class="dev-btn blue" onclick="devClearAllUsers()">🗑️ Delete Users</button>
-      <button class="dev-btn green" onclick="devExportData()">💾 Export Data</button>
-      <button class="dev-btn green" onclick="devViewLogs()">📋 View Logs</button>
-      <button class="dev-btn purple" onclick="devResetAll()">🔄 Reset All</button>
-      <button class="dev-btn red" onclick="devNukeStorage()">☢️ NUKE!</button>
+      <button class="dev-btn pink" onclick="devAddScore100()"><i data-lucide="plus"></i> score +100</button>
+      <button class="dev-btn pink" onclick="devLevelUp()"><i data-lucide="trending-up"></i> level +1</button>
+      <button class="dev-btn blue" id="devGridBtn" onclick="devToggleGrid()"><i data-lucide="grid"></i> toggle grid</button>
+      <button class="dev-btn blue" id="devFpsBtn" onclick="devToggleFps()"><i data-lucide="monitor"></i> toggle fps</button>
+      <button class="dev-btn purple" onclick="devClearAllScores()"><i data-lucide="trash-2"></i> clear scores</button>
+      <button class="dev-btn purple" onclick="devClearAllUsers()"><i data-lucide="users-x"></i> delete users</button>
+      <button class="dev-btn red" onclick="devResetAll()"><i data-lucide="rotate-ccw"></i> reset all</button>
+      <button class="dev-btn red" onclick="devNukeStorage()"><i data-lucide="bomb"></i> nuke storage</button>
     </div>
-    <div style="background:rgba(255,152,0,0.15); border:1px solid #ff9800; padding:12px; border-radius:8px; margin:12px 0; text-align:left; max-height:200px; overflow-y:auto;">
-      <div id="devStatus" style="font-size:0.85em; color:#ffaa00; font-family:monospace;"></div>
+    <div style="background:rgba(255,102,178,0.05); border:1px solid rgba(255,102,178,0.3); padding:15px; border-radius:16px; margin:15px 0; text-align:left;">
+      <div id="devStatus" style="font-size:0.9em; color:#ffb3d9; font-family:monospace; white-space:pre-wrap;"></div>
     </div>
-    <button class="close-btn" onclick="closeDevMenu()">Close</button>
+    <button class="close-btn" onclick="closeDevMenu()"><i data-lucide="x"></i> close</button>
   </div>
 </div>
 
-<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <h2>⚙️ Settings</h2>
+    <h2><i data-lucide="settings"></i> settings</h2>
     <div class="settings-row">
-      <label>🔊 Sound</label>
-      <button class="toggle-btn" id="soundToggleBtn" onclick="toggleSoundSetting()">ON</button>
+      <label><i data-lucide="volume-2"></i> sound</label>
+      <button class="toggle-btn" id="soundToggleBtn" onclick="toggleSoundSetting()">on</button>
     </div>
     <div class="settings-row">
-      <label>🎮 D-Pad</label>
-      <button class="toggle-btn" id="dpadToggleBtn" onclick="toggleDpadSetting()">OFF</button>
+      <label><i data-lucide="gamepad-2"></i> d-pad controls</label>
+      <button class="toggle-btn" id="dpadToggleBtn" onclick="toggleDpadSetting()">off</button>
     </div>
     <div class="settings-row">
-      <label>📊 Difficulty</label>
+      <label><i data-lucide="activity"></i> difficulty</label>
       <select id="difficultySelect" onchange="changeDifficultySetting()">
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
+        <option value="easy">easy</option>
+        <option value="medium">medium</option>
+        <option value="hard">hard</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <label><i data-lucide="cherry"></i> fruit amount</label>
+      <select id="densitySelect" onchange="changeDensitySetting()">
+        <option value="1">low (1)</option>
+        <option value="2">normal (2)</option>
+        <option value="4">high (4)</option>
       </select>
     </div>
     <div class="color-slider-wrap">
-      <label>🐍 Snake Color</label>
+      <label><i data-lucide="palette"></i> snake color</label>
       <div class="snake-preview-row" id="snakePreviewRow">
         <div class="snake-preview-seg" id="sp0"></div>
         <div class="snake-preview-seg" id="sp1"></div>
@@ -247,148 +266,129 @@
         <div class="snake-preview-seg" id="sp3"></div>
         <div class="snake-preview-seg" id="sp4"></div>
       </div>
-      <input type="range" id="colorSlider" min="0" max="360" value="120" />
-      <div class="color-value" id="colorValue">Green — Hue 120</div>
+      <input type="range" id="colorSlider" min="0" max="360" value="330" />
+      <div class="color-value" id="colorValue">pink — hue 330</div>
     </div>
-    <h3 style="margin-top:20px;">🍎 Fruits</h3>
-    <div class="fruit-legend" style="display:block; text-align:left;">
-      <strong>🍎 Apple</strong> +10 — Common (35%)<br>
-      <strong>🍊 Orange</strong> +15 — Common (25%)<br>
-      <strong>🍓 Berry</strong> +25 — Uncommon (15%)<br>
-      <strong>🍌 Banana</strong> +35 — Rare (10%)<br>
-      <strong>🍉 Watermelon</strong> +50 — Rare (6%)<br>
-      <strong>🍇 Grapes</strong> +60 — Very Rare (4%)<br>
-      <strong>🍍 Pineapple</strong> +75 — Very Rare (2.5%)<br>
-      <strong>🥭 Mango</strong> +90 — Ultra Rare (1.5%)<br>
-      <strong>⭐ Star</strong> +100 — Legendary (0.8%)<br>
-      <strong>💎 Diamond</strong> +150 — Mythic (0.2%)
-    </div>
-    <button onclick="saveSettings()">💾 Save Settings</button>
-    <p class="small">⚠️ Saves to your account if signed in</p>
-    <button class="close-btn" onclick="closeSettings()">Close</button>
+    <button onclick="saveSettings()"><i data-lucide="save"></i> save settings</button>
+    <button class="close-btn" onclick="closeSettings()"><i data-lucide="x"></i> close</button>
   </div>
 </div>
 
-<!-- LEADERBOARD MODAL -->
 <div class="modal-overlay" id="leaderboardModal">
   <div class="modal">
-    <h2>🏆 Global Leaderboard</h2>
+    <h2><i data-lucide="trophy"></i> leaderboard</h2>
     <div class="leaderboard-list" id="lbList"></div>
-    <button class="close-btn" onclick="closeLeaderboard()">Close</button>
+    <button class="close-btn" onclick="closeLeaderboard()"><i data-lucide="x"></i> close</button>
   </div>
 </div>
 
-<!-- INFO MODAL -->
 <div class="modal-overlay" id="infoModal">
   <div class="modal">
-    <h2>📖 Game Info</h2>
-    <h3>🕹️ Controls</h3>
-    <div style="text-align:left; color:rgba(255,255,255,0.85); font-size:.9em; line-height:1.7;">
-      Arrow Keys or WASD to move<br>
-      Swipe on mobile to move<br>
-      Enable D-Pad in Settings<br>
-      SPACE to pause<br>
-      Higher difficulty = more points multiplier
+    <h2><i data-lucide="book-open"></i> how to play</h2>
+    <div style="text-align:left; color:rgba(255,230,242,0.9); font-size:.95em; line-height:1.8; background:rgba(255,255,255,0.03); padding:18px; border-radius:20px; border:1px solid rgba(255,153,204,0.15);">
+      swipe on screen to move<br>
+      use arrow keys or wasd<br>
+      enable d-pad in settings if u want<br>
+      eat fruits to grow and score points<br>
+      dont hit the walls or urself
     </div>
-    <button class="close-btn" onclick="closeInfo()">Close</button>
+    <button class="close-btn" onclick="closeInfo()"><i data-lucide="x"></i> close</button>
   </div>
 </div>
 
-<!-- GAME OVER MODAL -->
 <div class="modal-overlay" id="gameOverModal">
   <div class="modal">
-    <h2 style="color:#ff5555">💀 Game Over</h2>
-    <p>Score: <strong style="color:#4caf50; font-size:1.4em;"><span id="finalScore">0</span></strong></p>
-    <p>Difficulty: <span id="finalDifficulty">Easy</span></p>
-    <div id="gameOverPlayer" style="margin:8px 0; color:#81c784; font-weight:bold;"></div>
+    <h2 style="color:#ff4d4d"><i data-lucide="skull"></i> game over</h2>
+    <p>score: <strong style="color:#ff66b2; font-size:1.6em;"><span id="finalScore">0</span></strong></p>
+    <p>mode: <span id="finalDifficulty">easy</span></p>
+    <div id="gameOverPlayer" style="margin:12px 0; color:#ffb3d9; font-weight:bold; font-size:1.2em;"></div>
     <div class="leaderboard-list" id="lbListGameOver"></div>
-    <div class="button-group" style="margin-top:12px;">
-      <button onclick="resetGame()">▶ Play Again</button>
-      <button class="secondary" onclick="openSettingsFromGameOver()">⚙️ Settings</button>
+    <div class="button-group" style="margin-top:20px;">
+      <button onclick="resetGame()"><i data-lucide="rotate-cw"></i> play again</button>
+      <button class="secondary" onclick="openSettingsFromGameOver()"><i data-lucide="settings"></i> settings</button>
     </div>
-    <button class="secondary" onclick="showStartScreen()" style="margin-top:8px; min-width:180px;">🏠 Main Menu</button>
+    <button class="secondary" onclick="showStartScreen()" style="margin-top:12px; min-width:200px;"><i data-lucide="home"></i> main menu</button>
   </div>
 </div>
 
-<!-- MAIN PAGE -->
 <div class="container">
-  <h1 id="gameTitle" onclick="handleTitleClick()">🐍 Snake</h1>
-
+  
   <div class="user-info" id="userInfo">
     <div style="flex:1; text-align:left;">
       <div class="user-name" id="userName"></div>
-      <div class="user-sub" id="userSub">Signed in</div>
+      <div class="user-sub" id="userSub">signed in</div>
     </div>
-    <button class="close-btn" onclick="signOut()" style="margin:0; padding:8px 16px; min-width:auto; font-size:.85em;">Sign Out</button>
+    <button class="close-btn" onclick="signOut()" style="margin:0; padding:10px 18px; min-width:auto; font-size:.85em;"><i data-lucide="log-out"></i> sign out</button>
   </div>
 
-  <!-- START SCREEN -->
-  <div class="button-group" id="startButtons">
-    <button id="playBtn">▶ PLAY</button>
-    <button class="secondary" onclick="showSignInModal()">🔐 Sign In</button>
-    <button class="secondary" onclick="openLeaderboard()">🏆 Leaderboard</button>
-    <button class="secondary" onclick="openSettings()">⚙️ Settings</button>
-    <button class="secondary" onclick="openInfo()">📖 Info</button>
+  <div class="menu-glass" id="startMenuArea">
+    <h1 id="gameTitle" onclick="handleTitleClick()">snake</h1>
+    <div class="button-group" id="startButtons">
+      <button id="playBtn" style="width:100%; font-size:1.2em; padding:18px;"><i data-lucide="play-circle"></i> play now</button>
+      <button class="secondary" onclick="showSignInModal()"><i data-lucide="user"></i> sign in</button>
+      <button class="secondary" onclick="openLeaderboard()"><i data-lucide="award"></i> leaderboard</button>
+      <button class="secondary" onclick="openSettings()"><i data-lucide="sliders"></i> settings</button>
+      <button class="secondary" onclick="openInfo()"><i data-lucide="help-circle"></i> info</button>
+    </div>
   </div>
-
-  <!-- GAME ELEMENTS (hidden until play) -->
-  <canvas id="gameCanvas" width="400" height="400"></canvas>
 
   <div class="info" id="infoBar">
-    <div class="info-box">Score: <span id="score">0</span></div>
-    <div class="info-box">Level: <span id="level">1</span></div>
-    <div class="info-box">Best: <span id="highScore">0</span></div>
+    <div class="info-box"><i data-lucide="star"></i> score: <span id="score">0</span></div>
+    <div class="info-box"><i data-lucide="zap"></i> level: <span id="level">1</span></div>
+    <div class="info-box"><i data-lucide="crown"></i> best: <span id="highScore">0</span></div>
   </div>
 
   <div class="power-up-indicator" id="powerUpIndicator"></div>
 
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+
   <div class="fruit-legend" id="fruitLegend">
-    <strong>🍎+10</strong> <strong>🍊+15</strong> <strong>🍓+25</strong> <strong>🍌+35</strong>
-    <strong>🍉+50</strong> <strong>🍇+60</strong> <strong>🍍+75</strong> <strong>🥭+90</strong>
-    <strong>⭐+100</strong> <strong>💎+150</strong>
+    <strong>apple 10</strong> | <strong>orange 15</strong> | <strong>berry 25</strong> | <strong>banana 35</strong><br>
+    <strong>watermelon 50</strong> | <strong>grapes 60</strong> | <strong>pineapple 75</strong> | <strong>mango 90</strong><br>
+    <strong>star 100</strong> | <strong>diamond 150</strong>
   </div>
 
   <div class="button-group" id="gameButtons" style="display:none;">
-    <button id="pauseBtn" onclick="togglePause()">⏸ Pause</button>
-    <button onclick="resetGame()">🔄 Restart</button>
-    <button class="secondary" onclick="openSettings()">⚙️ Settings</button>
-    <button class="secondary" onclick="openInfo()">📖 Info</button>
+    <button id="pauseBtn" onclick="togglePause()"><i data-lucide="pause"></i> pause</button>
+    <button class="secondary" onclick="showStartScreen()"><i data-lucide="x-circle"></i> quit</button>
   </div>
 
   <div class="dpad" id="dpad">
     <div class="dpad-grid">
       <div></div>
-      <button class="control-btn" ontouchstart="setDir(0,-1)" onmousedown="setDir(0,-1)">⬆️</button>
+      <button class="control-btn" ontouchstart="handleDpad(event, 0,-1)" onmousedown="handleDpad(event, 0,-1)"><i data-lucide="arrow-up"></i></button>
       <div></div>
-      <button class="control-btn" ontouchstart="setDir(-1,0)" onmousedown="setDir(-1,0)">⬅️</button>
+      <button class="control-btn" ontouchstart="handleDpad(event, -1,0)" onmousedown="handleDpad(event, -1,0)"><i data-lucide="arrow-left"></i></button>
       <div></div>
-      <button class="control-btn" ontouchstart="setDir(1,0)" onmousedown="setDir(1,0)">➡️</button>
+      <button class="control-btn" ontouchstart="handleDpad(event, 1,0)" onmousedown="handleDpad(event, 1,0)"><i data-lucide="arrow-right"></i></button>
       <div></div>
-      <button class="control-btn" ontouchstart="setDir(0,1)" onmousedown="setDir(0,1)">⬇️</button>
+      <button class="control-btn" ontouchstart="handleDpad(event, 0,1)" onmousedown="handleDpad(event, 0,1)"><i data-lucide="arrow-down"></i></button>
       <div></div>
     </div>
   </div>
 </div>
 
 <script>
-/* STORAGE HELPERS */
+lucide.createIcons();
+
 const LS = {
   get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch(e) { return null; } },
-  set: (k,v) => localStorage.setItem(k, JSON.stringify(v)),
-  del: k => localStorage.removeItem(k),
-  keys: () => Object.keys(localStorage)
+  set: (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) { console.warn("storage err"); } },
+  del: k => localStorage.removeItem(k)
 };
 
-/* DEV MENU - 15 TAPS */
 let titleClickCount = 0;
 let titleClickTimeout;
+let devGrid = false;
+let devFps = false;
+let lastFrameTime = 0;
+let currentFps = 0;
 
 function handleTitleClick() {
   titleClickCount++;
   clearTimeout(titleClickTimeout);
   titleClickTimeout = setTimeout(() => { titleClickCount = 0; }, 1000);
-  
-  if (titleClickCount === 15) {
+  if (titleClickCount === 10) {
     titleClickCount = 0;
     document.getElementById('devPassModal').classList.add('visible');
     document.getElementById('devPass').value = '';
@@ -399,203 +399,108 @@ function handleTitleClick() {
 
 function devCheckPass() {
   const pass = document.getElementById('devPass').value;
-  const hash = pass.split('').reduce((h,c) => ((h<<5)-h)+c.charCodeAt(0)|0, 0) >>> 0;
-  
-  if (hash === 83638378) {
+  if (pass === '83638378') {
     document.getElementById('devPassModal').classList.remove('visible');
     openDevMenu();
-    appendLog('[DEV] Accessed dev menu');
   } else {
-    document.getElementById('devPassErr').textContent = 'Incorrect password';
-    appendLoginLog('DEV password fail attempt');
+    document.getElementById('devPassErr').textContent = 'wrong password';
   }
 }
 
-function closeDevPass() {
-  document.getElementById('devPassModal').classList.remove('visible');
+function closeDevPass() { document.getElementById('devPassModal').classList.remove('visible'); }
+function openDevMenu() { 
+  updateDevStatus(); 
+  document.getElementById('devGridBtn').innerHTML = devGrid ? '<i data-lucide="grid"></i> grid on' : '<i data-lucide="grid"></i> grid off';
+  document.getElementById('devFpsBtn').innerHTML = devFps ? '<i data-lucide="monitor"></i> fps on' : '<i data-lucide="monitor"></i> fps off';
+  lucide.createIcons();
+  document.getElementById('devMenuModal').classList.add('visible'); 
 }
-
-function openDevMenu() {
-  updateDevStatus();
-  document.getElementById('devMenuModal').classList.add('visible');
-}
-
-function closeDevMenu() {
-  document.getElementById('devMenuModal').classList.remove('visible');
-}
+function closeDevMenu() { document.getElementById('devMenuModal').classList.remove('visible'); }
 
 function updateDevStatus() {
   const users = Object.keys(getUsers()).length;
   const scores = getScores().length;
-  const topScore = getScores().length ? getScores()[0].score : 0;
-  let status = `👥 Users: ${users}\n🏅 Scores: ${scores}\n🔝 Top: ${topScore}\n💾 Size: ${(JSON.stringify(localStorage).length/1024).toFixed(1)}KB`;
+  let status = `users: ${users}\nscores: ${scores}`;
   document.getElementById('devStatus').textContent = status;
 }
 
-function devAddScore100() {
-  score += 100;
-  updateScore();
-  updateDevStatus();
-  appendLog('[DEV] Added 100 score');
-}
+function devAddScore100() { score += 100; updateScore(); updateDevStatus(); }
+function devLevelUp() { level += 1; updateScore(); updateDevStatus(); }
+function devToggleGrid() { devGrid = !devGrid; openDevMenu(); }
+function devToggleFps() { devFps = !devFps; openDevMenu(); }
+function devClearAllScores() { saveScores([]); updateDevStatus(); }
+function devClearAllUsers() { saveUsers({}); updateDevStatus(); }
+function devResetAll() { LS.del('snakeSettings3'); LS.del('snakeHighScore3'); loadSettings(); updateDevStatus(); }
+function devNukeStorage() { localStorage.clear(); location.reload(); }
 
-function devLevelUp() {
-  level += 1;
-  updateScore();
-  updateDevStatus();
-  appendLog('[DEV] Level +1');
-}
-
-function devClearAllScores() {
-  if (!confirm('Clear ALL scores?')) return;
-  saveScores([]);
-  updateDevStatus();
-  appendLog('[DEV] Cleared all scores');
-}
-
-function devClearAllUsers() {
-  if (!confirm('Delete ALL user accounts?')) return;
-  saveUsers({});
-  updateDevStatus();
-  appendLog('[DEV] Cleared all users');
-}
-
-function devExportData() {
-  const data = { users: getUsers(), scores: getScores(), settings: LS.get('snakeSettings') };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'snake_' + Date.now() + '.json';
-  a.click();
-  appendLog('[DEV] Data exported');
-}
-
-function devViewLogs() {
-  const logs = LS.get('snakeLogs') || [];
-  alert('Recent logs:\n' + logs.slice(0, 10).join('\n'));
-}
-
-function devResetAll() {
-  if (!confirm('Reset all settings?')) return;
-  LS.del('snakeSettings');
-  LS.del('snakeHighScore');
-  loadSettings();
-  updateDevStatus();
-  appendLog('[DEV] Reset all');
-}
-
-function devNukeStorage() {
-  if (!confirm('⚠️ NUKE ALL DATA?')) return;
-  if (!confirm('ARE YOU ABSOLUTELY SURE?')) return;
-  localStorage.clear();
-  appendLog('[DEV] STORAGE NUKED');
-  alert('Nuked! Reload page.');
-  location.reload();
-}
-
-/* AUTH - LOCAL ONLY */
-function getUsers() { return LS.get('snakeUsers') || {}; }
-function saveUsers(u) { LS.set('snakeUsers', u); }
-
-function hashPass(p) {
-  let h = 0;
-  for (let i = 0; i < p.length; i++) { h = Math.imul(31, h) + p.charCodeAt(i) | 0; }
-  return (h >>> 0).toString(36);
-}
+function getUsers() { return LS.get('snakeUsers3') || {}; }
+function saveUsers(u) { LS.set('snakeUsers3', u); }
+function hashPass(p) { let h=0; for(let i=0;i<p.length;i++) h=Math.imul(31,h)+p.charCodeAt(i)|0; return h.toString(); }
 
 function createAccount(username, password) {
-  if (!username || username.length < 2) return 'Username must be at least 2 characters';
-  if (!password || password.length < 4) return 'Password must be at least 4 characters';
+  if (!username || username.length < 2) return 'username too short';
+  if (!password || password.length < 4) return 'password too short';
   const users = getUsers();
-  if (users[username.toLowerCase()]) return 'Username already taken';
-  users[username.toLowerCase()] = {
-    username, passwordHash: hashPass(password),
-    snakeColorHue: 120, settings: {}, highScore: 0, created: Date.now()
-  };
+  const lower = username.toLowerCase();
+  if (users[lower]) return 'username taken';
+  users[lower] = { username, passwordHash: hashPass(password), snakeColorHue: 330, settings: {}, highScore: 0 };
   saveUsers(users);
-  appendLog(`Account created: ${username}`);
   return null;
 }
 
 function loginAccount(username, password) {
   const users = getUsers();
   const u = users[username.toLowerCase()];
-  if (!u) return 'Account not found';
-  if (u.passwordHash !== hashPass(password)) {
-    appendLoginLog(`FAIL login: ${username}`);
-    return 'Wrong password';
-  }
-  appendLoginLog(`OK login: ${username}`);
-  appendLog(`Login: ${username}`);
+  if (!u) return 'account not found';
+  if (u.passwordHash !== hashPass(password)) return 'wrong password';
   return null;
 }
 
 function getUserData(username) { return getUsers()[username.toLowerCase()] || null; }
-
 function saveUserData(username, data) {
   const users = getUsers();
-  if (users[username.toLowerCase()]) {
-    Object.assign(users[username.toLowerCase()], data);
+  const lower = username.toLowerCase();
+  if (users[lower]) {
+    users[lower] = { ...users[lower], ...data };
     saveUsers(users);
   }
 }
 
-/* LOGS */
-function appendLog(msg) {
-  const logs = LS.get('snakeLogs') || [];
-  logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
-  if (logs.length > 200) logs.pop();
-  LS.set('snakeLogs', logs);
+function getScores() { return LS.get('snakeScores3') || []; }
+function saveScores(s) { LS.set('snakeScores3', s); }
+
+function getModeString() {
+  return `${difficulty} | ${fruitDensity}x fruit`;
 }
 
-function appendLoginLog(msg) {
-  const logs = LS.get('snakeLoginLogs') || [];
-  logs.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
-  if (logs.length > 100) logs.pop();
-  LS.set('snakeLoginLogs', logs);
-}
-
-/* SCORES */
-function getScores() { return LS.get('snakeScores') || []; }
-function saveScores(s) { LS.set('snakeScores', s); }
-
-function addScore(username, scoreVal, diff) {
-  const scores = getScores();
-  scores.push({ username, score: scoreVal, difficulty: diff, date: new Date().toLocaleDateString(), ts: Date.now() });
+function addScore(username, scoreVal, currentMode) {
+  let scores = getScores();
+  let foundIndex = scores.findIndex(s => s.username === username && s.mode === currentMode);
+  if (foundIndex !== -1) {
+    if (scores[foundIndex].score < scoreVal) {
+      scores[foundIndex].score = scoreVal;
+      scores[foundIndex].date = new Date().toLocaleDateString();
+    }
+  } else {
+    scores.push({ username, score: scoreVal, mode: currentMode, date: new Date().toLocaleDateString() });
+  }
   scores.sort((a,b) => b.score - a.score);
-  if (scores.length > 200) scores.pop();
+  if (scores.length > 100) scores.pop();
   saveScores(scores);
-  appendLog(`Score: ${username} got ${scoreVal} on ${diff}`);
 }
 
 function renderLeaderboard(scores, listId) {
   const el = document.getElementById(listId);
   if (!el) return;
   el.innerHTML = '';
-  if (!scores || scores.length === 0) {
-    el.innerHTML = '<div style="color:rgba(255,255,255,0.5);padding:12px;">No scores yet — be the first!</div>';
-    return;
-  }
+  if (!scores.length) { el.innerHTML = '<div style="padding:15px;color:rgba(255,255,255,0.4);text-align:center;">no scores yet</div>'; return; }
   scores.forEach((s, i) => {
-    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
-    el.innerHTML += `<div class="lb-item"><span>${medal} ${s.username}</span><span style="color:#81c784">${s.score}</span><span style="color:#aaa;font-size:.8em">${s.difficulty}</span></div>`;
+    let rank = i===0?'1st':i===1?'2nd':i===2?'3rd':`#${i+1}`;
+    el.innerHTML += `<div class="lb-item"><span>${rank} - ${s.username}</span><span style="color:#ff66b2;font-weight:bold;">${s.score}</span><span style="color:#aaa;font-size:.8em">${s.mode}</span></div>`;
   });
 }
 
-async function fetchLeaderboard(limit=15) {
-  const scores = getScores().slice(0, limit);
-  renderLeaderboard(scores, 'lbList');
-  return scores;
-}
-
-async function fetchLeaderboardGameOver() {
-  const scores = getScores().slice(0, 5);
-  renderLeaderboard(scores, 'lbListGameOver');
-}
-
-/* AUTH UI */
 let currentUser = null;
-let gamesPlayedSession = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnCreateAcc').addEventListener('click', () => {
@@ -605,7 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (err) { document.getElementById('siErr').textContent = err; return; }
     loginUser(un);
   });
-
   document.getElementById('btnLoginAcc').addEventListener('click', () => {
     const un = document.getElementById('siUsername').value.trim();
     const pw = document.getElementById('siPassword').value;
@@ -613,11 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (err) { document.getElementById('siErr').textContent = err; return; }
     loginUser(un);
   });
-
   document.getElementById('playBtn').addEventListener('click', startGame);
-  document.getElementById('devPass').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') devCheckPass();
-  });
   loadSettings();
 });
 
@@ -625,96 +525,60 @@ function loginUser(username) {
   const udata = getUserData(username);
   if (!udata) return;
   currentUser = { username: udata.username };
-  snakeColorHue = udata.snakeColorHue || 120;
+  snakeColorHue = udata.snakeColorHue || 330;
   if (udata.settings) {
     if (udata.settings.sound !== undefined) soundEnabled = udata.settings.sound;
     if (udata.settings.dpad !== undefined) showDpad = udata.settings.dpad;
     if (udata.settings.difficulty) difficulty = udata.settings.difficulty;
-    if (udata.settings.theme) currentTheme = udata.settings.theme;
+    if (udata.settings.fruitDensity) fruitDensity = udata.settings.fruitDensity;
   }
   document.getElementById('userInfo').classList.add('visible');
   document.getElementById('userName').textContent = udata.username;
-  document.getElementById('userSub').textContent = 'Signed in';
   document.getElementById('signInModal').classList.remove('visible');
-  document.getElementById('siErr').textContent = '';
   document.getElementById('colorSlider').value = snakeColorHue;
-  updateColorSlider();
   syncSettingsUI();
 }
 
-function showSignInModal() {
-  document.getElementById('siErr').textContent = '';
-  document.getElementById('signInModal').classList.add('visible');
-}
+function showSignInModal() { document.getElementById('siErr').textContent = ''; document.getElementById('signInModal').classList.add('visible'); }
+function skipSignIn() { document.getElementById('signInModal').classList.remove('visible'); }
+function signOut() { currentUser = null; document.getElementById('userInfo').classList.remove('visible'); }
 
-function skipSignIn() {
-  document.getElementById('signInModal').classList.remove('visible');
-}
-
-function signOut() {
-  currentUser = null;
-  document.getElementById('userInfo').classList.remove('visible');
-  appendLog('User signed out');
-}
-
-/* SETTINGS & THEME */
-let soundEnabled = true, showDpad = false, difficulty = 'easy', snakeColorHue = 120, currentTheme = 'dark';
-
-const THEMES = {
-  dark: { bg:'#0f0f1a', grid:'rgba(255,255,255,0.04)', name:'Dark' },
-  midnight: { bg:'#020818', grid:'rgba(0,100,255,0.08)', name:'Midnight Blue' },
-  forest: { bg:'#071a07', grid:'rgba(0,255,0,0.06)', name:'Forest' },
-  neon: { bg:'#000010', grid:'rgba(255,0,255,0.07)', name:'Neon' },
-  sunset: { bg:'#1a0a0a', grid:'rgba(255,100,50,0.06)', name:'Sunset' }
-};
-
-let boardTheme = { ...THEMES.dark };
+let soundEnabled = true, showDpad = false, difficulty = 'easy', fruitDensity = 2, snakeColorHue = 330;
 
 function loadSettings() {
-  const s = LS.get('snakeSettings');
+  const s = LS.get('snakeSettings3');
   if (s) {
     if (s.sound !== undefined) soundEnabled = s.sound;
     if (s.dpad !== undefined) showDpad = s.dpad;
     if (s.difficulty) difficulty = s.difficulty;
+    if (s.fruitDensity) fruitDensity = s.fruitDensity;
     if (s.snakeColorHue !== undefined) snakeColorHue = s.snakeColorHue;
-    if (s.theme) currentTheme = s.theme;
   }
   syncSettingsUI();
 }
 
 function syncSettingsUI() {
   document.getElementById('difficultySelect').value = difficulty;
+  document.getElementById('densitySelect').value = fruitDensity;
   document.getElementById('colorSlider').value = snakeColorHue;
   updateColorSlider();
-  document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'ON' : 'OFF';
+  document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'on' : 'off';
   document.getElementById('soundToggleBtn').className = soundEnabled ? 'toggle-btn active' : 'toggle-btn';
-  document.getElementById('dpadToggleBtn').textContent = showDpad ? 'ON' : 'OFF';
+  document.getElementById('dpadToggleBtn').textContent = showDpad ? 'on' : 'off';
   document.getElementById('dpadToggleBtn').className = showDpad ? 'toggle-btn active' : 'toggle-btn';
   if (showDpad) document.getElementById('dpad').classList.add('visible');
   else document.getElementById('dpad').classList.remove('visible');
-  applyTheme();
-}
-
-function applyTheme() {
-  boardTheme = { ...THEMES[currentTheme] };
-  if (!boardTheme) boardTheme = { ...THEMES.dark };
-}
-
-function changeTheme() {
-  currentTheme = document.getElementById('themeSelect').value;
-  applyTheme();
 }
 
 function hexFromHUE(hue) {
   const h = ((hue % 360) + 360) % 360;
-  const s = 0.70, l = 0.50;
+  const s = 0.85, l = 0.65;
   const c = (1 - Math.abs(2*l-1)) * s;
   const x = c * (1 - Math.abs((h/60)%2 - 1));
   const m = l - c/2;
   let r,g,b;
-  if (h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}
-  else if(h<180){r=0;g=c;b=x;}else if(h<240){r=0;g=x;b=c;}
-  else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
+  if(h<60){r=c;g=x;b=0;}else if(h<120){r=x;g=c;b=0;}else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;}else if(h<300){r=x;g=0;b=c;}else{r=c;g=0;b=x;}
   const R=Math.round((r+m)*255), G=Math.round((g+m)*255), B=Math.round((b+m)*255);
   return `#${R.toString(16).padStart(2,'0')}${G.toString(16).padStart(2,'0')}${B.toString(16).padStart(2,'0')}`;
 }
@@ -722,121 +586,93 @@ function hexFromHUE(hue) {
 function updateColorSlider() {
   const hue = snakeColorHue;
   const hex = hexFromHUE(hue);
-  const names = [[0,'Red'],[30,'Orange'],[60,'Yellow'],[90,'Lime'],[120,'Green'],[150,'Mint'],[180,'Cyan'],[210,'Sky Blue'],[240,'Blue'],[270,'Purple'],[300,'Magenta'],[330,'Pink'],[360,'Red']];
-  let name = 'Color';
-  for (let i = 0; i < names.length - 1; i++) { if (hue >= names[i][0] && hue < names[i+1][0]) { name = names[i][1]; break; } }
-  document.getElementById('colorValue').textContent = `${name} — Hue ${hue} (${hex})`;
+  const names = [[0,'red'],[30,'orange'],[60,'yellow'],[90,'lime'],[120,'green'],[150,'mint'],[180,'cyan'],[210,'sky'],[240,'blue'],[270,'purple'],[300,'magenta'],[330,'pink'],[360,'red']];
+  let name = 'color';
+  for(let i=0; i<names.length-1; i++){ if(hue>=names[i][0] && hue<names[i+1][0]){ name = names[i][1]; break; } }
+  document.getElementById('colorValue').textContent = `${name} — hue ${hue}`;
   document.getElementById('colorSlider').style.setProperty('--thumb-color', hex);
-  for (let i = 0; i < 5; i++) {
+  for(let i=0; i<5; i++){
     const el = document.getElementById(`sp${i}`);
-    if (el) el.style.background = hexFromHUE(hue - i*10);
+    if(el) el.style.background = hexFromHUE(hue - i*12);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const cs = document.getElementById('colorSlider');
-  if (cs) cs.addEventListener('input', e => {
-    snakeColorHue = parseInt(e.target.value);
-    updateColorSlider();
-  });
-});
+document.getElementById('colorSlider').addEventListener('input', e => { snakeColorHue = parseInt(e.target.value); updateColorSlider(); });
 
-function openSettings() { 
-  document.getElementById('settingsModal').classList.add('visible');
-}
-
-function closeSettings() { 
-  document.getElementById('settingsModal').classList.remove('visible');
-}
-
-function toggleSoundSetting() {
-  soundEnabled = !soundEnabled;
-  document.getElementById('soundToggleBtn').textContent = soundEnabled ? 'ON' : 'OFF';
-  document.getElementById('soundToggleBtn').className = soundEnabled ? 'toggle-btn active' : 'toggle-btn';
-}
-
-function toggleDpadSetting() {
-  showDpad = !showDpad;
-  document.getElementById('dpadToggleBtn').textContent = showDpad ? 'ON' : 'OFF';
-  document.getElementById('dpadToggleBtn').className = showDpad ? 'toggle-btn active' : 'toggle-btn';
-  if (showDpad) document.getElementById('dpad').classList.add('visible');
-  else document.getElementById('dpad').classList.remove('visible');
-}
-
-function changeDifficultySetting() { 
-  difficulty = document.getElementById('difficultySelect').value;
-}
+function openSettings() { document.getElementById('settingsModal').classList.add('visible'); }
+function closeSettings() { document.getElementById('settingsModal').classList.remove('visible'); }
+function toggleSoundSetting() { soundEnabled = !soundEnabled; syncSettingsUI(); }
+function toggleDpadSetting() { showDpad = !showDpad; syncSettingsUI(); }
+function changeDifficultySetting() { difficulty = document.getElementById('difficultySelect').value; }
+function changeDensitySetting() { fruitDensity = parseInt(document.getElementById('densitySelect').value); }
 
 function saveSettings() {
   snakeColorHue = parseInt(document.getElementById('colorSlider').value);
-  const settings = { sound: soundEnabled, dpad: showDpad, difficulty, snakeColorHue, theme: currentTheme };
-  LS.set('snakeSettings', settings);
-  if (currentUser) saveUserData(currentUser.username, { snakeColorHue, settings });
-  appendLog(`Settings saved${currentUser ? ' for '+currentUser.username : ' (local)'}`);
+  const s = { sound: soundEnabled, dpad: showDpad, difficulty, fruitDensity, snakeColorHue };
+  LS.set('snakeSettings3', s);
+  if (currentUser) saveUserData(currentUser.username, { snakeColorHue, settings: s });
   closeSettings();
 }
 
-function openLeaderboard() { 
-  fetchLeaderboard(); 
-  document.getElementById('leaderboardModal').classList.add('visible');
-}
+function openLeaderboard() { renderLeaderboard(getScores().slice(0, 15), 'lbList'); document.getElementById('leaderboardModal').classList.add('visible'); }
+function closeLeaderboard() { document.getElementById('leaderboardModal').classList.remove('visible'); }
+function openInfo() { document.getElementById('infoModal').classList.add('visible'); }
+function closeInfo() { document.getElementById('infoModal').classList.remove('visible'); }
+function openSettingsFromGameOver() { document.getElementById('gameOverModal').classList.remove('visible'); openSettings(); }
 
-function closeLeaderboard() { 
-  document.getElementById('leaderboardModal').classList.remove('visible');
-}
-
-function openInfo() { 
-  document.getElementById('infoModal').classList.add('visible');
-}
-
-function closeInfo() { 
-  document.getElementById('infoModal').classList.remove('visible');
-}
-
-function openSettingsFromGameOver() { 
-  document.getElementById('gameOverModal').classList.remove('visible');
-  openSettings();
-}
-
-/* GAME LOGIC */
-let gameRunning = false;
-let gamePaused = false;
-let score = 0;
-let level = 1;
-let highScore = LS.get('snakeHighScore') || 0;
-
-const DIFF = {
-  easy: { speed: 100, multiplier: 1 },
-  medium: { speed: 70, multiplier: 2 },
-  hard: { speed: 50, multiplier: 3 }
-};
-
+let gameRunning = false, gamePaused = false, score = 0, level = 1, highScore = LS.get('snakeHighScore3') || 0;
+const DIFF = { easy: { speed: 130, mult: 1 }, medium: { speed: 90, mult: 2 }, hard: { speed: 65, mult: 3 } };
 let diffCfg = DIFF[difficulty];
+let snake = [], direction = {x:1, y:0}, nextDirection = {x:1, y:0};
 
-// GAME STATE
-let snake = [{x: 10, y: 10}];
-let fruit = {x: 15, y: 15};
-let direction = {x: 1, y: 0};
-let nextDirection = {x: 1, y: 0};
-let gameFrameCounter = 0;
+const FRUITS = [
+  { name:'apple', pts:10, prob:35 },
+  { name:'orange', pts:15, prob:25 },
+  { name:'berry', pts:25, prob:15 },
+  { name:'banana', pts:35, prob:10 },
+  { name:'watermelon', pts:50, prob:6 },
+  { name:'grapes', pts:60, prob:4 },
+  { name:'pineapple', pts:75, prob:2.5 },
+  { name:'mango', pts:90, prob:1.5 },
+  { name:'star', pts:100, prob:0.8 },
+  { name:'diamond', pts:150, prob:0.2 }
+];
+
+let activeFruits = [];
+
+function spawnFruitObj() {
+  let rand = Math.random() * 100, sum = 0, chosen = FRUITS[0];
+  for(let f of FRUITS) { sum += f.prob; if(rand <= sum) { chosen = f; break; } }
+  
+  let posFound = false, fx, fy;
+  while(!posFound) {
+    fx = Math.floor(Math.random() * 20);
+    fy = Math.floor(Math.random() * 20);
+    posFound = !snake.some(s => s.x === fx && s.y === fy) && !activeFruits.some(f => f.x === fx && f.y === fy);
+  }
+  
+  const newFruit = { x: fx, y: fy, type: chosen };
+  activeFruits.push(newFruit);
+  
+  if (chosen.pts >= 50) {
+    let ind = document.getElementById('powerUpIndicator');
+    ind.innerHTML = `<i data-lucide="sparkles"></i> spawned ${chosen.name} +${chosen.pts * diffCfg.mult}`;
+    lucide.createIcons();
+    ind.classList.add('visible');
+    setTimeout(() => ind.classList.remove('visible'), 2500);
+  }
+}
 
 function startGame() {
-  gameRunning = true;
-  gamePaused = false;
-  score = 0;
-  level = 1;
-  gamesPlayedSession++;
-  
-  // Reset game state
-  snake = [{x: 10, y: 10}];
-  fruit = {x: 15, y: 15};
-  direction = {x: 1, y: 0};
-  nextDirection = {x: 1, y: 0};
-  gameFrameCounter = 0;
-  
+  gameRunning = true; gamePaused = false; score = 0; level = 1;
+  snake = [{x:10, y:10}, {x:9, y:10}, {x:8, y:10}];
+  direction = {x:1, y:0}; nextDirection = {x:1, y:0};
   diffCfg = DIFF[difficulty];
+  activeFruits = [];
   
-  document.getElementById('startButtons').style.display = 'none';
+  for(let i=0; i<fruitDensity; i++) spawnFruitObj();
+  
+  document.getElementById('startMenuArea').style.display = 'none';
   document.getElementById('gameButtons').style.display = 'flex';
   document.getElementById('infoBar').classList.add('visible');
   document.getElementById('fruitLegend').classList.add('visible');
@@ -844,18 +680,13 @@ function startGame() {
   
   updateScore();
   gameLoop();
-  appendLog(`Game started on ${difficulty}`);
 }
 
-function resetGame() {
-  document.getElementById('gameOverModal').classList.remove('visible');
-  showStartScreen();
-}
-
+function resetGame() { document.getElementById('gameOverModal').classList.remove('visible'); startGame(); }
 function showStartScreen() {
-  gameRunning = false;
-  gamePaused = false;
-  document.getElementById('startButtons').style.display = 'flex';
+  gameRunning = false; gamePaused = false;
+  document.getElementById('gameOverModal').classList.remove('visible');
+  document.getElementById('startMenuArea').style.display = 'block';
   document.getElementById('gameButtons').style.display = 'none';
   document.getElementById('infoBar').classList.remove('visible');
   document.getElementById('fruitLegend').classList.remove('visible');
@@ -863,9 +694,10 @@ function showStartScreen() {
 }
 
 function togglePause() {
-  if (!gameRunning) return;
+  if(!gameRunning) return;
   gamePaused = !gamePaused;
-  document.getElementById('pauseBtn').textContent = gamePaused ? '▶ Resume' : '⏸ Pause';
+  document.getElementById('pauseBtn').innerHTML = gamePaused ? '<i data-lucide="play"></i> resume' : '<i data-lucide="pause"></i> pause';
+  lucide.createIcons();
 }
 
 function updateScore() {
@@ -874,91 +706,180 @@ function updateScore() {
   document.getElementById('highScore').textContent = Math.max(highScore, score);
 }
 
+function drawCustomFruit(ctx, x, y, gs, typeName) {
+  let cx = x * gs + gs/2;
+  let cy = y * gs + gs/2;
+  let r = gs/2 - 2;
+  
+  ctx.save();
+  ctx.translate(cx, cy);
+  
+  if (typeName === 'apple') {
+    ctx.fillStyle = '#ff4d4d'; ctx.beginPath(); ctx.arc(0,1,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#4caf50'; ctx.fillRect(-1, -r, 2, 4);
+  } else if (typeName === 'orange') {
+    ctx.fillStyle = '#ff9800'; ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#e65100'; ctx.beginPath(); ctx.arc(0,-r+3,1.5,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'berry') {
+    ctx.fillStyle = '#e91e63';
+    ctx.beginPath(); ctx.arc(-3,-2,r/1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(3,-2,r/1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0,3,r/1.5,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'banana') {
+    ctx.strokeStyle = '#ffeeb5'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.arc(0, -r+3, r, 0.2, Math.PI - 0.2); ctx.stroke();
+  } else if (typeName === 'watermelon') {
+    ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.arc(0,2,r,0,Math.PI,true); ctx.fill();
+    ctx.fillStyle = '#ff5252'; ctx.beginPath(); ctx.arc(0,2,r-1.5,0,Math.PI,true); ctx.fill();
+  } else if (typeName === 'grapes') {
+    ctx.fillStyle = '#9c27b0';
+    ctx.beginPath(); ctx.arc(-3,-3,3.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(3,-3,3.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0,1,3.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-1,4,3.5,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'pineapple') {
+    ctx.fillStyle = '#ffeb3b'; ctx.fillRect(-r+2,-r+5,r*2-4,r*2-5);
+    ctx.fillStyle = '#4caf50'; ctx.beginPath(); ctx.moveTo(0,-r+1); ctx.lineTo(-4,-r-3); ctx.lineTo(4,-r-3); ctx.fill();
+  } else if (typeName === 'mango') {
+    ctx.fillStyle = '#ffc107'; ctx.beginPath(); ctx.ellipse(0,0,r,r-3,Math.PI/4,0,Math.PI*2); ctx.fill();
+  } else if (typeName === 'star') {
+    ctx.fillStyle = '#ffeb3b'; ctx.beginPath();
+    for(let i=0; i<5; i++) {
+      ctx.lineTo(Math.cos((18+i*72)*Math.PI/180)*r, -Math.sin((18+i*72)*Math.PI/180)*r);
+      ctx.lineTo(Math.cos((54+i*72)*Math.PI/180)*(r/2), -Math.sin((54+i*72)*Math.PI/180)*(r/2));
+    }
+    ctx.closePath(); ctx.fill();
+  } else if (typeName === 'diamond') {
+    ctx.fillStyle = '#00bcd4';
+    ctx.beginPath(); ctx.moveTo(0,-r); ctx.lineTo(r,0); ctx.lineTo(0,r); ctx.lineTo(-r,0); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawGooglyEyes(ctx, headX, headY, gs, dir) {
+  let cx = headX * gs + gs/2;
+  let cy = headY * gs + gs/2;
+  
+  let jiggleX = (Math.random() - 0.5) * 1.5;
+  let jiggleY = (Math.random() - 0.5) * 1.5;
+  
+  let ex1, ey1, ex2, ey2;
+  let px1, py1, px2, py2;
+  
+  let dx = dir.x;
+  let dy = dir.y;
+  
+  if (dx === 1) { 
+    ex1 = cx + 2; ey1 = cy - 4; ex2 = cx + 2; ey2 = cy + 4;
+    px1 = ex1 + 1.5 + jiggleX; py1 = ey1 + jiggleY;
+    px2 = ex2 + 1.5 + jiggleX; py2 = ey2 + jiggleY;
+  } else if (dx === -1) {
+    ex1 = cx - 2; ey1 = cy - 4; ex2 = cx - 2; ey2 = cy + 4;
+    px1 = ex1 - 1.5 + jiggleX; py1 = ey1 + jiggleY;
+    px2 = ex2 - 1.5 + jiggleX; py2 = ey2 + jiggleY;
+  } else if (dy === 1) {
+    ex1 = cx - 4; ey1 = cy + 2; ex2 = cx + 4; ey2 = cy + 2;
+    px1 = ex1 + jiggleX; py1 = ey1 + 1.5 + jiggleY;
+    px2 = ex2 + jiggleX; py2 = ey2 + 1.5 + jiggleY;
+  } else {
+    ex1 = cx - 4; ey1 = cy - 2; ex2 = cx + 4; ey2 = cy - 2;
+    px1 = ex1 + jiggleX; py1 = ey1 - 1.5 + jiggleY;
+    px2 = ex2 + jiggleX; py2 = ey2 - 1.5 + jiggleY;
+  }
+
+  ctx.fillStyle = 'white';
+  ctx.beginPath(); ctx.arc(ex1, ey1, 3.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(ex2, ey2, 3.5, 0, Math.PI*2); ctx.fill();
+  
+  ctx.fillStyle = '#1c0e1f';
+  ctx.beginPath(); ctx.arc(px1, py1, 1.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(px2, py2, 1.5, 0, Math.PI*2); ctx.fill();
+}
+
 function renderGame() {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
-  const gridSize = canvas.width / 20;
+  const gs = canvas.width / 20;
   
-  // Clear canvas
-  ctx.fillStyle = boardTheme.bg;
+  ctx.fillStyle = '#160918';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  // Draw grid
-  ctx.strokeStyle = boardTheme.grid;
-  ctx.lineWidth = 1;
-  for (let i = 0; i <= 20; i++) {
-    ctx.beginPath();
-    ctx.moveTo(i * gridSize, 0);
-    ctx.lineTo(i * gridSize, canvas.height);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(0, i * gridSize);
-    ctx.lineTo(canvas.width, i * gridSize);
-    ctx.stroke();
+  if (devGrid) {
+    ctx.strokeStyle = 'rgba(255,102,178,0.08)';
+    ctx.lineWidth = 1;
+    for(let i=0; i<=20; i++){
+      ctx.beginPath(); ctx.moveTo(i*gs,0); ctx.lineTo(i*gs,canvas.height); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,i*gs); ctx.lineTo(canvas.width,i*gs); ctx.stroke();
+    }
   }
   
-  // Draw snake
-  snake.forEach((seg, idx) => {
-    const hue = snakeColorHue - (idx * 5);
-    ctx.fillStyle = hexFromHUE(hue);
-    ctx.fillRect(seg.x * gridSize + 2, seg.y * gridSize + 2, gridSize - 4, gridSize - 4);
+  const baseHue = snakeColorHue;
+  
+  for(let i=0; i<snake.length-1; i++) {
+    let curr = snake[i], nxt = snake[i+1];
+    ctx.fillStyle = hexFromHUE(baseHue - (i * 2));
+    ctx.beginPath();
+    let minX = Math.min(curr.x, nxt.x), maxX = Math.max(curr.x, nxt.x);
+    let minY = Math.min(curr.y, nxt.y), maxY = Math.max(curr.y, nxt.y);
+    if(curr.x === nxt.x) { ctx.fillRect(curr.x*gs + 2, minY*gs + gs/2, gs-4, gs); } 
+    else { ctx.fillRect(minX*gs + gs/2, curr.y*gs + 2, gs, gs-4); }
+  }
+
+  snake.forEach((seg, i) => {
+    ctx.fillStyle = hexFromHUE(baseHue - (i * 2));
+    ctx.beginPath();
+    ctx.arc(seg.x*gs + gs/2, seg.y*gs + gs/2, gs/2 - 2, 0, Math.PI*2);
+    ctx.fill();
   });
   
-  // Draw fruit
-  ctx.font = `${gridSize - 4}px Arial`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('🍎', fruit.x * gridSize + gridSize/2, fruit.y * gridSize + gridSize/2);
+  drawGooglyEyes(ctx, snake[0].x, snake[0].y, gs, direction);
+  
+  activeFruits.forEach(f => {
+    drawCustomFruit(ctx, f.x, f.y, gs, f.type.name);
+  });
+  
+  if (devFps) {
+    ctx.fillStyle = '#ffb3d9';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+    ctx.fillText(`fps: ${currentFps}`, 5, 5);
+  }
 }
 
 function gameLoop() {
+  let now = performance.now();
+  currentFps = Math.round(1000 / (now - lastFrameTime));
+  lastFrameTime = now;
+
   if (gameRunning && !gamePaused) {
-    gameFrameCounter++;
-    
     direction = {...nextDirection};
-    
-    // Move snake
     const head = {...snake[0]};
-    head.x += direction.x;
-    head.y += direction.y;
+    head.x += direction.x; head.y += direction.y;
     
-    // Check bounds
-    if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) {
-      endGame();
-      return;
-    }
-    
-    // Check self collision
-    if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
-      endGame();
-      return;
+    if(head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20 || snake.some(s => s.x === head.x && s.y === head.y)) {
+      endGame(); return;
     }
     
     snake.unshift(head);
     
-    // Check fruit collision
-    if (head.x === fruit.x && head.y === fruit.y) {
-      score += 10 * diffCfg.multiplier;
-      level = Math.floor(score / 100) + 1;
-      
-      // Spawn new fruit
-      fruit = {
-        x: Math.floor(Math.random() * 20),
-        y: Math.floor(Math.random() * 20)
-      };
+    let ateIndex = activeFruits.findIndex(f => f.x === head.x && f.y === head.y);
+    if(ateIndex !== -1) {
+      score += activeFruits[ateIndex].type.pts * diffCfg.mult;
+      level = Math.floor(score / 150) + 1;
+      activeFruits.splice(ateIndex, 1);
     } else {
       snake.pop();
     }
     
-    updateScore();
-    renderGame();
+    while(activeFruits.length < fruitDensity) {
+      spawnFruitObj();
+    }
+    
+    updateScore(); renderGame();
   } else if (gameRunning && gamePaused) {
     renderGame();
   }
-  
-  if (gameRunning) {
-    setTimeout(gameLoop, diffCfg.speed);
-  }
+  if (gameRunning) setTimeout(gameLoop, diffCfg.speed);
 }
 
 function setDir(x, y) {
@@ -966,39 +887,60 @@ function setDir(x, y) {
   nextDirection = {x, y};
 }
 
+function handleDpad(e, x, y) {
+  e.preventDefault();
+  setDir(x, y);
+}
+
 function endGame() {
   gameRunning = false;
   highScore = Math.max(highScore, score);
-  LS.set('snakeHighScore', highScore);
+  LS.set('snakeHighScore3', highScore);
   
-  if (currentUser) {
-    addScore(currentUser.username, score, difficulty);
-    fetchLeaderboardGameOver();
+  let modeStr = getModeString();
+  
+  if(currentUser) {
+    addScore(currentUser.username, score, modeStr);
+    renderLeaderboard(getScores().slice(0, 5), 'lbListGameOver');
+    document.getElementById('gameOverPlayer').textContent = currentUser.username;
+  } else {
+    document.getElementById('gameOverPlayer').textContent = '';
+    document.getElementById('lbListGameOver').innerHTML = '';
   }
   
   document.getElementById('finalScore').textContent = score;
-  document.getElementById('finalDifficulty').textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
-  if (currentUser) {
-    document.getElementById('gameOverPlayer').textContent = `${currentUser.username}`;
-  }
-  
+  document.getElementById('finalDifficulty').textContent = modeStr;
   document.getElementById('gameOverModal').classList.add('visible');
-  appendLog(`Game ended: ${score} points on ${difficulty}`);
 }
 
-// Keyboard controls
-document.addEventListener('keydown', (e) => {
-  if (!gameRunning || gamePaused) return;
-  if (e.key === ' ') { e.preventDefault(); togglePause(); }
-  if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') { e.preventDefault(); setDir(0, -1); }
-  if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') { e.preventDefault(); setDir(0, 1); }
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') { e.preventDefault(); setDir(-1, 0); }
-  if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') { e.preventDefault(); setDir(1, 0); }
+document.addEventListener('keydown', e => {
+  if(!gameRunning || gamePaused) return;
+  if(e.key === ' ') { e.preventDefault(); togglePause(); }
+  if(e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') { e.preventDefault(); setDir(0, -1); }
+  if(e.key === 'ArrowDown' || e.key.toLowerCase() === 's') { e.preventDefault(); setDir(0, 1); }
+  if(e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a') { e.preventDefault(); setDir(-1, 0); }
+  if(e.key === 'ArrowRight' || e.key.toLowerCase() === 'd') { e.preventDefault(); setDir(1, 0); }
 });
 
-// Initialize
-loadSettings();
+const cvs = document.getElementById('gameCanvas');
+let tsX = 0, tsY = 0;
+cvs.addEventListener('touchstart', e => {
+  tsX = e.changedTouches[0].screenX; tsY = e.changedTouches[0].screenY;
+}, {passive: false});
+cvs.addEventListener('touchmove', e => e.preventDefault(), {passive: false});
+cvs.addEventListener('touchend', e => {
+  if(!gameRunning || gamePaused) return;
+  let dx = e.changedTouches[0].screenX - tsX;
+  let dy = e.changedTouches[0].screenY - tsY;
+  if(Math.abs(dx) > Math.abs(dy)) {
+    if(dx > 30) setDir(1, 0); else if(dx < -30) setDir(-1, 0);
+  } else {
+    if(dy > 30) setDir(0, 1); else if(dy < -30) setDir(0, -1);
+  }
+});
 </script>
-
 </body>
 </html>
+
+
+```

@@ -1,201 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>snake</title>
-
-<link rel="stylesheet" href="./style.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
-
-<script src="https://unpkg.com/lucide@latest"></script>
-</head>
-
-<body>
-
-<!-- SIGN IN -->
-<div class="modal-overlay" id="signInModal">
-  <div class="modal">
-    <h2><i data-lucide="user-circle"></i>sign in</h2>
-    <p>create or log into your account</p>
-
-    <input type="text" id="siUsername" placeholder="username" maxlength="20">
-    <input type="password" id="siPassword" placeholder="password">
-
-    <div class="err" id="siErr"></div>
-
-    <button id="btnCreateAcc">
-      <i data-lucide="user-plus"></i>create account
-    </button>
-
-    <button id="btnLoginAcc" class="secondary">
-      <i data-lucide="log-in"></i>log in
-    </button>
-
-    <button class="secondary" onclick="skipSignIn()">
-      <i data-lucide="ghost"></i>play as guest
-    </button>
-
-    <p class="small">saves your scores and settings</p>
-  </div>
-</div>
-
-<!-- DEV PASS -->
-<div class="modal-overlay" id="devPassModal">
-  <div class="modal">
-    <h2><i data-lucide="lock"></i>dev access</h2>
-
-    <input type="password" id="devPass" placeholder="password">
-    <div class="err" id="devPassErr"></div>
-
-    <button onclick="devCheckPass()">
-      <i data-lucide="check"></i>submit
-    </button>
-
-    <button class="close-btn" onclick="closeDevPass()">
-      <i data-lucide="x"></i>close
-    </button>
-  </div>
-</div>
-
-<!-- DEV MENU -->
-<div class="modal-overlay" id="devMenuModal">
-  <div class="modal">
-    <h2><i data-lucide="wrench"></i>dev menu</h2>
-
-    <div class="dev-btn-grid">
-      <button onclick="devAddScore100()">score +100</button>
-      <button onclick="devLevelUp()">level +1</button>
-      <button onclick="devToggleGrid()">toggle grid</button>
-      <button onclick="devToggleFps()">toggle fps</button>
-      <button onclick="devClearAllScores()">clear scores</button>
-      <button onclick="devClearAllUsers()">delete users</button>
-      <button onclick="devResetAll()">reset all</button>
-      <button onclick="devNukeStorage()">nuke storage</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      🐍 Snake
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&amp;display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js">
+    </script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- SIGN IN MODAL -->
+    <div class="modal-overlay" id="signInModal">
+      <div class="modal">
+        <h2>
+          <i data-lucide="user"></i>
+          account
+        </h2>
+        <p>
+          create or log into your account
+        </p>
+        <p class="small">
+          saves your scores and settings
+        </p>
+        <input type="text" id="siUsername" placeholder="username" maxlength="20" autocomplete="off" />
+        <input type="password" id="siPassword" placeholder="password" maxlength="50" autocomplete="off" />
+        <div class="err" id="siErr">
+        </div>
+        <div class="button-group">
+          <button id="btnCreateAcc">
+            <i data-lucide="user-plus"></i>
+            create
+          </button>
+          <button id="btnLoginAcc" class="secondary">
+            <i data-lucide="log-in"></i>
+            login
+          </button>
+        </div>
+        <button class="close-btn" onclick="closeSignIn()">
+          <i data-lucide="x"></i>
+          skip
+        </button>
+      </div>
     </div>
-
-    <div id="devStatus"></div>
-
-    <button class="close-btn" onclick="closeDevMenu()">
-      <i data-lucide="x"></i>close
-    </button>
-  </div>
-</div>
-
-<!-- SETTINGS -->
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <h2><i data-lucide="settings"></i>settings</h2>
-
-    <div class="settings-row">
-      <label>sound</label>
-      <button id="soundToggleBtn" onclick="toggleSoundSetting()">on</button>
+    <!-- LEADERBOARD MODAL -->
+    <div class="modal-overlay" id="lbModal">
+      <div class="modal">
+        <h2>
+          <i data-lucide="trophy"></i>
+          leaderboard
+        </h2>
+        <div class="leaderboard-list" id="lbList">
+        </div>
+        <button class="close-btn" onclick="closeLb()">
+          <i data-lucide="x"></i>
+          close
+        </button>
+      </div>
     </div>
-
-    <div class="settings-row">
-      <label>d-pad</label>
-      <button id="dpadToggleBtn" onclick="toggleDpadSetting()">off</button>
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+      <div class="modal">
+        <h2>
+          <i data-lucide="settings"></i>
+          settings
+        </h2>
+        <div class="settings-row">
+          <label>
+            <i data-lucide="volume-2"></i>
+            sound
+          </label>
+          <button class="toggle-btn" id="soundToggle" onclick="toggleSound()">
+            on
+          </button>
+        </div>
+        <div class="settings-row">
+          <label>
+            <i data-lucide="gamepad-2"></i>
+            d-pad
+          </label>
+          <button class="toggle-btn" id="dpadToggle" onclick="toggleDpad()">
+            off
+          </button>
+        </div>
+        <div class="settings-row">
+          <label>
+            <i data-lucide="zap"></i>
+            difficulty
+          </label>
+          <select id="diffSelect" onchange="changeDiff(this.value)">
+            <option value="easy">
+              easy
+            </option>
+            <option value="medium">
+              medium
+            </option>
+            <option value="hard">
+              hard
+            </option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <label>
+            <i data-lucide="cherry"></i>
+            fruit density
+          </label>
+          <select id="fruitSelect" onchange="changeFruit(this.value)">
+            <option value="1">
+              1x
+            </option>
+            <option value="2" selected="">
+              2x
+            </option>
+            <option value="3">
+              3x
+            </option>
+            <option value="4">
+              4x
+            </option>
+          </select>
+        </div>
+        <div class="color-slider-wrap">
+          <label>
+            <i data-lucide="palette"></i>
+            snake color
+          </label>
+          <input type="range" id="colorSlider" min="0" max="359" value="330" oninput="updateColorPreview(this.value)" onchange="saveColorHue(this.value)" />
+          <div class="snake-preview-row" id="snakePreview">
+          </div>
+          <div class="color-value" id="colorValue">
+            hue: 330°
+          </div>
+        </div>
+        <button class="close-btn" onclick="closeSettings()">
+          <i data-lucide="x"></i>
+          close
+        </button>
+      </div>
     </div>
-
-    <div class="settings-row">
-      <label>difficulty</label>
-      <select id="difficultySelect" onchange="changeDifficultySetting()">
-        <option value="easy">easy</option>
-        <option value="medium">medium</option>
-        <option value="hard">hard</option>
-      </select>
+    <!-- DEV PASS MODAL -->
+    <div class="modal-overlay" id="devPassModal">
+      <div class="modal">
+        <h2>
+          <i data-lucide="terminal"></i>
+          dev access
+        </h2>
+        <input type="password" id="devPass" placeholder="password" autocomplete="off" />
+        <div class="err" id="devPassErr">
+        </div>
+        <div class="button-group">
+          <button onclick="devCheckPass()">
+            <i data-lucide="unlock"></i>
+            enter
+          </button>
+          <button class="close-btn" onclick="closeDevPass()">
+            <i data-lucide="x"></i>
+            cancel
+          </button>
+        </div>
+      </div>
     </div>
-
-    <div class="settings-row">
-      <label>fruit amount</label>
-      <select id="densitySelect" onchange="changeDensitySetting()">
-        <option value="1">low</option>
-        <option value="2">normal</option>
-        <option value="4">high</option>
-      </select>
+    <!-- DEV MENU MODAL -->
+    <div class="modal-overlay" id="devMenuModal">
+      <div class="modal">
+        <h2>
+          <i data-lucide="terminal"></i>
+          dev menu
+        </h2>
+        <pre id="devStatus" style="color:#ffb3d9;font-size:.85em;margin:10px 0;text-align:left;">
+        </pre>
+        <div class="dev-btn-grid">
+          <button class="dev-btn pink" onclick="devAddScore100()">
+            +100 score
+          </button>
+          <button class="dev-btn pink" onclick="devLevelUp()">
+            level up
+          </button>
+          <button class="dev-btn purple" id="devGridBtn" onclick="devToggleGrid()">
+            grid off
+          </button>
+          <button class="dev-btn purple" id="devFpsBtn" onclick="devToggleFps()">
+            fps off
+          </button>
+          <button class="dev-btn red" onclick="devClearAllScores()">
+            clear scores
+          </button>
+          <button class="dev-btn red" onclick="devClearAllUsers()">
+            clear users
+          </button>
+          <button class="dev-btn blue" onclick="devResetAll()">
+            reset settings
+          </button>
+          <button class="dev-btn red" onclick="devNukeStorage()">
+            nuke storage
+          </button>
+        </div>
+        <button class="close-btn" onclick="closeDevMenu()">
+          <i data-lucide="x"></i>
+          close
+        </button>
+      </div>
     </div>
-
-    <input type="range" id="colorSlider" min="0" max="360" value="330">
-
-    <button onclick="saveSettings()">save</button>
-    <button class="close-btn" onclick="closeSettings()">close</button>
-  </div>
-</div>
-
-<!-- LEADERBOARD -->
-<div class="modal-overlay" id="leaderboardModal">
-  <div class="modal">
-    <h2><i data-lucide="trophy"></i>leaderboard</h2>
-    <div id="lbList"></div>
-    <button onclick="closeLeaderboard()">close</button>
-  </div>
-</div>
-
-<!-- INFO -->
-<div class="modal-overlay" id="infoModal">
-  <div class="modal">
-    <h2><i data-lucide="book-open"></i>how to play</h2>
-
-    <p>
-      swipe or use arrows / wasd<br>
-      eat fruit, grow, don’t hit walls
-    </p>
-
-    <button onclick="closeInfo()">close</button>
-  </div>
-</div>
-
-<!-- GAME OVER -->
-<div class="modal-overlay" id="gameOverModal">
-  <div class="modal">
-    <h2>game over</h2>
-
-    <p>score: <span id="finalScore">0</span></p>
-    <p>mode: <span id="finalDifficulty"></span></p>
-
-    <button onclick="resetGame()">play again</button>
-    <button onclick="showStartScreen()">menu</button>
-  </div>
-</div>
-
-<!-- MAIN -->
-<div class="container">
-
-  <div id="startMenuArea">
-    <h1 id="gameTitle">snake</h1>
-
-    <button id="playBtn">play</button>
-    <button onclick="showSignInModal()">sign in</button>
-    <button onclick="openLeaderboard()">leaderboard</button>
-    <button onclick="openSettings()">settings</button>
-    <button onclick="openInfo()">info</button>
-  </div>
-
-  <div id="infoBar">
-    <span>score: <span id="score">0</span></span>
-    <span>level: <span id="level">1</span></span>
-    <span>best: <span id="highScore">0</span></span>
-  </div>
-
-  <canvas id="gameCanvas" width="400" height="400"></canvas>
-
-  <div id="gameButtons" style="display:none">
-    <button onclick="togglePause()">pause</button>
-    <button onclick="showStartScreen()">quit</button>
-  </div>
-
-  <div id="dpad">
-    <button onclick="handleDpad(0,-1)">up</button>
-    <button onclick="handleDpad(-1,0)">left</button>
-    <button onclick="handleDpad(1,0)">right</button>
-    <button onclick="handleDpad(0,1)">down</button>
-  </div>
-
-</div>
-
-<script src="./app.js"></script>
-
-</body>
+    <!-- MAIN UI -->
+    <div class="container">
+      <h1 onclick="handleTitleClick()">
+        🐍 snake
+      </h1>
+      <!-- user info bar -->
+      <div class="user-info" id="userInfo">
+        <div>
+          <div class="user-name" id="userName">
+            player
+          </div>
+          <div class="user-sub">
+            logged in
+          </div>
+        </div>
+        <button class="secondary" style="min-width:auto;padding:8px 14px;" onclick="openSignIn()">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+      <!-- score/level/hi HUD (visible during game) -->
+      <div class="info" id="infoBar">
+        <div class="info-box">
+          <i data-lucide="star"></i>
+          <span id="scoreEl">          0
+</span>
+        </div>
+        <div class="info-box">
+          <i data-lucide="layers"></i>
+          lv
+          <span id="levelEl">          1
+</span>
+        </div>
+        <div class="info-box">
+          <i data-lucide="trophy"></i>
+          <span id="hiEl">          0
+</span>
+        </div>
+        <div class="info-box">
+          <i data-lucide="settings-2"></i>
+          <span id="modeEl">          easy | 2x
+</span>
+        </div>
+      </div>
+      <!-- canvas -->
+      <canvas id="gameCanvas" width="400" height="400">
+      </canvas>
+      <!-- d-pad -->
+      <div class="dpad" id="dpad">
+        <div class="dpad-grid">
+          <span></span>
+          <button class="control-btn" ontouchstart="setDir(0,-1)" onclick="setDir(0,-1)">
+            <i data-lucide="arrow-up"></i>
+          </button>
+          <span></span>
+          <button class="control-btn" ontouchstart="setDir(-1,0)" onclick="setDir(-1,0)">
+            <i data-lucide="arrow-left"></i>
+          </button>
+          <span></span>
+          <button class="control-btn" ontouchstart="setDir(1,0)" onclick="setDir(1,0)">
+            <i data-lucide="arrow-right"></i>
+          </button>
+          <span></span>
+          <button class="control-btn" ontouchstart="setDir(0,1)" onclick="setDir(0,1)">
+            <i data-lucide="arrow-down"></i>
+          </button>
+          <span></span>
+        </div>
+      </div>
+      <!-- menu buttons -->
+      <div class="button-group" id="menuBtns">
+        <button id="playBtn">
+          <i data-lucide="play"></i>
+          play
+        </button>
+        <button class="secondary" onclick="openLb()">
+          <i data-lucide="trophy"></i>
+          scores
+        </button>
+        <button class="secondary" onclick="openSettings()">
+          <i data-lucide="settings"></i>
+          settings
+        </button>
+        <button class="secondary" onclick="openSignIn()">
+          <i data-lucide="user"></i>
+          account
+        </button>
+      </div>
+      <!-- fruit legend -->
+      <div class="fruit-legend" id="fruitLegend">
+        🍎 +1   🍊 +3   🍇 +5   🍓 +2   🍋 +4   🫐 +6   ⭐ +10 level up
+      </div>
+    </div>
+    <script src="app.js">
+    </script>
+  </body>
 </html>

@@ -1,1 +1,201 @@
-<script src="https://unpkg.com/lucide@latest"></script><link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet"><div class="modal-overlay" id="signInModal"><div class="modal"><h2><i data-lucide="user-circle"></i>sign in</h2><p>create or log into your account</p><input type="text" id="siUsername" placeholder="username" maxlength="20"> <input type="password" id="siPassword" placeholder="password"><div class="err" id="siErr"></div><button id="btnCreateAcc"><i data-lucide="user-plus"></i>create account</button><button id="btnLoginAcc" class="secondary" style="margin-top:10px"><i data-lucide="log-in"></i>log in</button><button class="secondary" onclick="skipSignIn()" style="margin-top:10px"><i data-lucide="ghost"></i>play as guest</button><p class="small">saves your scores and pretty settings</p></div></div><div class="modal-overlay" id="devPassModal"><div class="modal"><h2><i data-lucide="lock"></i>dev access</h2><p style="color:#ffb3d9">enter secret password</p><input type="password" id="devPass" placeholder="password"><div class="err" id="devPassErr"></div><button class="dev-btn pink" onclick="devCheckPass()"><i data-lucide="check"></i>submit</button><button class="close-btn" onclick="closeDevPass()"><i data-lucide="x"></i>close</button></div></div><div class="modal-overlay" id="devMenuModal"><div class="modal"><h2><i data-lucide="wrench"></i>dev menu</h2><div class="dev-btn-grid"><button class="dev-btn pink" onclick="devAddScore100()"><i data-lucide="plus"></i>score +100</button><button class="dev-btn pink" onclick="devLevelUp()"><i data-lucide="trending-up"></i>level +1</button><button class="dev-btn blue" id="devGridBtn" onclick="devToggleGrid()"><i data-lucide="grid"></i>toggle grid</button><button class="dev-btn blue" id="devFpsBtn" onclick="devToggleFps()"><i data-lucide="monitor"></i>toggle fps</button><button class="dev-btn purple" onclick="devClearAllScores()"><i data-lucide="trash-2"></i>clear scores</button><button class="dev-btn purple" onclick="devClearAllUsers()"><i data-lucide="users-x"></i>delete users</button><button class="dev-btn red" onclick="devResetAll()"><i data-lucide="rotate-ccw"></i>reset all</button><button class="dev-btn red" onclick="devNukeStorage()"><i data-lucide="bomb"></i>nuke storage</button></div><div style="background:rgba(255,102,178,.05);border:1px solid rgba(255,102,178,.3);padding:15px;border-radius:16px;margin:15px 0;text-align:left"><div id="devStatus" style="font-size:.9em;color:#ffb3d9;font-family:monospace;white-space:pre-wrap"></div></div><button class="close-btn" onclick="closeDevMenu()"><i data-lucide="x"></i>close</button></div></div><div class="modal-overlay" id="settingsModal"><div class="modal"><h2><i data-lucide="settings"></i>settings</h2><div class="settings-row"><label><i data-lucide="volume-2"></i>sound</label><button class="toggle-btn" id="soundToggleBtn" onclick="toggleSoundSetting()">on</button></div><div class="settings-row"><label><i data-lucide="gamepad-2"></i>d-pad controls</label><button class="toggle-btn" id="dpadToggleBtn" onclick="toggleDpadSetting()">off</button></div><div class="settings-row"><label><i data-lucide="activity"></i>difficulty</label><select id="difficultySelect" onchange="changeDifficultySetting()"><option value="easy">easy</option><option value="medium">medium</option><option value="hard">hard</option></select></div><div class="settings-row"><label><i data-lucide="cherry"></i>fruit amount</label><select id="densitySelect" onchange="changeDensitySetting()"><option value="1">low (1)</option><option value="2">normal (2)</option><option value="4">high (4)</option></select></div><div class="color-slider-wrap"><label><i data-lucide="palette"></i>snake color</label><div class="snake-preview-row" id="snakePreviewRow"><div class="snake-preview-seg" id="sp0"></div><div class="snake-preview-seg" id="sp1"></div><div class="snake-preview-seg" id="sp2"></div><div class="snake-preview-seg" id="sp3"></div><div class="snake-preview-seg" id="sp4"></div></div><input type="range" id="colorSlider" min="0" max="360" value="330"><div class="color-value" id="colorValue">pink — hue 330</div></div><button onclick="saveSettings()"><i data-lucide="save"></i>save settings</button><button class="close-btn" onclick="closeSettings()"><i data-lucide="x"></i>close</button></div></div><div class="modal-overlay" id="leaderboardModal"><div class="modal"><h2><i data-lucide="trophy"></i>leaderboard</h2><div class="leaderboard-list" id="lbList"></div><button class="close-btn" onclick="closeLeaderboard()"><i data-lucide="x"></i>close</button></div></div><div class="modal-overlay" id="infoModal"><div class="modal"><h2><i data-lucide="book-open"></i>how to play</h2><div style="text-align:left;color:rgba(255,230,242,.9);font-size:.95em;line-height:1.8;background:rgba(255,255,255,.03);padding:18px;border-radius:20px;border:1px solid rgba(255,153,204,.15)">swipe on screen to move<br>use arrow keys or wasd<br>enable d-pad in settings if u want<br>eat fruits to grow and score points<br>dont hit the walls or urself</div><button class="close-btn" onclick="closeInfo()"><i data-lucide="x"></i>close</button></div></div><div class="modal-overlay" id="gameOverModal"><div class="modal"><h2 style="color:#ff4d4d"><i data-lucide="skull"></i>game over</h2><p>score:<strong style="color:#ff66b2;font-size:1.6em"><span id="finalScore">0</span></strong></p><p>mode:<span id="finalDifficulty">easy</span></p><div id="gameOverPlayer" style="margin:12px 0;color:#ffb3d9;font-weight:700;font-size:1.2em"></div><div class="leaderboard-list" id="lbListGameOver"></div><div class="button-group" style="margin-top:20px"><button onclick="resetGame()"><i data-lucide="rotate-cw"></i>play again</button><button class="secondary" onclick="openSettingsFromGameOver()"><i data-lucide="settings"></i>settings</button></div><button class="secondary" onclick="showStartScreen()" style="margin-top:12px;min-width:200px"><i data-lucide="home"></i>main menu</button></div></div><div class="container"><div class="user-info" id="userInfo"><div style="flex:1;text-align:left"><div class="user-name" id="userName"></div><div class="user-sub" id="userSub">signed in</div></div><button class="close-btn" onclick="signOut()" style="margin:0;padding:10px 18px;min-width:auto;font-size:.85em"><i data-lucide="log-out"></i>sign out</button></div><div class="menu-glass" id="startMenuArea"><h1 id="gameTitle" onclick="handleTitleClick()">snake</h1><div class="button-group" id="startButtons"><button id="playBtn" style="width:100%;font-size:1.2em;padding:18px"><i data-lucide="play-circle"></i>play now</button><button class="secondary" onclick="showSignInModal()"><i data-lucide="user"></i>sign in</button><button class="secondary" onclick="openLeaderboard()"><i data-lucide="award"></i>leaderboard</button><button class="secondary" onclick="openSettings()"><i data-lucide="sliders"></i>settings</button><button class="secondary" onclick="openInfo()"><i data-lucide="help-circle"></i>info</button></div></div><div class="info" id="infoBar"><div class="info-box"><i data-lucide="star"></i>score:<span id="score">0</span></div><div class="info-box"><i data-lucide="zap"></i>level:<span id="level">1</span></div><div class="info-box"><i data-lucide="crown"></i>best:<span id="highScore">0</span></div></div><div class="power-up-indicator" id="powerUpIndicator"></div><canvas id="gameCanvas" width="400" height="400"></canvas><div class="fruit-legend" id="fruitLegend"><strong>apple 10</strong>|<strong>orange 15</strong>|<strong>berry 25</strong>|<strong>banana 35</strong><br><strong>watermelon 50</strong>|<strong>grapes 60</strong>|<strong>pineapple 75</strong>|<strong>mango 90</strong><br><strong>star 100</strong>|<strong>diamond 150</strong></div><div class="button-group" id="gameButtons" style="display:none"><button id="pauseBtn" onclick="togglePause()"><i data-lucide="pause"></i>pause</button><button class="secondary" onclick="showStartScreen()"><i data-lucide="x-circle"></i>quit</button></div><div class="dpad" id="dpad"><div class="dpad-grid"><div></div><button class="control-btn" ontouchstart="handleDpad(event,0,-1)" onmousedown="handleDpad(event,0,-1)"><i data-lucide="arrow-up"></i></button><div></div><button class="control-btn" ontouchstart="handleDpad(event,-1,0)" onmousedown="handleDpad(event,-1,0)"><i data-lucide="arrow-left"></i></button><div></div><button class="control-btn" ontouchstart="handleDpad(event,1,0)" onmousedown="handleDpad(event,1,0)"><i data-lucide="arrow-right"></i></button><div></div><button class="control-btn" ontouchstart="handleDpad(event,0,1)" onmousedown="handleDpad(event,0,1)"><i data-lucide="arrow-down"></i></button><div></div></div></div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>snake</title>
+
+<link rel="stylesheet" href="./style.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;900&display=swap" rel="stylesheet">
+
+<script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<!-- SIGN IN -->
+<div class="modal-overlay" id="signInModal">
+  <div class="modal">
+    <h2><i data-lucide="user-circle"></i>sign in</h2>
+    <p>create or log into your account</p>
+
+    <input type="text" id="siUsername" placeholder="username" maxlength="20">
+    <input type="password" id="siPassword" placeholder="password">
+
+    <div class="err" id="siErr"></div>
+
+    <button id="btnCreateAcc">
+      <i data-lucide="user-plus"></i>create account
+    </button>
+
+    <button id="btnLoginAcc" class="secondary">
+      <i data-lucide="log-in"></i>log in
+    </button>
+
+    <button class="secondary" onclick="skipSignIn()">
+      <i data-lucide="ghost"></i>play as guest
+    </button>
+
+    <p class="small">saves your scores and settings</p>
+  </div>
+</div>
+
+<!-- DEV PASS -->
+<div class="modal-overlay" id="devPassModal">
+  <div class="modal">
+    <h2><i data-lucide="lock"></i>dev access</h2>
+
+    <input type="password" id="devPass" placeholder="password">
+    <div class="err" id="devPassErr"></div>
+
+    <button onclick="devCheckPass()">
+      <i data-lucide="check"></i>submit
+    </button>
+
+    <button class="close-btn" onclick="closeDevPass()">
+      <i data-lucide="x"></i>close
+    </button>
+  </div>
+</div>
+
+<!-- DEV MENU -->
+<div class="modal-overlay" id="devMenuModal">
+  <div class="modal">
+    <h2><i data-lucide="wrench"></i>dev menu</h2>
+
+    <div class="dev-btn-grid">
+      <button onclick="devAddScore100()">score +100</button>
+      <button onclick="devLevelUp()">level +1</button>
+      <button onclick="devToggleGrid()">toggle grid</button>
+      <button onclick="devToggleFps()">toggle fps</button>
+      <button onclick="devClearAllScores()">clear scores</button>
+      <button onclick="devClearAllUsers()">delete users</button>
+      <button onclick="devResetAll()">reset all</button>
+      <button onclick="devNukeStorage()">nuke storage</button>
+    </div>
+
+    <div id="devStatus"></div>
+
+    <button class="close-btn" onclick="closeDevMenu()">
+      <i data-lucide="x"></i>close
+    </button>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2><i data-lucide="settings"></i>settings</h2>
+
+    <div class="settings-row">
+      <label>sound</label>
+      <button id="soundToggleBtn" onclick="toggleSoundSetting()">on</button>
+    </div>
+
+    <div class="settings-row">
+      <label>d-pad</label>
+      <button id="dpadToggleBtn" onclick="toggleDpadSetting()">off</button>
+    </div>
+
+    <div class="settings-row">
+      <label>difficulty</label>
+      <select id="difficultySelect" onchange="changeDifficultySetting()">
+        <option value="easy">easy</option>
+        <option value="medium">medium</option>
+        <option value="hard">hard</option>
+      </select>
+    </div>
+
+    <div class="settings-row">
+      <label>fruit amount</label>
+      <select id="densitySelect" onchange="changeDensitySetting()">
+        <option value="1">low</option>
+        <option value="2">normal</option>
+        <option value="4">high</option>
+      </select>
+    </div>
+
+    <input type="range" id="colorSlider" min="0" max="360" value="330">
+
+    <button onclick="saveSettings()">save</button>
+    <button class="close-btn" onclick="closeSettings()">close</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="modal-overlay" id="leaderboardModal">
+  <div class="modal">
+    <h2><i data-lucide="trophy"></i>leaderboard</h2>
+    <div id="lbList"></div>
+    <button onclick="closeLeaderboard()">close</button>
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="modal-overlay" id="infoModal">
+  <div class="modal">
+    <h2><i data-lucide="book-open"></i>how to play</h2>
+
+    <p>
+      swipe or use arrows / wasd<br>
+      eat fruit, grow, don’t hit walls
+    </p>
+
+    <button onclick="closeInfo()">close</button>
+  </div>
+</div>
+
+<!-- GAME OVER -->
+<div class="modal-overlay" id="gameOverModal">
+  <div class="modal">
+    <h2>game over</h2>
+
+    <p>score: <span id="finalScore">0</span></p>
+    <p>mode: <span id="finalDifficulty"></span></p>
+
+    <button onclick="resetGame()">play again</button>
+    <button onclick="showStartScreen()">menu</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <div id="startMenuArea">
+    <h1 id="gameTitle">snake</h1>
+
+    <button id="playBtn">play</button>
+    <button onclick="showSignInModal()">sign in</button>
+    <button onclick="openLeaderboard()">leaderboard</button>
+    <button onclick="openSettings()">settings</button>
+    <button onclick="openInfo()">info</button>
+  </div>
+
+  <div id="infoBar">
+    <span>score: <span id="score">0</span></span>
+    <span>level: <span id="level">1</span></span>
+    <span>best: <span id="highScore">0</span></span>
+  </div>
+
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+  <div id="gameButtons" style="display:none">
+    <button onclick="togglePause()">pause</button>
+    <button onclick="showStartScreen()">quit</button>
+  </div>
+
+  <div id="dpad">
+    <button onclick="handleDpad(0,-1)">up</button>
+    <button onclick="handleDpad(-1,0)">left</button>
+    <button onclick="handleDpad(1,0)">right</button>
+    <button onclick="handleDpad(0,1)">down</button>
+  </div>
+
+</div>
+
+<script src="./app.js"></script>
+
+</body>
+</html>

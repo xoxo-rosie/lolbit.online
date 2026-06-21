@@ -1,558 +1,1013 @@
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Diamond | Premium Casino</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Roboto+Mono:wght@400;700&display=swap');
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+        :root {
+            --diamond-blue: #a5f3fc;
+            --gold: #d4af37;
+            --felt-green: #064e3b;
+            --table-border: #451a03;
+        }
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1a 0%, #000000 100%);
+        }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-  </body>
-</html>    <div style="display: table-row;">
-     <div style="font-size: 6vmin; display: table-cell; text-align:center; vertical-align: middle; background-color:#00C000; " onclick="Init(1)">
-      <div>Mini roulette</div>
-     </div>
-    </div>
+        .font-mono { font-family: 'Roboto Mono', monospace; }
+        
+        .text-gold { color: var(--gold); }
+        .bg-gold { background-color: var(--gold); }
+        .border-gold { border-color: var(--gold); }
 
-    <div style="display: table-row;">
-     <div style="font-size: 6vmin; display: table-cell; text-align:center; vertical-align: middle; background-color:#00C000; " onclick="Init(2)">
-      <div>100 roulette</div>
-     </div>
-    </div>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
 
-    <div style="display: table-row;">
-     <div style="font-size: 6vmin; display: table-cell; text-align:center; vertical-align: middle; background-color:#00C000; " onclick="DisplayHelp()">
-      <div>Help</div>
-     </div>
-    </div>
+        .casino-table {
+            background: var(--felt-green);
+            border: 8px solid var(--table-border);
+            border-radius: 60px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.9);
+            position: relative;
+        }
 
-   </div>
-  </div>
+        /* Playing Cards */
+        .playing-card {
+            width: 90px;
+            height: 135px;
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 8px;
+            font-size: 24px;
+            font-weight: 800;
+            box-shadow: -2px 5px 10px rgba(0,0,0,0.4);
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+        .card-red { color: #dc2626; }
+        .card-black { color: #171717; }
+        .card-hidden {
+            background: repeating-linear-gradient(45deg, #1e3a8a, #1e3a8a 10px, #1e40af 10px, #1e40af 20px);
+            border: 2px solid #ffffff;
+        }
+
+        /* Chips */
+        .chip {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 0 0 4px rgba(255,255,255,0.2);
+            border: 2px dashed rgba(255,255,255,0.5);
+            transition: transform 0.1s;
+        }
+        .chip:hover { transform: translateY(-3px) scale(1.05); }
+        .chip:active { transform: translateY(0) scale(0.95); }
+        
+        .chip-10 { background: #3b82f6; }
+        .chip-50 { background: #ef4444; }
+        .chip-100 { background: #10b981; }
+        .chip-500 { background: #8b5cf6; }
+        .chip-1000 { background: #f59e0b; color: #000; }
+
+        /* Slots */
+        .slot-machine {
+            background: linear-gradient(180deg, #262626 0%, #171717 100%);
+            border: 4px solid var(--gold);
+            border-radius: 12px;
+        }
+        .slot-window {
+            background: #ffffff;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            border: 2px solid #52525b;
+        }
+        .slot-reel {
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000;
+            border-right: 1px solid #d4d4d8;
+            background: linear-gradient(90deg, #f4f4f5 0%, #ffffff 50%, #f4f4f5 100%);
+        }
+        .slot-reel:last-child { border-right: none; }
+
+        /* Roulette */
+        .r-grid {
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            gap: 2px;
+            background: rgba(255,255,255,0.1);
+            padding: 2px;
+            border: 2px solid #fff;
+        }
+        .r-cell {
+            padding: 15px 5px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.2s;
+            font-family: 'Roboto Mono', monospace;
+        }
+        .r-cell:hover, .r-cell.selected {
+            border-color: var(--gold);
+            box-shadow: inset 0 0 15px var(--gold);
+            background: rgba(212, 175, 55, 0.2);
+        }
+        .bg-roulette-red { background: #dc2626; }
+        .bg-roulette-black { background: #171717; }
+        .bg-roulette-green { background: #059669; }
+
+        /* Notifications */
+        #notification-center {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: rgba(0, 0, 0, 0.9);
+            border-left: 4px solid var(--gold);
+            padding: 16px 24px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            animation: slideInRight 0.3s forwards;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(180deg, #d4af37 0%, #b8860b 100%);
+            color: #000;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #ffdf00;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-secondary {
+            background: #262626;
+            color: #fff;
+            border: 1px solid #52525b;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { background: #3f3f46; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-yellow-500 selection:text-black">
+
+    <!-- Top Navigation -->
+    <header class="glass-panel border-b-0 border-t-0 border-l-0 border-r-0 border-b border-white/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('lobby')">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 12L12 22L22 12L12 2Z" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 2L12 22" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12H22" stroke="#d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div class="text-2xl font-bold tracking-widest text-white uppercase">The Diamond</div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <div class="text-right">
+                    <div class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Account Balance</div>
+                    <div class="text-2xl font-mono font-bold text-gold" id="nav-balance">$50,000.00</div>
+                </div>
+                <button class="btn-primary px-6 py-2 rounded-sm text-sm" onclick="depositFunds()">Cashier</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="notification-center"></div>
+
+    <main class="flex-grow flex items-center justify-center p-6" id="main-content">
+        <!-- LOBBY -->
+        <div id="view-lobby" class="w-full max-w-6xl block animate-[fadeIn_0.5s_ease-out]">
+            <div class="text-center mb-16">
+                <h1 class="text-4xl md:text-5xl font-extrabold uppercase tracking-widest mb-4">High Limit Floor</h1>
+                <div class="w-24 h-1 bg-gold mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Game Cards -->
+                <div class="glass-panel p-8 rounded-xl cursor-pointer hover:border-gold transition-all duration-300 group" onclick="navigate('slots')">
+                    <div class="h-16 w-16 mb-6 rounded-full border border-gray-500 flex items-center justify-center group-hover:border-gold group-hover:text-gold transition-colors">
+                        <span class="text-2xl font-bold font-mono">777</span>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-wider mb-2 text-white group-hover:text-gold">Classic Slots</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">High variance 3-reel mechanics. Max payout 500x.</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-xl cursor-pointer hover:border-gold transition-all duration-300 group" onclick="navigate('blackjack')">
+                    <div class="h-16 w-16 mb-6 rounded-full border border-gray-500 flex items-center justify-center group-hover:border-gold group-hover:text-gold transition-colors">
+                        <span class="text-2xl font-bold">21</span>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-wider mb-2 text-white group-hover:text-gold">Blackjack</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Dealer stands on soft 17. Blackjack pays 3:2.</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-xl cursor-pointer hover:border-gold transition-all duration-300 group" onclick="navigate('roulette')">
+                    <div class="h-16 w-16 mb-6 rounded-full border border-gray-500 flex items-center justify-center group-hover:border-gold group-hover:text-gold transition-colors">
+                        <span class="text-2xl font-bold">00</span>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-wider mb-2 text-white group-hover:text-gold">Roulette</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">European single-zero wheel. Inside and outside limits apply.</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-xl cursor-pointer hover:border-gold transition-all duration-300 group" onclick="navigate('dice')">
+                    <div class="h-16 w-16 mb-6 rounded-full border border-gray-500 flex items-center justify-center group-hover:border-gold group-hover:text-gold transition-colors">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="16" r="1.5"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold uppercase tracking-wider mb-2 text-white group-hover:text-gold">Craps</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">High stakes dice tables. Standard payout structures.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLOTS -->
+        <div id="view-slots" class="w-full max-w-4xl hidden">
+            <button onclick="navigate('lobby')" class="text-gray-400 hover:text-white mb-6 uppercase tracking-wider text-sm font-bold flex items-center gap-2">
+                &larr; Return to Floor
+            </button>
+            
+            <div class="glass-panel p-10 rounded-2xl">
+                <div class="flex justify-between items-end mb-8 border-b border-white/10 pb-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold uppercase tracking-widest text-gold">Diamond Slots</h2>
+                        <p class="text-gray-400 font-mono text-sm mt-1">ID: SL-8009 | MAX WIN: $500,000</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-gray-400 uppercase">Payout</div>
+                        <div class="font-mono text-xl" id="slot-last-win">$0.00</div>
+                    </div>
+                </div>
+
+                <div class="slot-machine p-8 mb-8 max-w-2xl mx-auto shadow-2xl shadow-black">
+                    <div class="slot-window grid grid-cols-3 rounded-lg overflow-hidden border-4 border-zinc-800">
+                        <div class="slot-reel" id="reel-1">BAR</div>
+                        <div class="slot-reel" id="reel-2">BAR</div>
+                        <div class="slot-reel" id="reel-3">BAR</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6 bg-black/50 p-6 rounded-xl border border-white/5">
+                    <div class="flex flex-col">
+                        <span class="text-xs text-gray-400 uppercase tracking-wider mb-2">Total Wager</span>
+                        <div class="flex items-center gap-4 bg-zinc-900 rounded p-1 border border-zinc-700">
+                            <button class="w-10 h-10 flex items-center justify-center text-xl bg-zinc-800 hover:bg-zinc-700 rounded transition" onclick="adjustSlotBet(-100)">-</button>
+                            <span class="font-mono text-xl w-24 text-center font-bold" id="slot-bet-display">$100</span>
+                            <button class="w-10 h-10 flex items-center justify-center text-xl bg-zinc-800 hover:bg-zinc-700 rounded transition" onclick="adjustSlotBet(100)">+</button>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary w-full md:w-auto px-16 py-4 rounded text-xl" id="slot-spin-btn" onclick="spinSlots()">
+                        SPIN
+                    </button>
+                </div>
+                
+                <div class="mt-6 text-center text-sm text-gray-500 font-mono">
+                    PAYTABLE: [DIAMOND]x3 = 500x | [7]x3 = 100x | [BAR]x3 = 20x | [CHERRY]x3 = 5x
+                </div>
+            </div>
+        </div>
+
+        <!-- BLACKJACK -->
+        <div id="view-blackjack" class="w-full max-w-5xl hidden">
+            <button onclick="navigate('lobby')" class="text-gray-400 hover:text-white mb-6 uppercase tracking-wider text-sm font-bold flex items-center gap-2">
+                &larr; Return to Floor
+            </button>
+            
+            <div class="casino-table p-8 md:p-12">
+                <div class="absolute top-4 left-0 right-0 text-center text-white/30 uppercase tracking-[0.5em] font-bold text-xl pointer-events-none">Blackjack Pays 3:2</div>
+                <div class="absolute top-10 left-0 right-0 text-center text-white/30 uppercase tracking-widest font-semibold text-xs pointer-events-none">Dealer must draw to 16, and stand on all 17s</div>
+                
+                <!-- Dealer Area -->
+                <div class="min-h-[160px] flex flex-col items-center mt-12 mb-16 relative">
+                    <div class="bg-black/40 px-4 py-1 rounded text-sm font-mono mb-4 border border-white/10 uppercase tracking-wider">
+                        Dealer <span id="bj-dealer-score" class="ml-2 text-gold">0</span>
+                    </div>
+                    <div id="bj-dealer-cards" class="flex gap-[-40px] justify-center relative">
+                        <!-- Cards injected here -->
+                    </div>
+                </div>
+
+                <!-- Player Area -->
+                <div class="min-h-[160px] flex flex-col items-center mb-8 relative">
+                    <div class="bg-black/40 px-4 py-1 rounded text-sm font-mono mb-4 border border-white/10 uppercase tracking-wider">
+                        Player <span id="bj-player-score" class="ml-2 text-gold">0</span>
+                    </div>
+                    <div id="bj-player-cards" class="flex gap-2 justify-center">
+                        <!-- Cards injected here -->
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="bg-black/80 p-6 rounded-2xl border border-white/10 max-w-3xl mx-auto">
+                    
+                    <!-- Betting Phase -->
+                    <div id="bj-bet-phase" class="flex flex-col items-center">
+                        <div class="text-gray-400 uppercase text-sm font-bold tracking-wider mb-4">Place Your Wager</div>
+                        <div class="font-mono text-3xl font-bold text-white mb-6" id="bj-current-bet">$0</div>
+                        
+                        <div class="flex flex-wrap justify-center gap-4 mb-6" id="chip-container">
+                            <div class="chip chip-10" onclick="addBjBet(10)">$10</div>
+                            <div class="chip chip-50" onclick="addBjBet(50)">$50</div>
+                            <div class="chip chip-100" onclick="addBjBet(100)">$100</div>
+                            <div class="chip chip-500" onclick="addBjBet(500)">$500</div>
+                            <div class="chip chip-1000" onclick="addBjBet(1000)">$1k</div>
+                        </div>
+
+                        <div class="flex gap-4 w-full justify-center">
+                            <button class="btn-secondary px-8 py-3 rounded uppercase text-sm" onclick="clearBjBet()">Clear</button>
+                            <button class="btn-primary px-12 py-3 rounded uppercase text-sm" onclick="startBlackjack()">Deal</button>
+                        </div>
+                    </div>
+
+                    <!-- Action Phase -->
+                    <div id="bj-action-phase" class="hidden flex justify-center gap-4">
+                        <button class="btn-secondary px-8 py-4 rounded text-xl uppercase tracking-wider w-32" onclick="bjHit()">Hit</button>
+                        <button class="bg-red-700 hover:bg-red-600 text-white font-bold border border-red-500 shadow-lg px-8 py-4 rounded text-xl uppercase tracking-wider w-32 transition-colors" onclick="bjStand()">Stand</button>
+                        <button id="bj-double-btn" class="bg-blue-700 hover:bg-blue-600 text-white font-bold border border-blue-500 shadow-lg px-8 py-4 rounded text-xl uppercase tracking-wider w-32 transition-colors" onclick="bjDouble()">Double</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ROULETTE -->
+        <div id="view-roulette" class="w-full max-w-6xl hidden">
+            <button onclick="navigate('lobby')" class="text-gray-400 hover:text-white mb-6 uppercase tracking-wider text-sm font-bold flex items-center gap-2">
+                &larr; Return to Floor
+            </button>
+            
+            <div class="casino-table p-8">
+                <div class="flex flex-col lg:flex-row gap-8 items-center justify-between mb-8">
+                    <!-- Wheel Area -->
+                    <div class="w-48 h-48 rounded-full border-8 border-[#271001] bg-gradient-to-br from-zinc-800 to-black flex items-center justify-center relative shadow-[0_0_30px_rgba(0,0,0,1)] flex-shrink-0">
+                        <div class="absolute inset-2 border-2 border-dashed border-white/20 rounded-full animate-[spin_10s_linear_infinite]" id="r-wheel-inner"></div>
+                        <div id="r-result-display" class="z-10 text-6xl font-mono font-bold text-white drop-shadow-md">
+                            --
+                        </div>
+                    </div>
+
+                    <!-- Betting Area -->
+                    <div class="flex-grow w-full">
+                        <div class="text-right text-gray-300 uppercase tracking-wider text-xs mb-2 font-bold">Standard European Layout</div>
+                        <div class="r-grid text-white text-sm lg:text-base">
+                            <!-- Column 0 -->
+                            <div class="r-cell bg-roulette-green row-span-3 flex items-center justify-center" onclick="setRBet('0', 35)" id="rb-0">0</div>
+                            
+                            <!-- Row 1 (3, 6, 9...) -->
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('3', 35)" id="rb-3">3</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('6', 35)" id="rb-6">6</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('9', 35)" id="rb-9">9</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('12', 35)" id="rb-12">12</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('15', 35)" id="rb-15">15</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('18', 35)" id="rb-18">18</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('21', 35)" id="rb-21">21</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('24', 35)" id="rb-24">24</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('27', 35)" id="rb-27">27</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('30', 35)" id="rb-30">30</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('33', 35)" id="rb-33">33</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('36', 35)" id="rb-36">36</div>
+                            <div class="r-cell bg-black/50 border-white/50 text-xs" onclick="setRBet('row1', 2)" id="rb-row1">2:1</div>
+
+                            <!-- Row 2 (2, 5, 8...) -->
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('2', 35)" id="rb-2">2</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('5', 35)" id="rb-5">5</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('8', 35)" id="rb-8">8</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('11', 35)" id="rb-11">11</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('14', 35)" id="rb-14">14</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('17', 35)" id="rb-17">17</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('20', 35)" id="rb-20">20</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('23', 35)" id="rb-23">23</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('26', 35)" id="rb-26">26</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('29', 35)" id="rb-29">29</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('32', 35)" id="rb-32">32</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('35', 35)" id="rb-35">35</div>
+                            <div class="r-cell bg-black/50 border-white/50 text-xs" onclick="setRBet('row2', 2)" id="rb-row2">2:1</div>
+
+                            <!-- Row 3 (1, 4, 7...) -->
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('1', 35)" id="rb-1">1</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('4', 35)" id="rb-4">4</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('7', 35)" id="rb-7">7</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('10', 35)" id="rb-10">10</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('13', 35)" id="rb-13">13</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('16', 35)" id="rb-16">16</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('19', 35)" id="rb-19">19</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('22', 35)" id="rb-22">22</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('25', 35)" id="rb-25">25</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('28', 35)" id="rb-28">28</div>
+                            <div class="r-cell bg-roulette-black" onclick="setRBet('31', 35)" id="rb-31">31</div>
+                            <div class="r-cell bg-roulette-red" onclick="setRBet('34', 35)" id="rb-34">34</div>
+                            <div class="r-cell bg-black/50 border-white/50 text-xs" onclick="setRBet('row3', 2)" id="rb-row3">2:1</div>
+
+                            <!-- Bottom Bets -->
+                            <div class="col-start-2 col-span-4 r-cell bg-black/30" onclick="setRBet('1st12', 2)" id="rb-1st12">1st 12</div>
+                            <div class="col-span-4 r-cell bg-black/30" onclick="setRBet('2nd12', 2)" id="rb-2nd12">2nd 12</div>
+                            <div class="col-span-4 r-cell bg-black/30" onclick="setRBet('3rd12', 2)" id="rb-3rd12">3rd 12</div>
+
+                            <div class="col-start-2 col-span-2 r-cell bg-black/30" onclick="setRBet('1-18', 1)" id="rb-1-18">1-18</div>
+                            <div class="col-span-2 r-cell bg-black/30" onclick="setRBet('even', 1)" id="rb-even">EVEN</div>
+                            <div class="col-span-2 r-cell bg-roulette-red" onclick="setRBet('red', 1)" id="rb-red">RED</div>
+                            <div class="col-span-2 r-cell bg-roulette-black" onclick="setRBet('black', 1)" id="rb-black">BLACK</div>
+                            <div class="col-span-2 r-cell bg-black/30" onclick="setRBet('odd', 1)" id="rb-odd">ODD</div>
+                            <div class="col-span-2 r-cell bg-black/30" onclick="setRBet('19-36', 1)" id="rb-19-36">19-36</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Roulette Controls -->
+                <div class="bg-black/80 p-6 rounded-2xl border border-white/10 mt-6 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex flex-col items-center md:items-start">
+                        <div class="text-gray-400 uppercase text-xs font-bold tracking-wider mb-2">Total Wager</div>
+                        <div class="font-mono text-3xl font-bold text-white flex items-center gap-4">
+                            <span id="r-current-bet">$0</span>
+                            <span class="text-sm font-sans text-gold bg-gold/10 px-2 py-1 rounded border border-gold/30" id="r-selection-text">No Bet</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <div class="chip chip-10" onclick="addRBet(10)">$10</div>
+                        <div class="chip chip-50" onclick="addRBet(50)">$50</div>
+                        <div class="chip chip-100" onclick="addRBet(100)">$100</div>
+                        <div class="chip chip-500" onclick="addRBet(500)">$500</div>
+                        <button class="btn-secondary px-4 py-2 rounded text-xs uppercase" onclick="clearRBet()">Clear</button>
+                    </div>
+
+                    <button class="btn-primary px-12 py-4 rounded text-xl" onclick="spinRoulette()" id="r-spin-btn">SPIN WHEEL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DICE / CRAPS -->
+        <div id="view-dice" class="w-full max-w-5xl hidden">
+            <button onclick="navigate('lobby')" class="text-gray-400 hover:text-white mb-6 uppercase tracking-wider text-sm font-bold flex items-center gap-2">
+                &larr; Return to Floor
+            </button>
+
+            <div class="casino-table p-8 md:p-12">
+                <div class="absolute top-4 left-0 right-0 text-center text-white/30 uppercase tracking-[0.5em] font-bold text-xl pointer-events-none">Craps Table Limits</div>
+                
+                <div class="flex justify-center gap-8 mb-12 mt-8">
+                    <div class="w-24 h-24 bg-white rounded-xl shadow-[inset_0_0_15px_rgba(0,0,0,0.2)] border border-gray-300 flex flex-wrap p-2 justify-center content-center gap-1" id="die-1">
+                        <div class="w-4 h-4 bg-black rounded-full m-1"></div>
+                    </div>
+                    <div class="w-24 h-24 bg-white rounded-xl shadow-[inset_0_0_15px_rgba(0,0,0,0.2)] border border-gray-300 flex flex-wrap p-2 justify-center content-center gap-1" id="die-2">
+                        <div class="w-4 h-4 bg-black rounded-full m-1"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="border-2 border-white/30 hover:border-gold p-6 text-center cursor-pointer transition bg-black/20 rounded" id="db-under" onclick="setDBet('under', 1)">
+                        <div class="text-2xl font-bold mb-1">UNDER 7</div>
+                        <div class="text-gold font-mono text-sm">PAYS 1:1</div>
+                    </div>
+                    <div class="border-2 border-white/30 hover:border-gold p-6 text-center cursor-pointer transition bg-black/20 rounded" id="db-seven" onclick="setDBet('seven', 4)">
+                        <div class="text-2xl font-bold mb-1">EXACTLY 7</div>
+                        <div class="text-gold font-mono text-sm">PAYS 4:1</div>
+                    </div>
+                    <div class="border-2 border-white/30 hover:border-gold p-6 text-center cursor-pointer transition bg-black/20 rounded" id="db-over" onclick="setDBet('over', 1)">
+                        <div class="text-2xl font-bold mb-1">OVER 7</div>
+                        <div class="text-gold font-mono text-sm">PAYS 1:1</div>
+                    </div>
+                </div>
+
+                <!-- Dice Controls -->
+                <div class="bg-black/80 p-6 rounded-2xl border border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex flex-col items-center md:items-start">
+                        <div class="text-gray-400 uppercase text-xs font-bold tracking-wider mb-2">Total Wager</div>
+                        <div class="font-mono text-3xl font-bold text-white flex items-center gap-4">
+                            <span id="d-current-bet">$0</span>
+                            <span class="text-sm font-sans text-gold bg-gold/10 px-2 py-1 rounded border border-gold/30" id="d-selection-text">No Bet</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <div class="chip chip-10" onclick="addDBet(10)">$10</div>
+                        <div class="chip chip-50" onclick="addDBet(50)">$50</div>
+                        <div class="chip chip-100" onclick="addDBet(100)">$100</div>
+                        <div class="chip chip-500" onclick="addDBet(500)">$500</div>
+                        <button class="btn-secondary px-4 py-2 rounded text-xs uppercase" onclick="clearDBet()">Clear</button>
+                    </div>
+
+                    <button class="btn-primary px-12 py-4 rounded text-xl" onclick="rollDice()" id="d-roll-btn">ROLL DICE</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- CORE SYSTEM ---
+        let state = {
+            balance: 50000,
+            views: ['lobby', 'slots', 'blackjack', 'roulette', 'dice'],
+            formatCurrency: (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num)
+        };
+
+        function updateBalance(amount) {
+            state.balance += amount;
+            document.getElementById('nav-balance').innerText = state.formatCurrency(state.balance);
+            if(state.balance <= 0) notify("BANKRUPT", "Please visit cashier.", "error");
+        }
+
+        function checkWager(amount) {
+            if (amount <= 0) { notify("INVALID WAGER", "Place a valid bet.", "error"); return false; }
+            if (amount > state.balance) { notify("INSUFFICIENT FUNDS", "Lower your wager.", "error"); return false; }
+            return true;
+        }
+
+        function navigate(viewId) {
+            state.views.forEach(v => {
+                document.getElementById('view-' + v).classList.add('hidden');
+                document.getElementById('view-' + v).classList.remove('block');
+            });
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+            document.getElementById('view-' + viewId).classList.add('block');
+        }
+
+        function notify(title, msg, type = 'info') {
+            const container = document.getElementById('notification-center');
+            const toast = document.createElement('div');
+            let borderColor = type === 'win' ? '#10b981' : type === 'error' ? '#ef4444' : '#d4af37';
+            
+            toast.className = 'toast flex flex-col';
+            toast.style.borderLeftColor = borderColor;
+            toast.innerHTML = `
+                <span class="text-xs text-gray-400 uppercase tracking-wider mb-1">${title}</span>
+                <span class="text-sm font-mono text-white">${msg}</span>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function depositFunds() {
+            updateBalance(10000);
+            notify("CASHIER", "Deposited $10,000 to your account.", "win");
+        }
+
+        // --- GAME 1: SLOTS ---
+        const slotConfig = {
+            symbols: ['CHERRY', 'BAR', '7', 'DIAMOND'],
+            weights: [50, 30, 15, 5], // Probabilities
+            bet: 100,
+            spinning: false
+        };
+
+        function adjustSlotBet(amount) {
+            if(slotConfig.spinning) return;
+            let newBet = slotConfig.bet + amount;
+            if(newBet < 10) newBet = 10;
+            if(newBet > 10000) newBet = 10000;
+            slotConfig.bet = newBet;
+            document.getElementById('slot-bet-display').innerText = state.formatCurrency(newBet);
+        }
+
+        function getRandomSymbol() {
+            let rand = Math.random() * 100;
+            let cumulative = 0;
+            for (let i = 0; i < slotConfig.weights.length; i++) {
+                cumulative += slotConfig.weights[i];
+                if (rand <= cumulative) return slotConfig.symbols[i];
+            }
+            return 'BAR';
+        }
+
+        function spinSlots() {
+            if(slotConfig.spinning) return;
+            if(!checkWager(slotConfig.bet)) return;
+
+            updateBalance(-slotConfig.bet);
+            slotConfig.spinning = true;
+            document.getElementById('slot-spin-btn').disabled = true;
+            document.getElementById('slot-spin-btn').classList.add('opacity-50');
+            document.getElementById('slot-last-win').innerText = "--";
+
+            const reels = [document.getElementById('reel-1'), document.getElementById('reel-2'), document.getElementById('reel-3')];
+            let spins = 0;
+
+            const interval = setInterval(() => {
+                reels.forEach(r => r.innerText = slotConfig.symbols[Math.floor(Math.random()*4)]);
+                spins++;
+                if(spins > 20) {
+                    clearInterval(interval);
+                    const finalSymbols = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
+                    reels.forEach((r, i) => {
+                        r.innerText = finalSymbols[i];
+                        if(finalSymbols[i] === 'DIAMOND') r.classList.add('text-cyan-400');
+                        else if(finalSymbols[i] === '7') r.classList.add('text-red-500');
+                        else if(finalSymbols[i] === 'CHERRY') r.classList.add('text-pink-600');
+                        else r.className = 'slot-reel'; // reset
+                    });
+                    evalSlots(finalSymbols);
+                }
+            }, 50);
+        }
+
+        function evalSlots(symbols) {
+            let win = 0;
+            if(symbols[0] === symbols[1] && symbols[1] === symbols[2]) {
+                const s = symbols[0];
+                if(s === 'DIAMOND') win = slotConfig.bet * 500;
+                else if(s === '7') win = slotConfig.bet * 100;
+                else if(s === 'BAR') win = slotConfig.bet * 20;
+                else if(s === 'CHERRY') win = slotConfig.bet * 5;
+            }
+
+            if(win > 0) {
+                updateBalance(win);
+                document.getElementById('slot-last-win').innerText = state.formatCurrency(win);
+                document.getElementById('slot-last-win').classList.add('text-gold');
+                notify("JACKPOT", `Won ${state.formatCurrency(win)}`, "win");
+            } else {
+                document.getElementById('slot-last-win').innerText = "$0.00";
+                document.getElementById('slot-last-win').classList.remove('text-gold');
+            }
+
+            slotConfig.spinning = false;
+            document.getElementById('slot-spin-btn').disabled = false;
+            document.getElementById('slot-spin-btn').classList.remove('opacity-50');
+        }
 
 
-  <div id="ProbScreen" style="overflow:scroll; display:none; z-index:2; position:fixed; left:0px; top:0px; right:0px; bottom:0px; background-color:#FFFFFF; width:100%; height:100%; padding:0px; color:black; opacity: 0.95;">
-   <p><input type="button" value = "Return" onclick="ProbClose()" style="width:100%;height:10vh;"></p>
-   <div style="margin:10px;">
-    <table>
-     <caption>Value probability</caption>
-     <tr><th style="background-color:#E0E0E0">Value</th><th colspan="2" style="background-color:#E0E0E0">STD</th><th colspan="2" style="background-color:#E0E0E0">NO-0</th></tr>
-     <tr id="ProbP0"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP1"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP2"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP3"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP4"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP5"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP6"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP7"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP8"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP9"><td  align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP10"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP11"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP12"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP13"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP14"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP15"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP16"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP17"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP18"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP19"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP20"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP21"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP22"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP23"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP24"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP25"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP26"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP27"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP28"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP29"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP30"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP31"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP32"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP33"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP34"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP35"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP36"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP37"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP38"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP39"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP40"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP41"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP42"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP43"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP44"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP45"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP46"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP47"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP48"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP49"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP50"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP51"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP52"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP53"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP54"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP55"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP56"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP57"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP58"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP59"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP60"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP61"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP62"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP63"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP64"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP65"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP66"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP67"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP68"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP69"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP70"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP71"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP72"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP73"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP74"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP75"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP76"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP77"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP78"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP79"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP80"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP81"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP82"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP83"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP84"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP85"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP86"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP87"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP88"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP89"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP90"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP91"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP92"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP93"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP94"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP95"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP96"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP97"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP98"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP99"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP100"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP101"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP102"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP103"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP104"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP105"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP106"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP107"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP108"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-     <tr id="ProbP109"><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td><td align="right"></td></tr>
-    </table>
-    <p align="center"></p>
-    <table id="ProbNums">
-     <caption>Game table</caption>
-     <tr>
-      <td rowspan="3" id="ProbN0" align="center">0</td>
-      <td id="ProbN3" align="center">0</td>
-      <td id="ProbN6" align="center">0</td>
-      <td id="ProbN9" align="center">0</td>
-      <td id="ProbN12" align="center">0</td>
-      <td id="ProbN15" align="center">0</td>
-      <td id="ProbN18" align="center">0</td>
-      <td id="ProbN21" align="center">0</td>
-      <td id="ProbN24" align="center">0</td>
-      <td id="ProbN27" align="center">0</td>
-      <td id="ProbN30" align="center">0</td>
-      <td id="ProbN33" align="center">0</td>
-      <td id="ProbN36" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="ProbN2" align="center">0</td>
-      <td id="ProbN5" align="center">0</td>
-      <td id="ProbN8" align="center">0</td>
-      <td id="ProbN11" align="center">0</td>
-      <td id="ProbN14" align="center">0</td>
-      <td id="ProbN17" align="center">0</td>
-      <td id="ProbN20" align="center">0</td>
-      <td id="ProbN23" align="center">0</td>
-      <td id="ProbN26" align="center">0</td>
-      <td id="ProbN29" align="center">0</td>
-      <td id="ProbN32" align="center">0</td>
-      <td id="ProbN35" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="ProbN1" align="center">0</td>
-      <td id="ProbN4" align="center">0</td>
-      <td id="ProbN7" align="center">0</td>
-      <td id="ProbN10" align="center">0</td>
-      <td id="ProbN13" align="center">0</td>
-      <td id="ProbN16" align="center">0</td>
-      <td id="ProbN19" align="center">0</td>
-      <td id="ProbN22" align="center">0</td>
-      <td id="ProbN25" align="center">0</td>
-      <td id="ProbN28" align="center">0</td>
-      <td id="ProbN31" align="center">0</td>
-      <td id="ProbN34" align="center">0</td>
-     </tr>
-    </table>
-    <table id="ProbNums100">
-     <caption>Game table</caption>
-     <tr>
-      <td id="Prob100N0"  align="center" rowspan="2">0</td>
-      <td id="Prob100N1"  align="center">0</td>
-      <td id="Prob100N11" align="center">0</td>
-      <td id="Prob100N21" align="center">0</td>
-      <td id="Prob100N31" align="center">0</td>
-      <td id="Prob100N41" align="center">0</td>
-      <td id="Prob100N51" align="center">0</td>
-      <td id="Prob100N61" align="center">0</td>
-      <td id="Prob100N71" align="center">0</td>
-      <td id="Prob100N81" align="center">0</td>
-      <td id="Prob100N91" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N2"  align="center">0</td>
-      <td id="Prob100N12" align="center">0</td>
-      <td id="Prob100N22" align="center">0</td>
-      <td id="Prob100N32" align="center">0</td>
-      <td id="Prob100N42" align="center">0</td>
-      <td id="Prob100N52" align="center">0</td>
-      <td id="Prob100N62" align="center">0</td>
-      <td id="Prob100N72" align="center">0</td>
-      <td id="Prob100N82" align="center">0</td>
-      <td id="Prob100N92" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N101" align="center" rowspan="2">0</td>
-      <td id="Prob100N3"  align="center">0</td>
-      <td id="Prob100N13" align="center">0</td>
-      <td id="Prob100N23" align="center">0</td>
-      <td id="Prob100N33" align="center">0</td>
-      <td id="Prob100N43" align="center">0</td>
-      <td id="Prob100N53" align="center">0</td>
-      <td id="Prob100N63" align="center">0</td>
-      <td id="Prob100N73" align="center">0</td>
-      <td id="Prob100N83" align="center">0</td>
-      <td id="Prob100N93" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N4"  align="center">0</td>
-      <td id="Prob100N14" align="center">0</td>
-      <td id="Prob100N24" align="center">0</td>
-      <td id="Prob100N34" align="center">0</td>
-      <td id="Prob100N44" align="center">0</td>
-      <td id="Prob100N54" align="center">0</td>
-      <td id="Prob100N64" align="center">0</td>
-      <td id="Prob100N74" align="center">0</td>
-      <td id="Prob100N84" align="center">0</td>
-      <td id="Prob100N94" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N102" align="center" rowspan="2">0</td>
-      <td id="Prob100N5"  align="center">0</td>
-      <td id="Prob100N15" align="center">0</td>
-      <td id="Prob100N25" align="center">0</td>
-      <td id="Prob100N35" align="center">0</td>
-      <td id="Prob100N45" align="center">0</td>
-      <td id="Prob100N55" align="center">0</td>
-      <td id="Prob100N65" align="center">0</td>
-      <td id="Prob100N75" align="center">0</td>
-      <td id="Prob100N85" align="center">0</td>
-      <td id="Prob100N95" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N6"  align="center">0</td>
-      <td id="Prob100N16" align="center">0</td>
-      <td id="Prob100N26" align="center">0</td>
-      <td id="Prob100N36" align="center">0</td>
-      <td id="Prob100N46" align="center">0</td>
-      <td id="Prob100N56" align="center">0</td>
-      <td id="Prob100N66" align="center">0</td>
-      <td id="Prob100N76" align="center">0</td>
-      <td id="Prob100N86" align="center">0</td>
-      <td id="Prob100N96" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N103" align="center" rowspan="2">0</td>
-      <td id="Prob100N7"  align="center">0</td>
-      <td id="Prob100N17" align="center">0</td>
-      <td id="Prob100N27" align="center">0</td>
-      <td id="Prob100N37" align="center">0</td>
-      <td id="Prob100N47" align="center">0</td>
-      <td id="Prob100N57" align="center">0</td>
-      <td id="Prob100N67" align="center">0</td>
-      <td id="Prob100N77" align="center">0</td>
-      <td id="Prob100N87" align="center">0</td>
-      <td id="Prob100N97" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N8"  align="center">0</td>
-      <td id="Prob100N18" align="center">0</td>
-      <td id="Prob100N28" align="center">0</td>
-      <td id="Prob100N38" align="center">0</td>
-      <td id="Prob100N48" align="center">0</td>
-      <td id="Prob100N58" align="center">0</td>
-      <td id="Prob100N68" align="center">0</td>
-      <td id="Prob100N78" align="center">0</td>
-      <td id="Prob100N88" align="center">0</td>
-      <td id="Prob100N98" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N104" align="center" rowspan="2">0</td>
-      <td id="Prob100N9"  align="center">0</td>
-      <td id="Prob100N19" align="center">0</td>
-      <td id="Prob100N29" align="center">0</td>
-      <td id="Prob100N39" align="center">0</td>
-      <td id="Prob100N49" align="center">0</td>
-      <td id="Prob100N59" align="center">0</td>
-      <td id="Prob100N69" align="center">0</td>
-      <td id="Prob100N79" align="center">0</td>
-      <td id="Prob100N89" align="center">0</td>
-      <td id="Prob100N99" align="center">0</td>
-     </tr>
-     <tr>
-      <td id="Prob100N10"  align="center">0</td>
-      <td id="Prob100N20" align="center">0</td>
-      <td id="Prob100N30" align="center">0</td>
-      <td id="Prob100N40" align="center">0</td>
-      <td id="Prob100N50" align="center">0</td>
-      <td id="Prob100N60" align="center">0</td>
-      <td id="Prob100N70" align="center">0</td>
-      <td id="Prob100N80" align="center">0</td>
-      <td id="Prob100N90" align="center">0</td>
-      <td id="Prob100N100" align="center">0</td>
-     </tr>
-    </table>
-   </div>
-   <p><input type="button" value = "Return" onclick="ProbClose()" style="width:100%;height:10vh;"></p>
-  </div>
+        // --- GAME 2: BLACKJACK ---
+        let bjState = {
+            deck: [], playerHand: [], dealerHand: [], bet: 0, inProgress: false
+        };
 
-  <div id="HelpScreen" style="overflow:scroll; display:none; z-index:2; position:fixed; left:0px; top:0px; right:0px; bottom:0px; background-color:#FFFFFF; width:100%; height:100%; padding:0px; color:black; opacity: 0.95;">
-   <p><input type="button" value = "Close help" onclick="CloseHelp()" style="width:100%;height:10vh;"></p>
-   <div style="margin:10px;">
-    <h1>Overview</h1>
-    <p>There are three roulette games, which can be played by several players and has the same rules, as in the most casinos in Europe. You have to select game by clicking the name on the intro screen. To play the selected game you have to add al least on player to player list. The screen information is available while no players are on the player list only. In the such case, the help information is available by clicking the working area or the buttons, which function are related to the current player (every button other than <b>PLA</b> and <b>STD</b>).</p>
-    <p>There are the following games:</p>
-    <ul>
-     <li><i>Classic roulette</i> - The classical european roulette with 36 numbers and one zero. This game supports the wheel standard sectors bets known as racetrack.</li>
-     <li><i>Mini roulette</i> - Roulette with 12 numbers and zero. If the zero is hit, for all bets, which not includes the zero there are lost only half of value.</li>
-     <li><i>100 roulette</i> - Roulette with 100 numbers, in place of zero, there are five letters.</li>
-    </ul>
-    <p>If the zero or letter is hit, all outside bets (odd/even, low/high, red/black, dozens, columns, snake) are lost as a whole. In the <i>Mini roulette</i>, if zero is hit, the player loses only half of value of the bets, which excludes the zero. There is reason, why in the <i>Mini roulette</i> all bets must have even value.</p>
-    <h1>Information bar</h1>
-    <p>At the top of the game screen, there is the current player information bar, which is blank, while the player list is blank. During the game, in the bar there ase the following informations:</p>
-    <ul>
-     <li>The player name and balance.</li>
-     <li><b>Chip</b> - The number of chips change step and sign by once click on the table or wheel.</li>
-     <li><b>Last</b> - The game result of the previous round (won or lost).</li>
-     <li><b>Factor</b> - The chip value factor used to bet.</li>
-     <li><b>Bet</b> - The whole bet value including the value factor.</li>
-    </ul>
-    <p>The bar is clicking sensitive and has the two the most important game functions (available also while the player list is blank):</p>
-    <ul>
-     <li><b>Click on the left or right 1/3 part (where are the player name, balance, factor and bet values)</b> - Change the display (all, table only, wheel only).</li>
-     <li><b>Click on the center 1/3 part (where are the Chip and Last values)</b> - Spin the wheel (perform the game round), if player list is blank, displays help information.</li>
-    </ul>
-    <h1>Button bar</h1>
-    <p>At the bottom of the game screen, there is the button bar used during game. The first 8 buttons are available only while there is at least one player. Otherwise, the buttons displays the help informations. The button functions are:</p>
-    <ul>
-     <li><b>&lt;&lt;</b> - Switch to the previous player.</li>
-     <li><b>&gt;&gt;</b> - Switch to the next player.</li>
-     <li><b>C-</b> - Decrease the number of chips change by once click.</li>
-     <li><b>C+</b> - Increase the number of chips change by once click.</li>
-     <li><b>+/-</b> - Switch between chip adding and removing, the state is indicated by value change sign.</li>
-     <li><b>CLR</b> - Clear all bets (if table is not blank) or set bets from previous round (if table is blank).</li>
-     <li><b>F-</b> - Decrease the chip value factor.</li>
-     <li><b>F+</b> - Increase the chip value factor.</li>
-     <li><b>PLA</b> - Add a player to the player list.</li>
-     <li><b>STD</b>/<b>NO-0</b>/<b>SEL</b>/<b>PROB</b> - Change the wheel spinning mode (the button caption indicates the current mode).</li>
-    </ul>
-    <h1>Players</h1>
-    <p>To play the game, you have to add at least one player. You can add the number of player as you want. You can add or remove any player during the game at the any moment between wheel spins.</p>
-    <h2>Add a player</h2>
-    <p>To add a player, you have to click the <b>PLA</b> button. Then, you have input non-blank player name and initial balance, which can be zero, positive or negative. The player will be added to the player list and set as the current player.</p>
-    <h2>Change or remove the player</h2>
-    <p>During the game, you can change the current player name, balance or remove the current player. To do this, you have click the player list (if the list is not visible, change the screen layout until the list is visible). Then, there will be displayed name input box with the current player name. To change the name, simply input another non-blank name or leave the name unchanged, when you want to change the balance only. After the name change, you can change the balance. Input the new balance and leave the balance unchanged.</p>
-    <p>To remove the current player, click on the player list and clear the player name. After accepting the blank player name, you have to confirm player removing.</p>
-    <h1>Table bets</h1>
-    <p>The basis of roulette game is placing bet chips on the table by clicking appropiate table places against the roulette betting rules. Set the number of chips using the <b>C+</b> and <b>C-</b> buttons. To switch between adding or removing chips, clich the <b>+/-</b> button. While the <b>Chip</b> value is positive, the clicking on the table will cause adding the number of chips as indicated be the value everytime. Simirally, if the <b>Chip</b> value is negative, the chips will be removed by clicking them on the table everytime. You can place at most the 10000 chips at the one table place, there are no other limits, such as the minimum or maximum bet value for whole table.</p>
-    <p>The other players can place his bets after setting the current player to himself by clicking the <b>&lt;&lt;</b> or <b>&gt;&gt;</b> button. The white chips with number belongs to the current player, the gray chips without number belongs to the players other than the current.</p>
-    <h2>Chip hints</h2>
-    <p>At the game begin, on the table there are shown blue frames, which shows all possible chip places. If the frame is larger than chip, you are click anywhere inside the frame tu put the chip.</p>
-    <p>After the first click on the table or on the wheel number, the hints will disappear. To appear the hints again, click <b>C-</b> or <b>C+</b> button meny times until set the chip nominal beyond the available range. The hint frames will be visible until the next table or wheel number click.</p>
-    <h2>Snake bet</h2>
-    <p>The <i>Classic roulette</i> supports the <b>Snake bet</b>, which is one of the outside bets with 2:1 payout (same as column or dozen). For the <b>Snake bet</b>, you have to place the chips on the line crossing between the <b>1st column</b> field corner, the <b>3rd 12</b> field corner and the <b>34</b> field corner. This bet covers the following numbers: 1, 5, 9, 12, 14, 16, 19, 23, 27, 30, 32, and 34.</p>
-    <h1>Wheel bets</h1>
-    <p>The wheel illustration can be used as the racetrack to place sector, neighbor and final bets.</p>
-    <h2>Sectors</h2>
-    <p>Sector bets are available in <i>Classic roulette</i> only. Inside the wheel, you can place the following sector bets:</p>
-    <ul>
-     <li><b>S. 0/2/3</b> - Serie 5/8 - Vousins du Zero - Neighbours of Zero:</li>
-     <ul>
-      <li>1 chip for split: {4, 7}, {12, 15}, {18, 21}, {19, 22}, {32, 35}</li>
-      <li>2 chips for trio: {0, 2, 3}</li>
-      <li>2 chips for corner: {25, 26, 28, 29}</li>
-     </ul>
-     <li><b>0-GAME</b> - 0-Spiel - Zero game:</li>
-     <ul>
-      <li>1 chip for straight: {26}</li>
-      <li>1 chip for split: {0, 3}, {12, 15}, {32, 35}</li>
-     </ul>
-     <li><b>S. 5/8</b> - Serie 5/8 - Tiers du Cylindre - Thirds of the wheel:</li>
-     <ul>
-      <li>1 chip for split: {5, 8}, {10, 11}, {13, 16}, {23, 24}, {27, 30}, {33, 36}</li>
-     </ul>
-     <li><b>ORP.</b> - Orphelins - Orphans:</li>
-     <ul>
-      <li>1 chip for straight: {1}</li>
-      <li>1 chip for split: {6, 9}, {14, 17}, {17, 20}, {31, 34}</li>
-     </ul>
-    </ul>
-    <p>The both <b>S. 0/2/3</b> sectors are treated as the once sector. You can place the chips on both <b>S. 0/2/3</b> sectors, but the bet will be totalized from both sectors. The both <b>ORP.</b> sectors works the same way. The number of placed chips will be automatically multiplied against the sector bet rules.</p>
-    <p>When you perform the spin, the sector bets will be moved to the table against sector betting rules.</p>
-    <h2>Neighbors</h2>
-    <p>By clicking the center of the wheel, you can set the number of neighbours from 0 to 5. The number of neighbours will be shown in the wheel center.</p>
-    <p>You can click the number on the wheel to place chips on the choosen number and neighbour numbers. The chips will not be shown on the table and will be treated as the same as the chips placed on the single numbers (straight bet) on the table. The wheel numbers, which are affected against the neighbours, will by highlighted.</p>
-    <h2>Final bets</h2>
-    <p>The final bets are available in <i>Classic roluette</i> and <i>100 roulette</i>. By clicking the center of the wheel, you can swith to the final bets mode, which will be indicated by <b>Final bets</b> phrase in the wheel center.</p>
-    <p>In the mode, if you click the number either on the table (straight bets only) or on the wheel, the chips will be placed on all numbers with the same unity digit. When you click on the wheel, the affected numbers will be highlighted.</p>
-    <p>The semi-final bets are not supported. You have to manually place such bets on the table.</p>
-    <h2>Decimal bets</h2>
-    <p>Decimal bets are available in <i>100 roulette</i> only. By clicking the center of the wheel, you can swith to the decimal bets mode, which will be indicated by <b>Dec. bets</b> phrase in the wheel center.</p>
-    <p>In the mode, if you click the number either on the table (straight bets only) or on the wheel, the chips will be placed on all numbers with the same decimal sequence from 1 to 10 or from 11 to 20 and so on. When you click on the wheel, the affected numbers will be highlighted.</p>
-    <h1>Chip value factor</h1>
-    <p>Roulette allows wide range of bet values, so the value of one chip can be set by value factor per one chip. You can change the value factor by clicking <b>F+</b> and <b>F-</b> from 1 do 1 billion in the power of 10 steps. You cannot place several bets in wider range than four order of magnitude due to 10000 chips limit per place, but you can increase the bet value by increasing the value factor. The real bet value (including the factor) are displayed as the <b>Bet</b> value.</p>
-    <h1>Wheel in the <i>100 roulette</i></h1>
-    <p>The wheel in the <i>100 roulette</i> has 105 symbols (numbers from 1 to 100 and 5 letters). The 105 units on the wheel circumference will be to narrow to click using the finger and to show chip value. The wheel is splited to three parts, because 3 is one of divisors of 105 and on the circumference there are only 35 units. The splitting point is indicated by white radial placed line. If you look for the numbers clockwise (when the wheel not rotates), the parts are ordered from outer, through the middle, to inner, and the inner part passes to the outer part.</p>
-    <p>You can place the chips only on symbols, which are on the most outer parts. After symbol click, the splitting point will be places on the opposite place related to clicked symbol.</p>
-    <p>If you want to click one of the symbols, which is currently on the middle part or inner part, you have to click anywhere on the middle or inner part to move the part to the outer part. The splitting line will be placed on the opposite side related to the clicked symbol.</p>
-    <h1>Spinning the wheel</h1>
-    <p>The game provides the three wheel spinning modes, which can be switched by clicking the <b>STD</b> button, which changes the caption against the current mode. There are available the following modes:</p>
-    <ul>
-     <li><b>STD</b> - Standard mode. The wheel will automatically choose any of all available numbers or symbols, including zero or card suit.</li>
-     <li><b>NO-0</b> - Non-zero mode. The mode elliminates the house edge, wheel will automatically choose any number excluding the zero or card suit, despite this, you can place bets including the zero or card suit, but the zero or card suit will never be hit.</li>
-     <li><b>SEL</b> - Selection mode. The randomization is turned off and the player have to select the hit number by clicking the number of the table or on the wheel. This mode is for test and educational purposes.</li>
-     <li><b>PROB</b> - Switch between normal mode and probability mode without wheel spining.</li>
-    </ul>
-    <p>To spin the wheel, click on the the right 2/3 part of information bar, where are the <b>Chip</b>, <b>Last</b>, <b>Factor</b> and <b>Bet</b> values. During the wheel spinning all functions excepting the screen layout and selecting the number in <b>SEL</b> mode are disabled. If the wheel spinning mode is set to <b>SEL</b>, choose the wining number by clicking on the wheel on on the table.</p>
-    <p>After the hit number is determined by random in the <b>STD</b> or <b>NO-0</b> mode or by choosing in <b>SEL</b> mode, the balance for every player will be automatically changed by the winning or losing value. The value will be displayed as the <b>Last</b> value. The current player selection does not affect the spinning process and result.</p>
-    <p>The winning bets will left on the table and the other bets will be removed. The game round ends on this. After that, the next round begins and, you and the other players can again place the bet and spin the wheel. You can use <b>CLR</b> button to clear placed chips.</p>
-    <p>If the table is blank, this <b>CLR</b> button will allow to set the same bets, which was set in previous round, but you can set the value change factor. To set the factor, you will be asked for <b>Last bet numerator</b> and <b>Last bet denominator</b>. By default, both values are 1 and this value will be used if you input incorrect value. The value of each restored chip will be multiplied by the quotient of numerator and denominator. The chip value will be rounded to integer number. In the <i>Mini roulette</i> the value will be rounded to multiply of 2.</p>
-    <p>For example, to double bet, input 2 as numerator and 1 as denominator. To make half a bet, input 1 as numerator and 2 as denominator.</p>
-    <p>If calculated chip value exceedes 10000, the value will be set to 10000. If the calculated and rounded chip value is 0, the chip will not be placed.</p>
-    <p>The number of rounds are not limited, everytime in placing bet state, a player can be added or removed. At the next to the wheel there are the 12 last hit number, the last number is highlighted in the bar.</p>
-    <h1>Win/lose probability</h1>
-    <p>In the <b>PROB</b> wheel spinning mode, you can switch between normal and probability display modes instead of the wheel spin. In the probability mode, the showing information for the current player.</p>
-    <p>You can play the game, but in the probability mode, there are some differences:</p>
-    <ul>
-     <li>On the table and on the wheel, instead of numbers, there will be displayed the change of balance if this number will hit at the spining. The background colors are following:
-      <ul>
-       <li>Green - You will win.</li>
-       <li>Yellow - Your balance will not be changed.</li>
-       <li>Red - You will lose.</li>
-      </ul>
-     </li>
-     <li>On the table, the chips placed on the inside bets will not be visible, however, you can change the chips by clicking on the table as in normal mode.</li>
-     <li>In place of player list, there will be displayed the value probability for <b>STD</b> and <b>NO-0</b> spining mode. The table summarizes, which values of spinning are possible and with how high probability of each.</li>
-     <li>If you click the value probability table, you willl see the same information, but it can be more readable on certain cases.</li>
-    </ul>
-    <p>To increate readibility, the <b>Factor</b> setting is not included in the value.</p>
-    <h1>Payout</h1>
-    <p>In each game, the payout ratio depends on count of numbers excluding the zero and letters, which equals to number of possible hits when you playing in <b>NO-0</b> mode. The other elements, on which payout ratio depends, is the counts of numbers, which beat covers.</p>
-    <p>Exactly, the payout radio can be calculated from the following formula: <b>P = ((N / X) - 1)</b></p>
-    <ul>
-     <li>P - Payout ratio.</li>
-     <li>N - Count of all available numbers excluding the zero or letters.
-      <ul>
-       <li><i>Classic roulette</i>: <b>N = 36</b></li>
-       <li><i>Mini roulette</i>: <b>N = 12</b></li>
-       <li><i>100 roulette</i>: <b>N = 100</b></li>
-      </ul>
-     </li>
-     <li>X - Count of numbers including the zero or letters covered by bet.</li>
-    </ul>
-    <p>Some payout radios calculated from above formula are not integer value. Every such radio is rounded down to integer and markered as italic in the following bet payout ratio table.</p>
-    <table border="1">
-     <tr><th>Bet</th><th>Classic</th><th>Mini</th><th>100</th></tr>
-     <tr><td>Straight</td><td align="center">35:1</td><td align="center">11:1</td><td align="center">99:1</td></tr>
-     <tr><td>Split</td><td align="center">17:1</td><td align="center">5:1</td><td align="center">49:1</td></tr>
-     <tr><td>Trio</td><td align="center">11:1</td><td align="center">3:1</td><td align="center"><i>32:1</i></td></tr>
-     <tr><td>Corner</td><td align="center">8:1</td><td align="center">2:1</td><td align="center">24:1</td></tr>
-     <tr><td>All letters</td><td align="center">&nbsp;</td><td align="center">&nbsp;</td><td align="center">19:1</td></tr>
-     <tr><td>Basket</td><td align="center">8:1</td><td align="center">2:1</td><td align="center"><i>5:1</i></td></tr>
-     <tr><td>Street</td><td align="center">11:1</td><td align="center">3:1</td><td align="center">9:1</td></tr>
-     <tr><td>Line</td><td align="center">5:1</td><td align="center">1:1</td><td align="center">4:1</td></tr>
-     <tr><td>Column</td><td align="center">2:1</td><td align="center">2:1</td><td align="center">9:1</td></tr>
-     <tr><td>Two columns</td><td align="center">&nbsp;</td><td align="center">&nbsp;</td><td align="center">4:1</td></tr>
-     <tr><td>Dozen</td><td align="center">2:1</td><td align="center">&nbsp;</td><td align="center">&nbsp;</td></tr>
-     <tr><td>Snake</td><td align="center">2:1</td><td align="center">&nbsp;</td><td align="center">&nbsp;</td></tr>
-     <tr><td>Low/High</td><td align="center">1:1</td><td align="center">&nbsp;</td><td align="center">&nbsp;</td></tr>
-     <tr><td>Red/Black</td><td align="center">1:1</td><td align="center">1:1</td><td align="center">1:1</td></tr>
-     <tr><td>Even/Odd</td><td align="center">1:1</td><td align="center">&nbsp;</td><td align="center">1:1</td></tr>
-    </table>
-    <h1>Game state persistence</h1>
-    <p>The application automatically saves state using local storage. You can close the application and open it again to resume. This feature prevents from game state lose due to accidentally refresh application or open other URL in your browser. If you want to reset game or select other game, refresh the application at least three times.</p>
-   </div>
-   <p><input type="button" value = "Close help" onclick="CloseHelp()" style="width:100%;height:10vh;"></p>
-  <div>
+        function addBjBet(amount) {
+            if(bjState.inProgress) return;
+            bjState.bet += amount;
+            document.getElementById('bj-current-bet').innerText = state.formatCurrency(bjState.bet);
+        }
 
-  <script src="graph.js">
-  </script>
-  <script src="core.js">
-  </script>
-  <script src="paintview.js">
-  </script>
-  <script src="paintwheel.js">
-  </script>
-  <script src="painttable.js">
-  </script>
-  <script src="paintplayer.js">
-  </script>
-  <script src="prob.js">
-  </script>
-  <script src="spin.js">
-  </script>
-  <script src="game.js">
-  </script>
-  <script src="struct.js">
-  </script>
-  <script src="unistorage.js">
-  </script>
-  <script src="gamestate.js">
-  </script>
-  <script>
-   InitStart();
-  </script>
- </body>
-      </html>
+        function clearBjBet() {
+            if(bjState.inProgress) return;
+            bjState.bet = 0;
+            document.getElementById('bj-current-bet').innerText = "$0.00";
+        }
+
+        function buildDeck() {
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+            let deck = [];
+            for(let s of suits) {
+                for(let v of values) {
+                    deck.push({suit: s, val: v, isRed: (s==='♥' || s==='♦')});
+                }
+            }
+            return deck.sort(() => Math.random() - 0.5);
+        }
+
+        function getScore(hand) {
+            let score = 0, aces = 0;
+            for(let c of hand) {
+                if(['J','Q','K'].includes(c.val)) score += 10;
+                else if(c.val === 'A') { score += 11; aces++; }
+                else score += parseInt(c.val);
+            }
+            while(score > 21 && aces > 0) { score -= 10; aces--; }
+            return score;
+        }
+
+        function renderCard(card, hidden=false) {
+            if(hidden) return `<div class="playing-card card-hidden"></div>`;
+            let color = card.isRed ? 'card-red' : 'card-black';
+            return `
+                <div class="playing-card ${color}">
+                    <div class="text-left">${card.val}</div>
+                    <div class="text-center text-4xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">${card.suit}</div>
+                    <div class="text-right rotate-180">${card.val}</div>
+                </div>`;
+        }
+
+        function updateBjBoard(revealDealer) {
+            document.getElementById('bj-player-cards').innerHTML = bjState.playerHand.map(c => renderCard(c)).join('');
+            document.getElementById('bj-player-score').innerText = getScore(bjState.playerHand);
+
+            if(revealDealer) {
+                document.getElementById('bj-dealer-cards').innerHTML = bjState.dealerHand.map(c => renderCard(c)).join('');
+                document.getElementById('bj-dealer-score').innerText = getScore(bjState.dealerHand);
+            } else {
+                document.getElementById('bj-dealer-cards').innerHTML = renderCard(bjState.dealerHand[0]) + renderCard(bjState.dealerHand[1], true);
+                document.getElementById('bj-dealer-score').innerText = "?";
+            }
+        }
+
+        function startBlackjack() {
+            if(!checkWager(bjState.bet) || bjState.bet === 0) {
+                if(bjState.bet === 0) notify("WAGER REQUIRED", "Place chips on the table.", "error");
+                return;
+            }
+            updateBalance(-bjState.bet);
+            bjState.inProgress = true;
+            bjState.deck = buildDeck();
+            
+            bjState.playerHand = [bjState.deck.pop(), bjState.deck.pop()];
+            bjState.dealerHand = [bjState.deck.pop(), bjState.deck.pop()];
+
+            document.getElementById('bj-bet-phase').classList.add('hidden');
+            document.getElementById('bj-action-phase').classList.remove('hidden');
+            document.getElementById('bj-action-phase').classList.add('flex');
+            document.getElementById('bj-double-btn').disabled = false;
+            document.getElementById('bj-double-btn').classList.remove('opacity-50');
+
+            updateBjBoard(false);
+
+            if(getScore(bjState.playerHand) === 21) handleBjEnd(true, true);
+        }
+
+        function bjHit() {
+            document.getElementById('bj-double-btn').disabled = true;
+            document.getElementById('bj-double-btn').classList.add('opacity-50');
+            bjState.playerHand.push(bjState.deck.pop());
+            updateBjBoard(false);
+            if(getScore(bjState.playerHand) > 21) handleBjEnd(false, false, "PLAYER BUST");
+        }
+
+        function bjDouble() {
+            if(state.balance < bjState.bet) {
+                notify("FUNDS", "Not enough to double.", "error");
+                return;
+            }
+            updateBalance(-bjState.bet);
+            bjState.bet *= 2;
+            bjState.playerHand.push(bjState.deck.pop());
+            updateBjBoard(false);
+            if(getScore(bjState.playerHand) > 21) handleBjEnd(false, false, "PLAYER BUST");
+            else bjStand();
+        }
+
+        function bjStand() {
+            updateBjBoard(true);
+            let dScore = getScore(bjState.dealerHand);
+            let pScore = getScore(bjState.playerHand);
+            
+            let drawInt = setInterval(() => {
+                if(dScore < 17) {
+                    bjState.dealerHand.push(bjState.deck.pop());
+                    dScore = getScore(bjState.dealerHand);
+                    updateBjBoard(true);
+                } else {
+                    clearInterval(drawInt);
+                    if(dScore > 21) handleBjEnd(true, false, "DEALER BUST");
+                    else if(pScore > dScore) handleBjEnd(true, false, "PLAYER WINS");
+                    else if(dScore > pScore) handleBjEnd(false, false, "DEALER WINS");
+                    else handleBjEnd('push', false, "PUSH");
+                }
+            }, 600);
+        }
+
+        function handleBjEnd(win, isBj, msg="") {
+            bjState.inProgress = false;
+            updateBjBoard(true);
+
+            setTimeout(() => {
+                if(win === true) {
+                    let payout = isBj ? (bjState.bet * 2.5) : (bjState.bet * 2);
+                    updateBalance(payout);
+                    notify("HAND WON", `${msg || 'Blackjack!'}. Payout: ${state.formatCurrency(payout)}`, "win");
+                } else if(win === 'push') {
+                    updateBalance(bjState.bet);
+                    notify("PUSH", "Wager returned.");
+                } else {
+                    notify("HAND LOST", msg, "error");
+                }
+
+                document.getElementById('bj-action-phase').classList.add('hidden');
+                document.getElementById('bj-action-phase').classList.remove('flex');
+                document.getElementById('bj-bet-phase').classList.remove('hidden');
+                clearBjBet();
+            }, 1000);
+        }
+
+        // --- GAME 3: ROULETTE ---
+        const rState = { betType: null, betVal: null, mult: 0, amt: 0, spinning: false };
+
+        function addRBet(amt) {
+            if(rState.spinning) return;
+            rState.amt += amt;
+            document.getElementById('r-current-bet').innerText = state.formatCurrency(rState.amt);
+        }
+        function clearRBet() {
+            if(rState.spinning) return;
+            rState.amt = 0;
+            document.getElementById('r-current-bet').innerText = "$0.00";
+        }
+        function setRBet(type, mult) {
+            if(rState.spinning) return;
+            document.querySelectorAll('.r-cell').forEach(el => el.classList.remove('selected'));
+            document.getElementById(`rb-${type}`).classList.add('selected');
+            rState.betType = type;
+            rState.mult = mult;
+            document.getElementById('r-selection-text').innerText = type.toUpperCase();
+        }
+
+        function spinRoulette() {
+            if(rState.spinning) return;
+            if(!rState.betType) { notify("WAGER", "Select a position on the layout.", "error"); return; }
+            if(rState.amt === 0) { notify("WAGER", "Place chips to spin.", "error"); return; }
+            if(!checkWager(rState.amt)) return;
+
+            updateBalance(-rState.amt);
+            rState.spinning = true;
+            document.getElementById('r-spin-btn').disabled = true;
+            document.getElementById('r-spin-btn').classList.add('opacity-50');
+
+            const resultDisplay = document.getElementById('r-result-display');
+            let spins = 0;
+            
+            let int = setInterval(() => {
+                resultDisplay.innerText = Math.floor(Math.random()*37);
+                spins++;
+                if(spins > 30) {
+                    clearInterval(int);
+                    finishRoulette();
+                }
+            }, 60);
+        }
+
+        function getRouletteProperties(num) {
+            if(num === 0) return {color: 'green', type: '0'};
+            const reds = [1,3,5,7,9,12,14,16,18,19,21,23,25,27,30,32,34,36];
+            return {
+                color: reds.includes(num) ? 'red' : 'black',
+                even: num % 2 === 0,
+                half: num <= 18 ? '1-18' : '19-36',
+                dozen: num <= 12 ? '1st12' : num <= 24 ? '2nd12' : '3rd12',
+                row: num % 3 === 0 ? 'row1' : num % 3 === 2 ? 'row2' : 'row3'
+            };
+        }
+
+        function finishRoulette() {
+            const finalNum = Math.floor(Math.random() * 37);
+            const props = getRouletteProperties(finalNum);
+            
+            const rd = document.getElementById('r-result-display');
+            rd.innerText = finalNum;
+            rd.className = `z-10 text-6xl font-mono font-bold drop-shadow-md text-${props.color === 'red' ? 'red-500' : props.color==='green'?'green-500':'gray-300'}`;
+
+            let win = false;
+            let t = rState.betType;
+            
+            if(t === finalNum.toString()) win = true;
+            else if(finalNum !== 0) {
+                if(t === props.color) win = true;
+                if(t === 'even' && props.even) win = true;
+                if(t === 'odd' && !props.even) win = true;
+                if(t === props.half) win = true;
+                if(t === props.dozen) win = true;
+                if(t === props.row) win = true;
+            }
+
+            if(win) {
+                let payout = rState.amt + (rState.amt * rState.mult);
+                updateBalance(payout);
+                notify("WINNER", `Number ${finalNum}. Paid ${state.formatCurrency(payout)}`, "win");
+            } else {
+                notify("LOSER", `Number ${finalNum}. Wager lost.`, "error");
+            }
+
+            rState.spinning = false;
+            document.getElementById('r-spin-btn').disabled = false;
+            document.getElementById('r-spin-btn').classList.remove('opacity-50');
+        }
+
+        // --- GAME 4: DICE (CRAPS LITE) ---
+        const dState = { betType: null, mult: 0, amt: 0, rolling: false };
+
+        function addDBet(amt) {
+            if(dState.rolling) return;
+            dState.amt += amt;
+            document.getElementById('d-current-bet').innerText = state.formatCurrency(dState.amt);
+        }
+        function clearDBet() {
+            if(dState.rolling) return;
+            dState.amt = 0;
+            document.getElementById('d-current-bet').innerText = "$0.00";
+        }
+        function setDBet(type, mult) {
+            if(dState.rolling) return;
+            ['under', 'seven', 'over'].forEach(id => document.getElementById('db-'+id).classList.remove('border-gold'));
+            document.getElementById(`db-${type}`).classList.add('border-gold');
+            dState.betType = type;
+            dState.mult = mult;
+            document.getElementById('d-selection-text').innerText = type.toUpperCase();
+        }
+
+        function drawDie(val, id) {
+            const el = document.getElementById(id);
+            el.innerHTML = '';
+            const dots = {
+                1: [4], 2: [0,8], 3: [0,4,8], 4: [0,2,6,8], 5: [0,2,4,6,8], 6: [0,1,2,6,7,8]
+            };
+            for(let i=0; i<9; i++) {
+                if(dots[val].includes(i)) el.innerHTML += `<div class="w-5 h-5 bg-black rounded-full"></div>`;
+                else el.innerHTML += `<div class="w-5 h-5"></div>`;
+            }
+        }
+
+        function rollDice() {
+            if(dState.rolling) return;
+            if(!dState.betType) { notify("WAGER", "Select a position on the layout.", "error"); return; }
+            if(dState.amt === 0) { notify("WAGER", "Place chips to roll.", "error"); return; }
+            if(!checkWager(dState.amt)) return;
+
+            updateBalance(-dState.amt);
+            dState.rolling = true;
+            document.getElementById('d-roll-btn').disabled = true;
+            document.getElementById('d-roll-btn').classList.add('opacity-50');
+
+            let rolls = 0;
+            let int = setInterval(() => {
+                drawDie(Math.floor(Math.random()*6)+1, 'die-1');
+                drawDie(Math.floor(Math.random()*6)+1, 'die-2');
+                rolls++;
+                if(rolls > 15) {
+                    clearInterval(int);
+                    finishDice();
+                }
+            }, 80);
+        }
+
+        function finishDice() {
+            const v1 = Math.floor(Math.random()*6)+1;
+            const v2 = Math.floor(Math.random()*6)+1;
+            const total = v1 + v2;
+            
+            drawDie(v1, 'die-1');
+            drawDie(v2, 'die-2');
+
+            let win = false;
+            if(dState.betType === 'under' && total < 7) win = true;
+            if(dState.betType === 'over' && total > 7) win = true;
+            if(dState.betType === 'seven' && total === 7) win = true;
+
+            if(win) {
+                let payout = dState.amt + (dState.amt * dState.mult);
+                updateBalance(payout);
+                notify("WINNER", `Rolled ${total}. Paid ${state.formatCurrency(payout)}`, "win");
+            } else {
+                notify("LOSER", `Rolled ${total}. Wager lost.`, "error");
+            }
+
+            dState.rolling = false;
+            document.getElementById('d-roll-btn').disabled = false;
+            document.getElementById('d-roll-btn').classList.remove('opacity-50');
+        }
+
+        // Init
+        document.getElementById('nav-balance').innerText = state.formatCurrency(state.balance);
+        drawDie(6, 'die-1'); drawDie(6, 'die-2');
+    </script>
+</body>
+</html>
+
